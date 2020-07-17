@@ -2,7 +2,9 @@ package com.jonteohr.discord.tejbz.twitch;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.github.philippheuer.credentialmanager.domain.OAuth2Credential;
 import com.github.philippheuer.events4j.core.EventManager;
@@ -16,15 +18,17 @@ import com.github.twitch4j.helix.domain.StreamList;
 import com.github.twitch4j.helix.domain.SubscriptionList;
 import com.github.twitch4j.helix.domain.User;
 import com.github.twitch4j.helix.domain.UserList;
+import com.jonteohr.discord.tejbz.CommandSQL;
 import com.jonteohr.discord.tejbz.credentials.Credentials;
 
 public class Twitch {
-	public static TwitchClient chatClient;
 	public static TwitchClient twitchClient;
 
-	public static OAuth2Credential OAuth2 = new OAuth2Credential("twitchify_bot", Credentials.OAUTH.getValue());
-	public static OAuth2Credential chatOauth = new OAuth2Credential("rlhypr", Credentials.CHATOAUTH.getValue());
+	public static OAuth2Credential OAuth2 = new OAuth2Credential("PGDABot", Credentials.OAUTH.getValue());
+	public static OAuth2Credential chatOauth = new OAuth2Credential("twitchify_bot", Credentials.CHATOAUTH.getValue());
 	public static OAuth2Credential chatBot = new OAuth2Credential("PGDABot", Credentials.BOTOAUTH.getValue());
+	
+	public static Map<String, String> commands = new HashMap<String, String>();
 	
 	public static void initTwitch() {
 		EventManager eventManager = new EventManager();
@@ -33,30 +37,28 @@ public class Twitch {
 		twitchClient = TwitchClientBuilder.builder()
 				.withEnableHelix(true)
 				.withEventManager(eventManager)
-				.withChatAccount(OAuth2)
+				.withDefaultAuthToken(OAuth2)
+				.withChatAccount(chatBot)
 				.withEnableChat(true)
 				.withEnablePubSub(true)
-				.withDefaultAuthToken(OAuth2)
 				.build();
 		
-		chatClient = TwitchClientBuilder.builder()
-				.withChatAccount(chatOauth)
-				.withEnableChat(true)
-				.withEventManager(eventManager)
-				.build();
-		
-		chatClient.getChat().joinChannel("rlhypr");
+		twitchClient.getChat().joinChannel("tejbz");
 		
 		TwitchHandler twitchHandler = new TwitchHandler();
 		eventManager.getEventHandler(SimpleEventHandler.class).registerListener(twitchHandler);
 		
-		twitchClient.getClientHelper().enableStreamEventListener("tejbz");
+		twitchClient.getClientHelper().enableStreamEventListener("25622462", "tejbz");
 		
 		twitchClient.getPubSub().listenForSubscriptionEvents(OAuth2, "25622462");
-		twitchClient.getPubSub().listenForCheerEvents(OAuth2, "25622462");
 		
 		System.out.println("Twitch4J Finished loading and initiated.");
 		System.out.println("Tejbz user ID: " + getUser("tejbz").getId());
+		
+		AutoMessage.autoMessageTimer();
+		
+		CommandSQL sql = new CommandSQL();
+		commands = sql.getCommandsMap();
 	}
 	
 	/**
@@ -65,7 +67,7 @@ public class Twitch {
 	 * @return {@link java.lang.String String} game-name
 	 */
 	public static String getGameById(String id) {
-		if(id.isEmpty() || id == "")
+		if(id == null || id == "")
 			return "No game set...";
 		GameList resList = twitchClient.getHelix().getGames(OAuth2.getAccessToken(), Arrays.asList(id), null).execute();
 		List<String> gamename = new ArrayList<String>();
@@ -112,20 +114,19 @@ public class Twitch {
 	
 	public static int getSubscribers(String channel) {
 		SubscriptionList reslist = twitchClient.getHelix().getSubscriptions(OAuth2.getAccessToken(), getUser(channel).getId(), null, null, 100).execute();
-		
-		int followers = reslist.getSubscriptions().size();
+		int subs = reslist.getSubscriptions().size();
 		int response = reslist.getSubscriptions().size();
 		String pagination = reslist.getPagination().getCursor();
 		
 		do {
 			reslist = twitchClient.getHelix().getSubscriptions(OAuth2.getAccessToken(), getUser(channel).getId(), pagination, null, 100).execute();
-			followers += reslist.getSubscriptions().size();
+			subs += reslist.getSubscriptions().size();
 			response = reslist.getSubscriptions().size();
 			pagination = reslist.getPagination().getCursor();
 		}
 		while(response > 0);
 		
-		return followers;
+		return subs;
 	}
 	
 	public static User getUser(String channel) {
