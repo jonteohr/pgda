@@ -22,6 +22,6 @@ public class AutoMessage {
 				Twitch.twitchClient.getChat().sendMessage("tejbz", "Check out Tejbz latest video: " + props.getPropertyValue("recent_video") + " tejbzSeemsgood");
 				count = 0;
 			}
-		}, 2*60*1000, 2*60*1000);
+		}, 7*60*1000, 7*60*1000);
 	}
 }
