@@ -40,7 +40,7 @@
 	<dependency> <!-- .Twitch4J -->
 	    <groupId>com.github.twitch4j</groupId>
 	    <artifactId>twitch4j</artifactId>
-	    <version>1.0.0</version>
+	    <version>1.1.0</version>
 	</dependency> <!-- ./Twitch4J -->
   </dependencies>
   
@@ -53,6 +53,10 @@
 			<name>jcenter-bintray</name>
 			<url>https://jcenter.bintray.com</url>
 		</repository>
+		<repository>
+	        <id>jitpack.io</id>
+	        <url>https://jitpack.io</url>
+	    </repository>
 	</repositories>
 
   <build>

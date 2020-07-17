@@ -14,7 +14,7 @@ public class SetVideo extends ListenerAdapter {
 		
 		String[] args = e.getMessage().getContentRaw().split("\\s+");
 		
-		if(!args[0].equalsIgnoreCase(App.prefix + "setvid"))
+		if(!args[0].equalsIgnoreCase(App.prefix + "setvideo"))
 			return;
 		
 		if(!perm.isMod(e.getMember()))
