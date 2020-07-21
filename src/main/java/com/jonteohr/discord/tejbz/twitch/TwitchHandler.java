@@ -9,6 +9,7 @@ import com.github.twitch4j.helix.domain.CreateClipList;
 import com.github.twitch4j.pubsub.events.ChannelSubscribeEvent;
 import com.jonteohr.discord.tejbz.App;
 import com.jonteohr.discord.tejbz.CommandSQL;
+import com.jonteohr.discord.tejbz.PropertyHandler;
 
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.TextChannel;
@@ -120,6 +121,20 @@ public class TwitchHandler {
 					return;
 				}
 				
+				if(args[0].equalsIgnoreCase("!automessage")) {
+					if(args.length < 2) {
+						chat.sendMessage("tejbz", "@" + user + " Invalid arguments. Correct usage: !automessage <number>");
+						return;
+					}
+					
+					PropertyHandler props = new PropertyHandler();
+					
+					if(props.setProperty("automessage_delay", args[1])) {
+						chat.sendMessage("tejbz", "@" + user + " Successfully saved the auto-message delay to: " + args[1] + "!");
+						return;
+					}
+				}
+				
 				if(args[0].equalsIgnoreCase("!format")) {
 					chat.sendMessage("tejbz", "@" + user + " Formatting rules are in the discord: https://discordapp.com/channels/124204242683559938/489590000556441603/732630257861132438");
 					return;
@@ -181,6 +196,9 @@ public class TwitchHandler {
 	public void onPubSub(ChannelSubscribeEvent e) {
 		System.out.println("PubSub Subscription:");
 		System.out.println(e.getData());
+		
+		App.jda.getUserById("307609343912574976").openPrivateChannel().complete().sendMessage("New Sub!").queue();
+		App.jda.getUserById("307609343912574976").openPrivateChannel().complete().sendMessage("" + e.getData()).queue();
 	}
 	
 }

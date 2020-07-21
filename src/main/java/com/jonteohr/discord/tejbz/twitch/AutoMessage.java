@@ -10,18 +10,19 @@ public class AutoMessage {
 	
 	public static void autoMessageTimer() {
 		Timer timer = new Timer();
+		PropertyHandler props = new PropertyHandler();
 		
 		timer.scheduleAtFixedRate(new TimerTask() {
 			
 			@Override
 			public void run() {	
-				if(count < 10)
+				if(count < Integer.parseInt(props.getPropertyValue("automessage_delay")))
 					return;
 				
 				PropertyHandler props = new PropertyHandler();
 				Twitch.twitchClient.getChat().sendMessage("tejbz", "Check out Tejbz latest video: " + props.getPropertyValue("recent_video") + " tejbzSeemsgood");
 				count = 0;
 			}
-		}, 7*60*1000, 7*60*1000);
+		}, 15*60*1000, 15*60*1000);
 	}
 }
