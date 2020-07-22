@@ -50,6 +50,7 @@ public class Twitch {
 		
 		twitchClient.getClientHelper().enableStreamEventListener("25622462", "tejbz");
 		
+		// Testing purposes!
 		twitchClient.getPubSub().listenForSubscriptionEvents(OAuth2, "25622462");
 		
 		System.out.println("Twitch4J Finished loading and initiated.");

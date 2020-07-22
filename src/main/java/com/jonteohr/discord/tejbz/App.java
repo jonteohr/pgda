@@ -42,6 +42,7 @@ public class App {
 	
 	public static Guild guild;
 	public static TextChannel general;
+	public static TextChannel twitchLog;
 	public static String logChannelId = "732559129268322375";
 	
 	public static boolean enableJoin = false;
