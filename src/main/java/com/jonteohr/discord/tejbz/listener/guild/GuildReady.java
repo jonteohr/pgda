@@ -17,6 +17,7 @@ public class GuildReady extends ListenerAdapter {
 		
 		App.guild = e.getGuild();
 		App.general = e.getGuild().getTextChannelById("124204242683559938");
+		App.twitchLog = e.getGuild().getTextChannelById("735122823017791578");
 //		App.general = e.getGuild().getTextChannelById("732241829877252096");
 		
 		setPresence(Twitch.getSubscribers("tejbz"));

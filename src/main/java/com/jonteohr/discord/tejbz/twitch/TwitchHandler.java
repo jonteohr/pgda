@@ -35,8 +35,24 @@ public class TwitchHandler {
 		String user = e.getTags().get("display-name");
 		
 		if(args[0].equalsIgnoreCase("!clip")) {
+			if(Twitch.getStream("tejbz") == null) {
+				chat.sendMessage("tejbz", "@" + user + " Tejbz is offline, there's nothing to clip!");
+				return;
+			}
 			CreateClipList clipData = Twitch.twitchClient.getHelix().createClip(Twitch.OAuth2.getAccessToken(), "25622462", false).execute();
-			chat.sendMessage("tejbz", "@" + user + " https://clips.twitch.tv/" + clipData.getData().get(0).getId());
+			String clipLink = "https://clips.twitch.tv/" + clipData.getData().get(0).getId();
+			chat.sendMessage("tejbz", "@" + user + " " + clipLink);
+
+			EmbedBuilder msg = new EmbedBuilder();
+			msg.setAuthor(user, null, Twitch.getUser(user).getProfileImageUrl());
+			msg.setDescription("(" + user + ")[https://twitch.tv/" + user + "] clipped Tejbz stream. Check it out!\n" + clipLink);
+			
+			App.twitchLog.sendMessage(msg.build()).queue();
+			return;
+		}
+		
+		if(args[0].equalsIgnoreCase("!commands")) {
+			chat.sendMessage("tejbz", "@" + user + " List of commands are available at: http://plox.nu/tejbz");
 			return;
 		}
 		
@@ -173,15 +189,16 @@ public class TwitchHandler {
 		if(Twitch.twitchClient.getChat().isChannelJoined("tejbz"))
 			Twitch.twitchClient.getChat().sendMessage("tejbz", "/me tejbzWave Welcome to the squad, @" + user + " tejbzLove");
 		
-		TextChannel channel = App.general;
+		TextChannel channel = App.twitchLog;
 		
 		EmbedBuilder msg = new EmbedBuilder();
 		msg.setColor(App.color);
-		msg.setAuthor("PGDA", null, App.authorImage);
 		
 		if(gifted) {
+			msg.setAuthor("PGDA", null, App.authorImage);
 			msg.setDescription("[" + e.getGiftedBy().getName() + "](https://twitch.tv/" + e.getGiftedBy().getName() + ") gifted a sub to [" + user + "](https://twitch.tv/" + user + ")");
 		} else {
+			msg.setAuthor(user, null, Twitch.getUser(user).getProfileImageUrl());
 			msg.setDescription("[" + user + "](https://twitch.tv/" + user + ") subscribed with " + tier + ". They've been subscribed for " + months + " months.");
 			if(!message.equalsIgnoreCase("No message.."))
 				msg.addField("Message", message, true);
@@ -192,6 +209,10 @@ public class TwitchHandler {
 		channel.sendMessage(msg.build()).queue();
 	}
 	
+	
+	/*
+	 * TESTING PURPOSES
+	 */
 	@EventSubscriber
 	public void onPubSub(ChannelSubscribeEvent e) {
 		System.out.println("PubSub Subscription:");
