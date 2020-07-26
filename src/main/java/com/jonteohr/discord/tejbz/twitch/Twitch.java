@@ -99,7 +99,7 @@ public class Twitch {
 	 * @return
 	 */
 	public static int getFollowers(String channel) {
-		FollowList reslist = twitchClient.getHelix().getFollowers(OAuth2.getAccessToken(), null, getUser(channel).getId(), null, 100).execute();
+		FollowList reslist = twitchClient.getHelix().getFollowers(OAuth2.getAccessToken(), null, getUser(channel).getId(), null, null).execute();
 		
 		return reslist.getTotal();
 	}
