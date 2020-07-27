@@ -11,7 +11,7 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
 public class VideoAnnouncer extends ListenerAdapter {
 	private static int count = 0;
-	private static int fire = 15;
+	private static int fire = 30;
 	
 	public void onGuildMessageReceived(GuildMessageReceivedEvent e) {
 		if(!e.getGuild().equals(App.guild))

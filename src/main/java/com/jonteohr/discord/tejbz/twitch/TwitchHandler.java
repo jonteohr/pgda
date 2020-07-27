@@ -189,7 +189,10 @@ public class TwitchHandler {
 		 * Twitch Chat
 		 */
 		if(Twitch.twitchClient.getChat().isChannelJoined("tejbz"))
-			Twitch.twitchClient.getChat().sendMessage("tejbz", "/me tejbzWave Welcome to the squad, @" + user + " tejbzLove");
+			if(months <= 1)
+				chat("tejbzWave Welcome to the squad, @" + user + " tejbzLove");
+			else
+				chat("tejbzWave Welcome back @" + user + " tejbzLove");
 		
 		TextChannel channel = App.twitchLog;
 		
