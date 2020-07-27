@@ -95,6 +95,64 @@ public class CommandSQL {
 			return false;
 		}
 	}
+	
+	/**
+	 * 
+	 * @param cmdName
+	 * @return
+	 */
+	public static boolean incrementUses(String cmdName) {
+		try {
+			Class.forName("com.mysql.cj.jdbc.Driver");
+			Connection con = DriverManager.getConnection("jdbc:mysql://" + Credentials.DB_HOST.getValue() + ":3306/" + Credentials.DB_NAME.getValue() + "?serverTimezone=UTC",
+					Credentials.DB_USER.getValue(),
+					Credentials.DB_PASS.getValue());
+
+			PreparedStatement pstmt = con.prepareStatement("UPDATE commands SET uses=uses+1 WHERE cmd=?;");
+			pstmt.setString(1, cmdName);
+
+			pstmt.executeUpdate();
+
+			con.close();
+
+			return true;
+		} catch (Exception e) {
+			System.out.println(e);
+			return false;
+		}
+	}
+	
+	/**
+	 * 
+	 * @param cmdName
+	 * @return
+	 */
+	public static int getUses(String cmdName) {
+		ResultSet result;
+		try {
+			Class.forName("com.mysql.cj.jdbc.Driver");
+			Connection con = DriverManager.getConnection("jdbc:mysql://" + Credentials.DB_HOST.getValue() + ":3306/" + Credentials.DB_NAME.getValue() + "?serverTimezone=UTC",
+					Credentials.DB_USER.getValue(),
+					Credentials.DB_PASS.getValue());
+			
+			PreparedStatement pstmt = con.prepareStatement("SELECT uses FROM commands WHERE cmd=?;");
+			pstmt.setString(1, cmdName);
+			
+			result = pstmt.executeQuery();
+
+			int res = 0;
+
+			while(result.next()) {
+				res = result.getInt(1);
+			}
+
+			return res;
+
+		} catch (Exception e) {
+			System.out.println(e);
+			return -1;
+		}
+	}
 
 	/**
 	 * 
