@@ -1,6 +1,7 @@
 package com.jonteohr.discord.tejbz.twitch;
 
 import com.github.philippheuer.events4j.simple.domain.EventSubscriber;
+import com.github.twitch4j.chat.events.channel.GiftSubscriptionsEvent;
 import com.github.twitch4j.chat.events.channel.IRCMessageEvent;
 import com.github.twitch4j.chat.events.channel.SubscriptionEvent;
 import com.github.twitch4j.events.ChannelGoLiveEvent;
@@ -181,9 +182,11 @@ public class TwitchHandler {
 		String user = e.getUser().getName();
 		int months = e.getMonths();
 		int streak = e.getSubStreak();
-		boolean gifted = e.getGifted();
 		String message = (e.getMessage().isPresent() ? e.getMessage().get() : "No message..");
 		String tier = (e.getSubscriptionPlan().contains("Prime") ? "Twitch Prime" : "A Tier " + e.getSubscriptionPlan().replace("0", "") + " sub");
+		
+		if(e.getGifted())
+			return;
 		
 		/*
 		 * Twitch Chat
@@ -199,17 +202,32 @@ public class TwitchHandler {
 		EmbedBuilder msg = new EmbedBuilder();
 		msg.setColor(App.color);
 		
-		if(gifted) {
-			msg.setAuthor("PGDA", null, App.authorImage);
-			msg.setDescription("[" + e.getGiftedBy().getName() + "](https://twitch.tv/" + e.getGiftedBy().getName() + ") gifted a sub to [" + user + "](https://twitch.tv/" + user + ")");
-		} else {
-			msg.setAuthor(user, "https://twitch.tv/" + user, Twitch.getUser(user).getProfileImageUrl());
-			msg.setDescription("Just subscribed with " + tier + ". They've been subscribed for " + months + " months.");
-			if(!message.equalsIgnoreCase("No message.."))
-				msg.addField("Message", message, true);
-			if(streak > 0)
-				msg.addField("Streak", streak + " months", true);
-		}
+		msg.setAuthor(user, "https://twitch.tv/" + user, Twitch.getUser(user).getProfileImageUrl());
+		msg.setDescription("Just subscribed with " + tier + ". They've been subscribed for " + months + " months.");
+		if(!message.equalsIgnoreCase("No message.."))
+			msg.addField("Message", message, true);
+		if(streak > 0)
+			msg.addField("Streak", streak + " months", true);
+		
+		channel.sendMessage(msg.build()).queue();
+	}
+	
+	@EventSubscriber
+	public void onGiftedSub(GiftSubscriptionsEvent e) {
+		String user = e.getUser().getName();
+		int count = e.getCount();
+		int totalGifted = e.getTotalCount();
+		
+		// Twitch Chat
+		if(Twitch.twitchClient.getChat().isChannelJoined("tejbz"))
+			chat("tejbzPog Thanks for the gifted, @" + user + " tejbzRage");
+		
+		TextChannel channel = App.twitchLog;
+		
+		EmbedBuilder msg = new EmbedBuilder();
+		msg.setColor(App.color);
+		msg.setAuthor(user, "https://twitch.tv/" + user, Twitch.getUser(user).getProfileImageUrl());
+		msg.setDescription("Just gifted " + count + " subs to the community! They've gifted a total of " + totalGifted + " subs.");
 		
 		channel.sendMessage(msg.build()).queue();
 	}
