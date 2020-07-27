@@ -63,8 +63,11 @@ public class TwitchHandler {
 				reply = reply.replace("[subcount]", Twitch.getSubscribers("tejbz") + "");
 			if(reply.contains("[follows]"))
 				reply = reply.replace("[follows]", "" + Twitch.getFollowers("tejbz"));
+			if(reply.contains("[count]"))
+				reply = reply.replace("[count]", String.valueOf(CommandSQL.getUses(args[0])));
 			
 			chat(reply);
+			CommandSQL.incrementUses(args[0]);
 			return;
 		}
 		
@@ -193,9 +196,9 @@ public class TwitchHandler {
 		 */
 		if(Twitch.twitchClient.getChat().isChannelJoined("tejbz"))
 			if(months <= 1)
-				chat("tejbzWave Welcome to the squad, @" + user + " tejbzLove");
+				chatMe("tejbzWave Welcome to the squad, @" + user + " tejbzLove");
 			else
-				chat("tejbzWave Welcome back @" + user + " tejbzLove");
+				chatMe("tejbzWave Welcome back @" + user + " tejbzLove");
 		
 		TextChannel channel = App.twitchLog;
 		
@@ -220,7 +223,7 @@ public class TwitchHandler {
 		
 		// Twitch Chat
 		if(Twitch.twitchClient.getChat().isChannelJoined("tejbz"))
-			chat("tejbzPog Thanks for the gifted, @" + user + " tejbzRage");
+			chatMe("tejbzPog Thanks for the gifted, @" + user + " tejbzRage");
 		
 		TextChannel channel = App.twitchLog;
 		
@@ -246,6 +249,10 @@ public class TwitchHandler {
 	}
 	
 	private void chat(String msg) {
+		Twitch.twitchClient.getChat().sendMessage("tejbz", msg);
+	}
+	
+	private void chatMe(String msg) {
 		Twitch.twitchClient.getChat().sendMessage("tejbz", "/me " + msg);
 	}
 	
