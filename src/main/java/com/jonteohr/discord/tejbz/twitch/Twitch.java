@@ -18,8 +18,10 @@ import com.github.twitch4j.helix.domain.StreamList;
 import com.github.twitch4j.helix.domain.SubscriptionList;
 import com.github.twitch4j.helix.domain.User;
 import com.github.twitch4j.helix.domain.UserList;
-import com.jonteohr.discord.tejbz.CommandSQL;
 import com.jonteohr.discord.tejbz.credentials.Credentials;
+import com.jonteohr.discord.tejbz.sql.AutoMessageSQL;
+import com.jonteohr.discord.tejbz.sql.CommandSQL;
+import com.jonteohr.discord.tejbz.twitch.automessage.AutoMessage;
 
 public class Twitch {
 	public static TwitchClient twitchClient;
@@ -59,7 +61,10 @@ public class Twitch {
 		AutoMessage.autoMessageTimer();
 		
 		CommandSQL sql = new CommandSQL();
+		AutoMessageSQL amSQL = new AutoMessageSQL();
+		
 		commands = sql.getCommandsMap();
+		AutoMessage.autoMessages = amSQL.getMessages();
 	}
 	
 	/**
