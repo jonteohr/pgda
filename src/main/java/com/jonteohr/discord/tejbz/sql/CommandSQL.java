@@ -1,4 +1,4 @@
-package com.jonteohr.discord.tejbz;
+package com.jonteohr.discord.tejbz.sql;
 
 import java.sql.Connection;
 import java.sql.DriverManager;

@@ -8,8 +8,10 @@ import com.github.twitch4j.events.ChannelGoLiveEvent;
 import com.github.twitch4j.helix.domain.CreateClipList;
 import com.github.twitch4j.pubsub.events.ChannelSubscribeEvent;
 import com.jonteohr.discord.tejbz.App;
-import com.jonteohr.discord.tejbz.CommandSQL;
 import com.jonteohr.discord.tejbz.PropertyHandler;
+import com.jonteohr.discord.tejbz.sql.AutoMessageSQL;
+import com.jonteohr.discord.tejbz.sql.CommandSQL;
+import com.jonteohr.discord.tejbz.twitch.automessage.AutoMessage;
 
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.TextChannel;
@@ -144,17 +146,56 @@ public class TwitchHandler {
 				}
 				
 				if(args[0].equalsIgnoreCase("!automessage")) {
-					if(args.length < 2) {
-						chat("@" + user + " Invalid arguments. Correct usage: !automessage <number>");
+					if(args.length < 3) {
+						chat("@" + user + " Invalid arguments. Visit http://plox.nu/tejbz for commands list.");
 						return;
 					}
 					
-					PropertyHandler props = new PropertyHandler();
+					String setting = args[1];
 					
-					if(props.setProperty("automessage_delay", args[1])) {
-						chat("@" + user + " Successfully saved the auto-message delay to: " + args[1] + "!");
+					if(setting.equalsIgnoreCase("interval")) {
+						PropertyHandler props = new PropertyHandler();
+						
+						if(props.setProperty("automessage_delay", args[2])) {
+							chat("@" + user + " Successfully saved the auto-message delay to: " + args[2] + "!");
+							return;
+						}
+					} else if(setting.equalsIgnoreCase("add")) {
+						String message = "";
+						for(int i = 2; i < args.length; i++) {
+							message += args[i] + " ";
+						}
+						
+						AutoMessageSQL amSql = new AutoMessageSQL();
+						
+						if(!amSql.addAutoMessage(message)) {
+							chat("Failed to add/update playlist. Try again later!");
+							return;
+						}
+						
+						AutoMessage.updateAutoMessages();
+						
+						chat("Added message and updated playlist.");
+						return;
+					} else if(setting.equalsIgnoreCase("remove")) {
+						String message = "";
+						for(int i = 2; i < args.length; i++) {
+							message += args[i] + " ";
+						}
+						
+						AutoMessageSQL amSql = new AutoMessageSQL();
+						
+						if(!amSql.removeAutoMessage(message)) {
+							chat("Failed to remove/update playlist. Try again later!");
+							return;
+						}
+						
+						AutoMessage.updateAutoMessages();
+						
+						chat("Removed the message from the playlist!");
 						return;
 					}
+					
 				}
 				
 				if(args[0].equalsIgnoreCase("!format")) {
