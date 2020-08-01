@@ -6,7 +6,6 @@ import com.github.twitch4j.chat.events.channel.IRCMessageEvent;
 import com.github.twitch4j.chat.events.channel.SubscriptionEvent;
 import com.github.twitch4j.events.ChannelGoLiveEvent;
 import com.github.twitch4j.helix.domain.CreateClipList;
-import com.github.twitch4j.pubsub.events.ChannelSubscribeEvent;
 import com.jonteohr.discord.tejbz.App;
 import com.jonteohr.discord.tejbz.PropertyHandler;
 import com.jonteohr.discord.tejbz.sql.AutoMessageSQL;
@@ -219,6 +218,8 @@ public class TwitchHandler {
 		msg.addField("Playing", Twitch.getGameById(e.getStream().getGameId()), false);
 		
 		App.general.sendMessage(msg.build()).queue();
+		
+		App.jda.getUserById("307609343912574976").openPrivateChannel().complete().sendMessage("GoLive event ID: " + e.getEventId()).queue();
 	}
 	
 	@EventSubscriber
@@ -254,6 +255,8 @@ public class TwitchHandler {
 			msg.addField("Streak", streak + " months", true);
 		
 		channel.sendMessage(msg.build()).queue();
+		
+		App.jda.getUserById("307609343912574976").openPrivateChannel().complete().sendMessage("Sub! Event id: " + e.getEventId() + " User: " + e.getUser().getName()).queue();
 	}
 	
 	@EventSubscriber
@@ -279,7 +282,7 @@ public class TwitchHandler {
 	
 	/*
 	 * TESTING PURPOSES
-	 */
+	 *
 	@EventSubscriber
 	public void onPubSub(ChannelSubscribeEvent e) {
 		System.out.println("PubSub Subscription:");
@@ -287,7 +290,7 @@ public class TwitchHandler {
 		
 		App.jda.getUserById("307609343912574976").openPrivateChannel().complete().sendMessage("New Sub!").queue();
 		App.jda.getUserById("307609343912574976").openPrivateChannel().complete().sendMessage("" + e.getData()).queue();
-	}
+	}*/
 	
 	private void chat(String msg) {
 		Twitch.twitchClient.getChat().sendMessage("tejbz", msg);
