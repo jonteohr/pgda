@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
 
 import com.github.philippheuer.credentialmanager.domain.OAuth2Credential;
 import com.github.philippheuer.events4j.core.EventManager;
@@ -43,6 +44,7 @@ public class Twitch {
 				.withChatAccount(chatBot)
 				.withEnableChat(true)
 				.withEnablePubSub(true)
+				.withScheduledThreadPoolExecutor(new ScheduledThreadPoolExecutor(Runtime.getRuntime().availableProcessors()))
 				.build();
 		
 		twitchClient.getChat().joinChannel("tejbz");
@@ -53,7 +55,7 @@ public class Twitch {
 		twitchClient.getClientHelper().enableStreamEventListener("25622462", "tejbz");
 		
 		// Testing purposes!
-		twitchClient.getPubSub().listenForSubscriptionEvents(OAuth2, "25622462");
+		//twitchClient.getPubSub().listenForSubscriptionEvents(OAuth2, "25622462");
 		
 		System.out.println("Twitch4J Finished loading and initiated.");
 		System.out.println("Tejbz user ID: " + getUser("tejbz").getId());
