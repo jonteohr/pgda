@@ -43,7 +43,7 @@ public class Twitch {
 				.withDefaultAuthToken(OAuth2)
 				.withChatAccount(chatBot)
 				.withEnableChat(true)
-				.withEnablePubSub(true)
+				.withEnablePubSub(false)
 				.withScheduledThreadPoolExecutor(new ScheduledThreadPoolExecutor(Runtime.getRuntime().availableProcessors()))
 				.build();
 		
