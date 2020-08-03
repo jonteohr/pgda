@@ -1,7 +1,7 @@
 # PGDABot
 Discord & Twitch chat bot for [Tejbz](https://twitch.tv/tejbz)
 
---
+---
 
 `com.jonteohr.discord.tejbz.Credentials.java`
 ```java
