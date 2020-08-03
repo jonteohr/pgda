@@ -45,7 +45,7 @@ public class AutoMessage {
 				System.out.println("Pagination is now: " + pagination);
 				System.out.println("Next message: " + autoMessages.get(pagination));
 			}
-		}, 15*60*1000, 15*60*1000);
+		}, 7*60*1000, 7*60*1000);
 	}
 
 	public static void updateAutoMessages() {

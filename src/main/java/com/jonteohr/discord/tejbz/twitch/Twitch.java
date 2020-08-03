@@ -22,6 +22,7 @@ import com.github.twitch4j.helix.domain.UserList;
 import com.jonteohr.discord.tejbz.credentials.Credentials;
 import com.jonteohr.discord.tejbz.sql.AutoMessageSQL;
 import com.jonteohr.discord.tejbz.sql.CommandSQL;
+import com.jonteohr.discord.tejbz.sql.WatchTimeSQL;
 import com.jonteohr.discord.tejbz.twitch.automessage.AutoMessage;
 
 public class Twitch {
@@ -43,6 +44,7 @@ public class Twitch {
 				.withChatAccount(chatBot)
 				.withEnableChat(true)
 				.withEnablePubSub(false)
+				.withEnableTMI(true)
 				.withScheduledThreadPoolExecutor(new ScheduledThreadPoolExecutor(Runtime.getRuntime().availableProcessors()))
 				.build();
 		
@@ -52,9 +54,6 @@ public class Twitch {
 		eventManager.getEventHandler(SimpleEventHandler.class).registerListener(twitchHandler);
 		
 		twitchClient.getClientHelper().enableStreamEventListener("25622462", "tejbz");
-		
-		// Testing purposes!
-		//twitchClient.getPubSub().listenForSubscriptionEvents(OAuth2, "25622462");
 		
 		System.out.println("Twitch4J Finished loading and initiated.");
 		System.out.println("Tejbz user ID: " + getUser("tejbz").getId());
@@ -66,6 +65,12 @@ public class Twitch {
 		
 		commands = sql.getCommandsMap();
 		AutoMessage.autoMessages = amSQL.getMessages();
+		
+		// Watch time timers
+		WatchTimer.countWatchTime();
+		WatchTimer.saveWatchTime();
+		WatchTimeSQL watchTimeSQL = new WatchTimeSQL();
+		WatchTimer.watchList = watchTimeSQL.getWatchTimeList();
 	}
 	
 	/**
