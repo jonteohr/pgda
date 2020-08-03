@@ -27,8 +27,7 @@ import com.jonteohr.discord.tejbz.twitch.automessage.AutoMessage;
 public class Twitch {
 	public static TwitchClient twitchClient;
 
-	public static OAuth2Credential OAuth2 = new OAuth2Credential("PGDABot", Credentials.OAUTH.getValue());
-	public static OAuth2Credential chatOauth = new OAuth2Credential("twitchify_bot", Credentials.CHATOAUTH.getValue());
+	public static OAuth2Credential OAuth2 = new OAuth2Credential("tejbz", Credentials.OAUTH.getValue());
 	public static OAuth2Credential chatBot = new OAuth2Credential("PGDABot", Credentials.BOTOAUTH.getValue());
 	
 	public static Map<String, String> commands = new HashMap<String, String>();
