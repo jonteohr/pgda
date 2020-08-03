@@ -7,8 +7,7 @@ Discord & Twitch chat bot for [Tejbz](https://twitch.tv/tejbz)
 ```java
 public enum Credentials {
 	TOKEN("BOT_TOKEN"),
-	OAUTH("OAUTH_TOKEN"),
-	CHATOAUTH("CHATBOT_TOKEN"),
+	OAUTH("TEJBZ_OAUTH"),
 	BOTOAUTH("CHATBOT_TOKEN"),
 	DB_HOST("localhost"),
 	DB_NAME("dbname"),
