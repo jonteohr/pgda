@@ -65,6 +65,8 @@ public class TwitchHandler {
 		
 		if(args[0].equalsIgnoreCase("!commands")) {
 			if(args.length > 1)
+				return;
+			
 			chat("@" + user + " List of commands are available at: http://plox.nu/tejbz");
 			return;
 		}
