@@ -6,6 +6,7 @@ import java.net.URL;
 import com.jonteohr.discord.tejbz.App;
 import com.jonteohr.discord.tejbz.PermissionHandler;
 import com.jonteohr.discord.tejbz.PropertyHandler;
+import com.jonteohr.discord.tejbz.web.WebLog;
 
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -33,6 +34,8 @@ public class SetSchedule extends ListenerAdapter {
 			
 			if(props.setProperty("schedule_url", url.toString())) {
 				e.getAuthor().openPrivateChannel().complete().sendMessage("Saved new schedule image!").queue();
+				
+				WebLog.addToWeblog("DISCORD", e.getAuthor().getAsTag(), "Updated the schedule: <a href='" + url.toString() + "'>New Schedule</a>");
 				return;
 			}
 			

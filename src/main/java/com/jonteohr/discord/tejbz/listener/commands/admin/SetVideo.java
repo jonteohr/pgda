@@ -3,6 +3,7 @@ package com.jonteohr.discord.tejbz.listener.commands.admin;
 import com.jonteohr.discord.tejbz.App;
 import com.jonteohr.discord.tejbz.PermissionHandler;
 import com.jonteohr.discord.tejbz.PropertyHandler;
+import com.jonteohr.discord.tejbz.web.WebLog;
 
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -29,6 +30,7 @@ public class SetVideo extends ListenerAdapter {
 		
 		if(prop.setProperty("recent_video", url)) {
 			e.getAuthor().openPrivateChannel().complete().sendMessage("Successfully saved!").queue();
+			WebLog.addToWeblog("DISCORD", e.getAuthor().getAsTag(), "Updated the latest video: <a href='" + url + "'>New Video</a>");
 		} else {
 			e.getAuthor().openPrivateChannel().complete().sendMessage("Failed to save...").queue();
 		}

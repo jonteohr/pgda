@@ -16,6 +16,7 @@ import com.jonteohr.discord.tejbz.PropertyHandler;
 import com.jonteohr.discord.tejbz.sql.AutoMessageSQL;
 import com.jonteohr.discord.tejbz.sql.CommandSQL;
 import com.jonteohr.discord.tejbz.twitch.automessage.AutoMessage;
+import com.jonteohr.discord.tejbz.web.WebLog;
 
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.TextChannel;
@@ -131,6 +132,7 @@ public class TwitchHandler {
 				if(sql.addCommand(cmdName, msg)) {
 					chat("@" + user + " Command " + cmdName + " stored!");
 					Twitch.commands.put(cmdName, msg);
+					WebLog.addToWeblog("TWITCH", user, "Created the command " + cmdName);
 				}
 				
 				return;
@@ -156,6 +158,7 @@ public class TwitchHandler {
 				if(sql.editCommand(cmdName, msg)) {
 					chat("@" + user + " Command " + cmdName + " stored!");
 					Twitch.commands.replace(cmdName, msg);
+					WebLog.addToWeblog("TWITCH", user, "Edited the command " + cmdName);
 				} else {
 					chat("@" + user + " Failed editing the command " + cmdName);
 				}
@@ -177,6 +180,7 @@ public class TwitchHandler {
 				if(sql.deleteCommand(args[1])) {
 					chat("@" + user + " Command " + args[1] + " successfully deleted!");
 					Twitch.commands.remove(args[1]);
+					WebLog.addToWeblog("TWITCH", user, "Deleted the command " + args[1]);
 				}
 				
 				return;
@@ -195,6 +199,7 @@ public class TwitchHandler {
 					
 					if(props.setProperty("automessage_delay", args[2])) {
 						chat("@" + user + " Successfully saved the auto-message delay to: " + args[2] + "!");
+						WebLog.addToWeblog("TWITCH", user, "Changed the automessage interval to " + args[2]);
 						return;
 					}
 				} else if(setting.equalsIgnoreCase("add")) {
@@ -213,6 +218,8 @@ public class TwitchHandler {
 					AutoMessage.updateAutoMessages();
 					
 					chat("Added message and updated playlist.");
+					
+					WebLog.addToWeblog("TWITCH", user, "Added a message to auto-message: <code>" + message + "</code>");
 					return;
 				} else if(setting.equalsIgnoreCase("remove")) {
 					String message = "";
@@ -230,6 +237,7 @@ public class TwitchHandler {
 					AutoMessage.updateAutoMessages();
 					
 					chat("Removed the message from the playlist!");
+					WebLog.addToWeblog("TWITCH", user, "Removed a message from auto-message: <code>" + message + "</code>");
 					return;
 				}
 				
