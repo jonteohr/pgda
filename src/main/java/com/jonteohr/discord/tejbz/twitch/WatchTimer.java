@@ -49,12 +49,15 @@ public class WatchTimer {
 			
 			@Override
 			public void run() {
+				if(!streamLive)
+					return;
+				
 				Map<String, Integer> savedList = sql.getWatchTimeList();
 				watchList.forEach((viewer, time) -> {
 					if(savedList.containsKey(viewer)) {
-						sql.incrementWatchTime(viewer);
+						sql.incrementWatchTime(viewer, time);
 					} else {
-						sql.addToWatchTime(viewer);
+						sql.addToWatchTime(viewer, time);
 					}
 				});
 			}
