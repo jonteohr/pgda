@@ -68,7 +68,7 @@ public class TwitchHandler {
 			if(args.length > 1)
 				return;
 			
-			chat("@" + user + " List of commands are available at: http://plox.nu/tejbz");
+			chat("@" + user + " List of commands are available at: http://pgda.xyz/commands");
 			return;
 		}
 		
@@ -188,7 +188,7 @@ public class TwitchHandler {
 			
 			if(args[0].equalsIgnoreCase("!automessage")) {
 				if(args.length < 3) {
-					chat("@" + user + " Invalid arguments. Visit http://plox.nu/tejbz for commands list.");
+					chat("@" + user + " Invalid arguments. Visit http://pgda.xyz/commands for commands list.");
 					return;
 				}
 				
