@@ -5,6 +5,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 
 import com.github.philippheuer.credentialmanager.domain.OAuth2Credential;
@@ -64,6 +66,7 @@ public class Twitch {
 		AutoMessageSQL amSQL = new AutoMessageSQL();
 		
 		commands = sql.getCommandsMap();
+		commandsUpdater();
 		AutoMessage.autoMessages = amSQL.getMessages();
 		
 		// Watch time timers
@@ -145,5 +148,18 @@ public class Twitch {
 		UserList usr = twitchClient.getHelix().getUsers(OAuth2.getAccessToken(), null, Arrays.asList(channel)).execute();
 		
 		return usr.getUsers().get(0);
+	}
+	
+	private static void commandsUpdater() {
+		Timer timer = new Timer();
+		CommandSQL sql = new CommandSQL();
+		
+		timer.scheduleAtFixedRate(new TimerTask() {
+			
+			@Override
+			public void run() {
+				commands = sql.getCommandsMap();
+			}
+		}, 30*1000, 30*1000);
 	}
 }

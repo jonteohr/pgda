@@ -11,8 +11,6 @@ import com.jonteohr.discord.tejbz.sql.WatchTimeSQL;
 
 public class WatchTimer {
 	
-	public static boolean streamLive = false;
-	
 	public static Map<String, Integer> watchList = new HashMap<String, Integer>();
 	
 	public static void countWatchTime() {
@@ -22,7 +20,7 @@ public class WatchTimer {
 			
 			@Override
 			public void run() {
-				if(!streamLive) // Stream is offline, don't count!
+				if(Twitch.getStream("tejbz") == null) // Stream is offline, don't count!
 					return;
 				
 				Chatters chatList = Twitch.twitchClient.getMessagingInterface().getChatters("tejbz").execute();
@@ -49,7 +47,7 @@ public class WatchTimer {
 			
 			@Override
 			public void run() {
-				if(!streamLive)
+				if(Twitch.getStream("tejbz") == null) // Stream is offline, don't count!
 					return;
 				
 				Map<String, Integer> savedList = sql.getWatchTimeList();
