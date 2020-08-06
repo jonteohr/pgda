@@ -66,12 +66,11 @@ public class Twitch {
 		AutoMessageSQL amSQL = new AutoMessageSQL();
 		
 		commands = sql.getCommandsMap();
-		commandsUpdater();
+		sqlUpdater();
 		AutoMessage.autoMessages = amSQL.getMessages();
 		
 		// Watch time timers
 		WatchTimer.countWatchTime();
-		WatchTimer.saveWatchTime();
 		WatchTimeSQL watchTimeSQL = new WatchTimeSQL();
 		WatchTimer.watchList = watchTimeSQL.getWatchTimeList();
 	}
@@ -150,7 +149,7 @@ public class Twitch {
 		return usr.getUsers().get(0);
 	}
 	
-	private static void commandsUpdater() {
+	private static void sqlUpdater() {
 		Timer timer = new Timer();
 		CommandSQL sql = new CommandSQL();
 		
@@ -159,6 +158,8 @@ public class Twitch {
 			@Override
 			public void run() {
 				commands = sql.getCommandsMap();
+				
+				AutoMessage.updateAutoMessages();
 			}
 		}, 30*1000, 30*1000);
 	}

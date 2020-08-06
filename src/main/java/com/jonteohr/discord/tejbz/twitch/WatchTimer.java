@@ -27,7 +27,7 @@ public class WatchTimer {
 				List<String> viewers = chatList.getAllViewers();
 				
 				viewers.forEach(viewer -> {
-					if(viewer.equalsIgnoreCase("tejbz")) // Don't want to record the broadcaster
+					if(viewer.equalsIgnoreCase("tejbz") || viewer.equalsIgnoreCase("streamelements") || viewer.equalsIgnoreCase("nightbot") || viewer.equalsIgnoreCase("pgdabot")) // Don't want to record the broadcaster, bots etc.
 						return;
 					
 					if(watchList.containsKey(viewer))
@@ -35,30 +35,19 @@ public class WatchTimer {
 					else
 						watchList.put(viewer, 1);
 				});
-			}
-		}, 1*60*1000, 1*60*1000);
-	}
-	
-	public static void saveWatchTime() {
-		Timer timer = new Timer();
-		WatchTimeSQL sql = new WatchTimeSQL();
-		
-		timer.scheduleAtFixedRate(new TimerTask() {
-			
-			@Override
-			public void run() {
-				if(Twitch.getStream("tejbz") == null) // Stream is offline, don't count!
-					return;
+				
+				WatchTimeSQL sql = new WatchTimeSQL();
 				
 				Map<String, Integer> savedList = sql.getWatchTimeList();
 				watchList.forEach((viewer, time) -> {
 					if(savedList.containsKey(viewer)) {
-						sql.incrementWatchTime(viewer, time);
+						if(savedList.get(viewer) != watchList.get(viewer))
+							sql.setWatchTime(viewer, time);
 					} else {
 						sql.addToWatchTime(viewer, time);
 					}
 				});
 			}
-		}, 15*60*1000, 15*60*1000);
+		}, 1*60*1000, 1*60*1000);
 	}
 }
