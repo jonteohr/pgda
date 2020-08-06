@@ -131,7 +131,7 @@ public class TwitchHandler {
 				if(sql.addCommand(cmdName, msg)) {
 					chat("@" + user + " Command " + cmdName + " stored!");
 					Twitch.commands.put(cmdName, msg);
-					WebLog.addToWeblog("TWITCH", user, "Created the command " + cmdName);
+					WebLog.addToWeblog("TWITCH", user, "Created the command <code>" + cmdName + "</code>");
 				}
 				
 				return;
@@ -157,7 +157,7 @@ public class TwitchHandler {
 				if(sql.editCommand(cmdName, msg)) {
 					chat("@" + user + " Command " + cmdName + " stored!");
 					Twitch.commands.replace(cmdName, msg);
-					WebLog.addToWeblog("TWITCH", user, "Edited the command " + cmdName);
+					WebLog.addToWeblog("TWITCH", user, "Edited the command <code>" + cmdName + "</code>");
 				} else {
 					chat("@" + user + " Failed editing the command " + cmdName);
 				}
@@ -179,7 +179,7 @@ public class TwitchHandler {
 				if(sql.deleteCommand(args[1])) {
 					chat("@" + user + " Command " + args[1] + " successfully deleted!");
 					Twitch.commands.remove(args[1]);
-					WebLog.addToWeblog("TWITCH", user, "Deleted the command " + args[1]);
+					WebLog.addToWeblog("TWITCH", user, "Deleted the command <code>" + args[1] + "</code>");
 				}
 				
 				return;

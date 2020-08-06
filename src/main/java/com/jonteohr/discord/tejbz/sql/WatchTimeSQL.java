@@ -18,7 +18,7 @@ public class WatchTimeSQL {
 	 * @return {@code true} if successful
 	 * @see #addToWatchTime(String)
 	 */
-	public boolean incrementWatchTime(String viewer, int time) {
+	public boolean setWatchTime(String viewer, int time) {
 		try {
 			Class.forName("com.mysql.cj.jdbc.Driver");
 			Connection con = DriverManager.getConnection("jdbc:mysql://" + Credentials.DB_HOST.getValue() + ":3306/" + Credentials.DB_NAME.getValue() + "?serverTimezone=UTC",
@@ -28,7 +28,7 @@ public class WatchTimeSQL {
 			int savedTime = getWatchTime(viewer);
 			int diffTime = time - savedTime;
 
-			PreparedStatement pstmt = con.prepareStatement("UPDATE watchtime SET time=time+? WHERE viewer=?");
+			PreparedStatement pstmt = con.prepareStatement("UPDATE watchtime SET time=? WHERE viewer=?");
 			pstmt.setInt(1, diffTime);
 			pstmt.setString(2, viewer);
 			pstmt.executeUpdate();
