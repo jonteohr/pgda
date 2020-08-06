@@ -145,6 +145,8 @@ public class CommandSQL {
 			while(result.next()) {
 				res = result.getInt(1);
 			}
+			
+			con.close();
 
 			return res;
 
@@ -174,6 +176,8 @@ public class CommandSQL {
 			while (result.next()) {
 				cmds.add(result.getString(1));
 			}
+			
+			con.close();
 
 			return cmds;
 
@@ -205,6 +209,8 @@ public class CommandSQL {
 			while(result.next()) {
 				reply = result.getString(1);
 			}
+			
+			con.close();
 
 			return reply;
 
@@ -230,6 +236,8 @@ public class CommandSQL {
 			while(result.next()) {
 				response.put(result.getString(1), result.getString(2));
 			}
+			
+			con.close();
 
 			return response;
 

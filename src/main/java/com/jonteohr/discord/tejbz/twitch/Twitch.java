@@ -60,14 +60,13 @@ public class Twitch {
 		System.out.println("Twitch4J Finished loading and initiated.");
 		System.out.println("Tejbz user ID: " + getUser("tejbz").getId());
 		
-		AutoMessage.autoMessageTimer();
-		
 		CommandSQL sql = new CommandSQL();
 		AutoMessageSQL amSQL = new AutoMessageSQL();
 		
 		commands = sql.getCommandsMap();
-		sqlUpdater();
 		AutoMessage.autoMessages = amSQL.getMessages();
+		sqlUpdater();
+		AutoMessage.autoMessageTimer();
 		
 		// Watch time timers
 		WatchTimer.countWatchTime();
@@ -161,6 +160,6 @@ public class Twitch {
 				
 				AutoMessage.updateAutoMessages();
 			}
-		}, 30*1000, 30*1000);
+		}, 15*1000, 15*1000);
 	}
 }

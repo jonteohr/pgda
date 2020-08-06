@@ -1,5 +1,7 @@
 package com.jonteohr.discord.tejbz.twitch;
 
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -10,6 +12,7 @@ import com.github.twitch4j.chat.events.channel.IRCMessageEvent;
 import com.github.twitch4j.chat.events.channel.SubscriptionEvent;
 import com.github.twitch4j.events.ChannelGoLiveEvent;
 import com.github.twitch4j.helix.domain.CreateClipList;
+import com.github.twitch4j.helix.domain.FollowList;
 import com.jonteohr.discord.tejbz.App;
 import com.jonteohr.discord.tejbz.PropertyHandler;
 import com.jonteohr.discord.tejbz.sql.AutoMessageSQL;
@@ -91,6 +94,30 @@ public class TwitchHandler {
 				}
 			}
 			
+			return;
+		}
+		
+		if(args[0].equalsIgnoreCase("!followage")) {
+			FollowList reslit = Twitch.twitchClient.getHelix().getFollowers(Twitch.OAuth2.getAccessToken(), Twitch.getUser(user).getId(), Twitch.getUser("tejbz").getId(), null, 1).execute();
+			
+			LocalDateTime followDate = reslit.getFollows().get(0).getFollowedAt();
+			LocalDateTime currentDate = LocalDateTime.now();
+			LocalDateTime tempDate = LocalDateTime.from(followDate);
+			
+			long years = tempDate.until(currentDate, ChronoUnit.YEARS);
+			tempDate = tempDate.plusYears(years);
+			
+			long months = tempDate.until(currentDate, ChronoUnit.MONTHS);
+			tempDate = tempDate.plusMonths(months);
+			
+			long days = tempDate.until(currentDate, ChronoUnit.DAYS);
+			
+			if(years > 0)
+				chat(user + " has followed tejbz for " + years + " years, " + months + " months and " + days + " days.");
+			else if(months > 1)
+				chat(user + " has follow tejbz for " + months + " months and " + days + " days.");
+			else
+				chat(user + " has followed tejbz for " + days + " days.");
 			return;
 		}
 		

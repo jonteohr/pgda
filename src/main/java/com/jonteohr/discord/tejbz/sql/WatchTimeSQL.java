@@ -93,6 +93,8 @@ public class WatchTimeSQL {
 			while(result.next()) {
 				res = result.getInt(1);
 			}
+			
+			con.close();
 
 			return res;
 
@@ -122,6 +124,8 @@ public class WatchTimeSQL {
 			while(result.next()) {
 				res.put(result.getString(1), result.getInt(2));
 			}
+			
+			con.close();
 
 			return res;
 
