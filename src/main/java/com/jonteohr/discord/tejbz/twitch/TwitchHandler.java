@@ -9,7 +9,6 @@ import com.github.twitch4j.chat.events.channel.GiftSubscriptionsEvent;
 import com.github.twitch4j.chat.events.channel.IRCMessageEvent;
 import com.github.twitch4j.chat.events.channel.SubscriptionEvent;
 import com.github.twitch4j.events.ChannelGoLiveEvent;
-import com.github.twitch4j.events.ChannelGoOfflineEvent;
 import com.github.twitch4j.helix.domain.CreateClipList;
 import com.jonteohr.discord.tejbz.App;
 import com.jonteohr.discord.tejbz.PropertyHandler;
@@ -255,20 +254,13 @@ public class TwitchHandler {
 		EmbedBuilder msg = new EmbedBuilder();
 		msg.setAuthor("Tejbz", null, Twitch.getUser(e.getChannel().getName()).getProfileImageUrl());
 		msg.setColor(App.color);
-		msg.setImage(Twitch.getStream("tejbz").getThumbnailUrl(1280, 720));
+		msg.setImage(e.getStream().getThumbnailUrl(1280, 720));
 		msg.setTitle("Tejbz just went live!", "https://www.twitch.tv/tejbz");
 		msg.addField("Title", e.getStream().getTitle(), false);
 		msg.addField("Playing", Twitch.getGameById(e.getStream().getGameId()), false);
 		
 		App.general.sendMessage(App.guild.getPublicRole().getAsMention()).queue();
 		App.general.sendMessage(msg.build()).queue();
-		
-		WatchTimer.streamLive = true;
-	}
-	
-	@EventSubscriber
-	public void onOffline(ChannelGoOfflineEvent e) {
-		WatchTimer.streamLive = false;
 	}
 	
 	@EventSubscriber
