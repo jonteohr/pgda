@@ -82,6 +82,8 @@ public class AutoMessageSQL {
 			while (result.next()) {
 				msgs.add(result.getString(1));
 			}
+			
+			con.close();
 
 			return msgs;
 
