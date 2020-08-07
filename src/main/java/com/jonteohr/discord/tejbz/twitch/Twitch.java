@@ -72,6 +72,8 @@ public class Twitch {
 		WatchTimer.countWatchTime();
 		WatchTimeSQL watchTimeSQL = new WatchTimeSQL();
 		WatchTimer.watchList = watchTimeSQL.getWatchTimeList();
+		
+		BotList.setBotList();
 	}
 	
 	/**
