@@ -24,12 +24,9 @@ public class WatchTimeSQL {
 			Connection con = DriverManager.getConnection("jdbc:mysql://" + Credentials.DB_HOST.getValue() + ":3306/" + Credentials.DB_NAME.getValue() + "?serverTimezone=UTC",
 						Credentials.DB_USER.getValue(),
 						Credentials.DB_PASS.getValue());
-			
-			int savedTime = getWatchTime(viewer);
-			int diffTime = time - savedTime;
 
 			PreparedStatement pstmt = con.prepareStatement("UPDATE watchtime SET time=? WHERE viewer=?");
-			pstmt.setInt(1, diffTime);
+			pstmt.setInt(1, time);
 			pstmt.setString(2, viewer);
 			pstmt.executeUpdate();
 
@@ -94,6 +91,7 @@ public class WatchTimeSQL {
 				res = result.getInt(1);
 			}
 			
+			result.close();
 			con.close();
 
 			return res;
@@ -116,7 +114,7 @@ public class WatchTimeSQL {
 					Credentials.DB_USER.getValue(),
 					Credentials.DB_PASS.getValue());
 			
-			PreparedStatement pstmt = con.prepareStatement("SELECT * FROM watchtime;");
+			PreparedStatement pstmt = con.prepareStatement("SELECT viewer, time FROM watchtime;");
 			result = pstmt.executeQuery();
 
 			Map<String, Integer> res = new HashMap<String, Integer>();

@@ -30,9 +30,9 @@ public class WatchTimer {
 					if(viewer.equalsIgnoreCase("tejbz") || viewer.equalsIgnoreCase("streamelements") || viewer.equalsIgnoreCase("nightbot") || viewer.equalsIgnoreCase("pgdabot")) // Don't want to record the broadcaster, bots etc.
 						return;
 					
-					if(watchList.containsKey(viewer))
+					if(watchList.containsKey(viewer)) {
 						watchList.replace(viewer, watchList.get(viewer) + 1);
-					else
+					} else
 						watchList.put(viewer, 1);
 				});
 				
