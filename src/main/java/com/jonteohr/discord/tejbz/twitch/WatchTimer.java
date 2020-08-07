@@ -27,7 +27,7 @@ public class WatchTimer {
 				List<String> viewers = chatList.getAllViewers();
 				
 				viewers.forEach(viewer -> {
-					if(viewer.equalsIgnoreCase("tejbz") || viewer.equalsIgnoreCase("streamelements") || viewer.equalsIgnoreCase("nightbot") || viewer.equalsIgnoreCase("pgdabot")) // Don't want to record the broadcaster, bots etc.
+					if(BotList.botList.contains(viewer)) // Don't want to record the broadcaster, bots etc.
 						return;
 					
 					if(watchList.containsKey(viewer)) {
