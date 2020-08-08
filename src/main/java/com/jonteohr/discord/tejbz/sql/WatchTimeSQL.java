@@ -123,6 +123,7 @@ public class WatchTimeSQL {
 				res.put(result.getString(1), result.getInt(2));
 			}
 			
+			result.close();
 			con.close();
 
 			return res;

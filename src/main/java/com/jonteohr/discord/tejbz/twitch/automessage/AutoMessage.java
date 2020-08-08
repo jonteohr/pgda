@@ -18,13 +18,13 @@ public class AutoMessage {
 	
 	public static void autoMessageTimer() {
 		Timer timer = new Timer();
-		PropertyHandler props = new PropertyHandler();
+		AutoMessageSQL sql = new AutoMessageSQL();
 		
 		timer.scheduleAtFixedRate(new TimerTask() {
 			
 			@Override
 			public void run() {	
-				if(count < Integer.parseInt(props.getPropertyValue("automessage_delay")))
+				if(count < sql.getInterval())
 					return;
 				
 				String message = autoMessages.get(pagination);
