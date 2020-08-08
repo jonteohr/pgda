@@ -146,6 +146,7 @@ public class CommandSQL {
 				res = result.getInt(1);
 			}
 			
+			result.close();
 			con.close();
 
 			return res;
@@ -177,6 +178,7 @@ public class CommandSQL {
 				cmds.add(result.getString(1));
 			}
 			
+			result.close();
 			con.close();
 
 			return cmds;
@@ -210,6 +212,7 @@ public class CommandSQL {
 				reply = result.getString(1);
 			}
 			
+			result.close();
 			con.close();
 
 			return reply;
@@ -237,6 +240,7 @@ public class CommandSQL {
 				response.put(result.getString(1), result.getString(2));
 			}
 			
+			result.close();
 			con.close();
 
 			return response;

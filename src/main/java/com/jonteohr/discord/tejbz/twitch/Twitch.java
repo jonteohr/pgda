@@ -1,5 +1,7 @@
 package com.jonteohr.discord.tejbz.twitch;
 
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -23,7 +25,9 @@ import com.github.twitch4j.helix.domain.User;
 import com.github.twitch4j.helix.domain.UserList;
 import com.jonteohr.discord.tejbz.credentials.Credentials;
 import com.jonteohr.discord.tejbz.sql.AutoMessageSQL;
+import com.jonteohr.discord.tejbz.sql.BlackList;
 import com.jonteohr.discord.tejbz.sql.CommandSQL;
+import com.jonteohr.discord.tejbz.sql.SettingsSQL;
 import com.jonteohr.discord.tejbz.sql.WatchTimeSQL;
 import com.jonteohr.discord.tejbz.twitch.automessage.AutoMessage;
 
@@ -34,6 +38,7 @@ public class Twitch {
 	public static OAuth2Credential chatBot = new OAuth2Credential("PGDABot", Credentials.BOTOAUTH.getValue());
 	
 	public static Map<String, String> commands = new HashMap<String, String>();
+	public static Map<String, Boolean> settings = new HashMap<String, Boolean>();
 	
 	public static void initTwitch() {
 		EventManager eventManager = new EventManager();
@@ -72,8 +77,12 @@ public class Twitch {
 		WatchTimer.countWatchTime();
 		WatchTimeSQL watchTimeSQL = new WatchTimeSQL();
 		WatchTimer.watchList = watchTimeSQL.getWatchTimeList();
-		
 		BotList.setBotList();
+		
+		// Fetch settings
+		getSettings();
+		BlackList blackList = new BlackList();
+		BlackList.blockedPhrases = blackList.getBlacklist();
 	}
 	
 	/**
@@ -150,6 +159,37 @@ public class Twitch {
 		return usr.getUsers().get(0);
 	}
 	
+	public static String getWatchTime(String user) {
+		int total = (WatchTimer.watchList.containsKey(user.toLowerCase()) ? WatchTimer.watchList.get(user.toLowerCase()) : 0);
+		int h = total / 60;
+		int m = total % 60;
+		
+		return h + " h " + m + " m";
+	}
+	
+	public static String getFollowAge(String user) {
+		FollowList reslit = Twitch.twitchClient.getHelix().getFollowers(Twitch.OAuth2.getAccessToken(), Twitch.getUser(user).getId(), Twitch.getUser("tejbz").getId(), null, 1).execute();
+		
+		LocalDateTime followDate = reslit.getFollows().get(0).getFollowedAt();
+		LocalDateTime currentDate = LocalDateTime.now();
+		LocalDateTime tempDate = LocalDateTime.from(followDate);
+		
+		long years = tempDate.until(currentDate, ChronoUnit.YEARS);
+		tempDate = tempDate.plusYears(years);
+		
+		long months = tempDate.until(currentDate, ChronoUnit.MONTHS);
+		tempDate = tempDate.plusMonths(months);
+		
+		long days = tempDate.until(currentDate, ChronoUnit.DAYS);
+		
+		if(years > 0)
+			return years + " years, " + months + " months and " + days + " days";
+		else if(months > 0)
+			return months + " months and " + days + " days";
+		else
+			return days + " days";
+	}
+	
 	private static void sqlUpdater() {
 		Timer timer = new Timer();
 		CommandSQL sql = new CommandSQL();
@@ -161,7 +201,17 @@ public class Twitch {
 				commands = sql.getCommandsMap();
 				
 				AutoMessage.updateAutoMessages();
+				
+				getSettings();
 			}
 		}, 15*1000, 15*1000);
+	}
+	
+	private static void getSettings() {
+		SettingsSQL sql = new SettingsSQL();
+		BlackList bList = new BlackList();
+		
+		settings.put("preventLinks", (sql.getSettingValue("preventLinks") == 1 ? true : false));
+		BlackList.blockedPhrases = bList.getBlacklist();
 	}
 }

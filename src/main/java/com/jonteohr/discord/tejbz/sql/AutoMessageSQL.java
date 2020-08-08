@@ -83,6 +83,7 @@ public class AutoMessageSQL {
 				msgs.add(result.getString(1));
 			}
 			
+			result.close();
 			con.close();
 
 			return msgs;
@@ -90,6 +91,54 @@ public class AutoMessageSQL {
 		} catch (Exception e) {
 			System.out.println(e);
 			return null;
+		}
+	}
+	
+	public int getInterval() {
+		ResultSet result;
+		try {
+			Class.forName("com.mysql.cj.jdbc.Driver");
+			Connection con = DriverManager.getConnection("jdbc:mysql://" + Credentials.DB_HOST.getValue() + ":3306/" + Credentials.DB_NAME.getValue() + "?serverTimezone=UTC",
+					Credentials.DB_USER.getValue(),
+					Credentials.DB_PASS.getValue());
+			
+			Statement pstmt = con.createStatement();
+			result = pstmt.executeQuery("SELECT status FROM settings WHERE setting='messageInterval';");
+
+			int res = 0;
+
+			while (result.next()) {
+				res = result.getInt(1);
+			}
+			
+			result.close();
+			con.close();
+
+			return res;
+
+		} catch (Exception e) {
+			System.out.println(e);
+			return -1;
+		}
+	}
+	
+	public boolean setInterval(int interval) {
+		try {
+			Class.forName("com.mysql.cj.jdbc.Driver");
+			Connection con = DriverManager.getConnection("jdbc:mysql://" + Credentials.DB_HOST.getValue() + ":3306/" + Credentials.DB_NAME.getValue() + "?serverTimezone=UTC",
+						Credentials.DB_USER.getValue(),
+						Credentials.DB_PASS.getValue());
+
+			PreparedStatement pstmt = con.prepareStatement("UPDATE settings SET status=" + interval + " WHERE setting='messageInterval';");
+			pstmt.setInt(1, interval);
+			pstmt.executeUpdate();
+
+			con.close();
+
+			return true;
+		} catch (Exception e) {
+			System.out.println(e);
+			return false;
 		}
 	}
 }

@@ -1,10 +1,10 @@
 package com.jonteohr.discord.tejbz.twitch;
 
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import com.github.philippheuer.events4j.simple.domain.EventSubscriber;
 import com.github.twitch4j.chat.events.channel.GiftSubscriptionsEvent;
@@ -12,10 +12,10 @@ import com.github.twitch4j.chat.events.channel.IRCMessageEvent;
 import com.github.twitch4j.chat.events.channel.SubscriptionEvent;
 import com.github.twitch4j.events.ChannelGoLiveEvent;
 import com.github.twitch4j.helix.domain.CreateClipList;
-import com.github.twitch4j.helix.domain.FollowList;
+import com.github.twitch4j.helix.domain.Stream;
 import com.jonteohr.discord.tejbz.App;
-import com.jonteohr.discord.tejbz.PropertyHandler;
 import com.jonteohr.discord.tejbz.sql.AutoMessageSQL;
+import com.jonteohr.discord.tejbz.sql.BlackList;
 import com.jonteohr.discord.tejbz.sql.CommandSQL;
 import com.jonteohr.discord.tejbz.twitch.automessage.AutoMessage;
 import com.jonteohr.discord.tejbz.web.WebLog;
@@ -26,6 +26,8 @@ import net.dv8tion.jda.api.entities.TextChannel;
 public class TwitchHandler {
 	
 	private int clipTime = 0;
+	private String URL_REGEX = "^((https?|ftp)://|(www|ftp)\\.)?[a-z0-9-]+(\\.[a-z0-9-]+)+([/?].*)?$";
+	Pattern pattern = Pattern.compile(URL_REGEX);
 	
 	@EventSubscriber
 	public void onTwitchChat(IRCMessageEvent e) {
@@ -41,7 +43,37 @@ public class TwitchHandler {
 		String[] args = e.getMessage().get().split("\\s+");
 		CommandSQL sql = new CommandSQL();
 		
+//		Used a /me prefix
+//		if(args[0].equalsIgnoreCase("ACTION"))
+		
 		String user = e.getTags().get("display-name");
+		
+		// Link check
+		if((Twitch.settings.get("preventLinks") == true) && !isModerator(e.getTags())) {
+			for(int i = 0; i < args.length; i++) {
+				Matcher m = pattern.matcher(args[i]);
+				if(m.find()) {
+					chat("/timeout " + user + " 1");
+					chat("Posting links is not allowed " + user);
+					
+					System.out.println("Removed " + user + "s message due to links disabled.");
+					break;
+				}
+			}
+		}
+		
+		// Blacklisted words check
+		if(!isModerator(e.getTags())) {
+			for(int i = 0; i < args.length; i++) {
+				if(BlackList.blockedPhrases.contains(args[i])) {
+					chat("/timeout " + user + " 1");
+					chat("You're using a blacklisted word/phrase " + user + "!");
+					
+					System.out.println("Removed " + user + "s message due to blacklisted word.");
+					return;
+				}
+			}
+		}
 		
 		if(args[0].equalsIgnoreCase("!clip")) {
 			if(Twitch.getStream("tejbz") == null) {
@@ -74,52 +106,52 @@ public class TwitchHandler {
 			return;
 		}
 		
-		if(args[0].equalsIgnoreCase("!watchtime")) {
-			if(args.length == 1) {
-				if(user.equalsIgnoreCase("tejbz")) // The broadcaster has no watchtime..
-					return;
-				
-				int total = (WatchTimer.watchList.containsKey(user.toLowerCase()) ? WatchTimer.watchList.get(user.toLowerCase()) : 0);
-				int h = total / 60;
-				int m = total % 60;
-				
-				chat(user + " has watched the stream for a total of " + h + "h " + m + "m.");
-			} else {
-				if(isModerator(e.getTags())) {
-					int total = (WatchTimer.watchList.containsKey(args[1].toLowerCase()) ? WatchTimer.watchList.get(args[1].toLowerCase()) : 0);
-					int h = total/60;
-					int m = total%60;
-					
-					chat(args[1] + " has watched the stream for a total of " + h + "h " + m + "m.");
-				}
-			}
-			
-			return;
-		}
+//		if(args[0].equalsIgnoreCase("!watchtime")) {
+//			if(args.length == 1) {
+//				if(user.equalsIgnoreCase("tejbz")) // The broadcaster has no watchtime..
+//					return;
+//				
+//				int total = (WatchTimer.watchList.containsKey(user.toLowerCase()) ? WatchTimer.watchList.get(user.toLowerCase()) : 0);
+//				int h = total / 60;
+//				int m = total % 60;
+//				
+//				chat(user + " has watched the stream for a total of " + h + "h " + m + "m.");
+//			} else {
+//				if(isModerator(e.getTags())) {
+//					int total = (WatchTimer.watchList.containsKey(args[1].toLowerCase()) ? WatchTimer.watchList.get(args[1].toLowerCase()) : 0);
+//					int h = total/60;
+//					int m = total%60;
+//					
+//					chat(args[1] + " has watched the stream for a total of " + h + "h " + m + "m.");
+//				}
+//			}
+//			
+//			return;
+//		}
 		
-		if(args[0].equalsIgnoreCase("!followage")) {
-			FollowList reslit = Twitch.twitchClient.getHelix().getFollowers(Twitch.OAuth2.getAccessToken(), Twitch.getUser(user).getId(), Twitch.getUser("tejbz").getId(), null, 1).execute();
-			
-			LocalDateTime followDate = reslit.getFollows().get(0).getFollowedAt();
-			LocalDateTime currentDate = LocalDateTime.now();
-			LocalDateTime tempDate = LocalDateTime.from(followDate);
-			
-			long years = tempDate.until(currentDate, ChronoUnit.YEARS);
-			tempDate = tempDate.plusYears(years);
-			
-			long months = tempDate.until(currentDate, ChronoUnit.MONTHS);
-			tempDate = tempDate.plusMonths(months);
-			
-			long days = tempDate.until(currentDate, ChronoUnit.DAYS);
-			
-			if(years > 0)
-				chat(user + " has followed tejbz for " + years + " years, " + months + " months and " + days + " days.");
-			else if(months > 1)
-				chat(user + " has follow tejbz for " + months + " months and " + days + " days.");
-			else
-				chat(user + " has followed tejbz for " + days + " days.");
-			return;
-		}
+//		if(args[0].equalsIgnoreCase("!followage")) {
+//			FollowList reslit = Twitch.twitchClient.getHelix().getFollowers(Twitch.OAuth2.getAccessToken(), Twitch.getUser(user).getId(), Twitch.getUser("tejbz").getId(), null, 1).execute();
+//			
+//			LocalDateTime followDate = reslit.getFollows().get(0).getFollowedAt();
+//			LocalDateTime currentDate = LocalDateTime.now();
+//			LocalDateTime tempDate = LocalDateTime.from(followDate);
+//			
+//			long years = tempDate.until(currentDate, ChronoUnit.YEARS);
+//			tempDate = tempDate.plusYears(years);
+//			
+//			long months = tempDate.until(currentDate, ChronoUnit.MONTHS);
+//			tempDate = tempDate.plusMonths(months);
+//			
+//			long days = tempDate.until(currentDate, ChronoUnit.DAYS);
+//			
+//			if(years > 0)
+//				chat(user + " has followed tejbz for " + years + " years, " + months + " months and " + days + " days.");
+//			else if(months > 1)
+//				chat(user + " has follow tejbz for " + months + " months and " + days + " days.");
+//			else
+//				chat(user + " has followed tejbz for " + days + " days.");
+//			return;
+//		}
 		
 		if(Twitch.commands.containsKey(args[0])) {
 			String reply = Twitch.commands.get(args[0])
@@ -132,6 +164,18 @@ public class TwitchHandler {
 				reply = reply.replace("[follows]", "" + Twitch.getFollowers("tejbz"));
 			if(reply.contains("[count]"))
 				reply = reply.replace("[count]", String.valueOf(CommandSQL.getUses(args[0])));
+			if(reply.contains("[watchtime]"))
+				reply = reply.replace("[watchtime]", Twitch.getWatchTime(user));
+			if(reply.contains("[followage]"))
+				reply = reply.replace("[followage]", Twitch.getFollowAge(user));
+			if(reply.contains("[uptime]")) {
+				Stream stream = Twitch.getStream("tejbz");
+				if(stream == null) {
+					reply = "Tejbz is offline.";
+				} else {
+					reply = reply.replace("[uptime]", App.formatDuration(stream.getUptime()));
+				}
+			}
 			
 			chat(reply);
 			CommandSQL.incrementUses(args[0]);
@@ -221,9 +265,9 @@ public class TwitchHandler {
 				String setting = args[1];
 				
 				if(setting.equalsIgnoreCase("interval")) {
-					PropertyHandler props = new PropertyHandler();
+					AutoMessageSQL amSql = new AutoMessageSQL();
 					
-					if(props.setProperty("automessage_delay", args[2])) {
+					if(amSql.setInterval(Integer.parseInt(args[2]))) {
 						chat("@" + user + " Successfully saved the auto-message delay to: " + args[2] + "!");
 						WebLog.addToWeblog("TWITCH", user, "Changed the automessage interval to " + args[2]);
 						return;
