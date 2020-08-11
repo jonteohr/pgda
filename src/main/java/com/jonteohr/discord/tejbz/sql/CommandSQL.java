@@ -250,4 +250,32 @@ public class CommandSQL {
 			return null;
 		}
 	}
+	
+	public Map<String, String> getSpecialCommands() {
+		ResultSet result;
+		try {
+			Class.forName("com.mysql.cj.jdbc.Driver");
+			Connection con = DriverManager.getConnection("jdbc:mysql://" + Credentials.DB_HOST.getValue() + ":3306/" + Credentials.DB_NAME.getValue() + "?serverTimezone=UTC",
+					Credentials.DB_USER.getValue(),
+					Credentials.DB_PASS.getValue());
+			
+			PreparedStatement pstmt = con.prepareStatement("SELECT cmd, type FROM commands WHERE type <> NULL;");
+			result = pstmt.executeQuery();
+
+			Map<String, String> response = new HashMap<String, String>();
+
+			while(result.next()) {
+				response.put(result.getString(1), result.getString(2));
+			}
+			
+			result.close();
+			con.close();
+
+			return response;
+
+		} catch (Exception e) {
+			System.out.println(e);
+			return null;
+		}
+	}
 }

@@ -43,33 +43,44 @@ public class TwitchHandler {
 		String[] args = e.getMessage().get().split("\\s+");
 		CommandSQL sql = new CommandSQL();
 		
-//		Used a /me prefix
-//		if(args[0].equalsIgnoreCase("ACTION"))
-		
 		String user = e.getTags().get("display-name");
 		
-		// Link check
-		if((Twitch.settings.get("preventLinks") == true) && !isModerator(e.getTags())) {
-			for(int i = 0; i < args.length; i++) {
-				Matcher m = pattern.matcher(args[i]);
-				if(m.find()) {
-					chat("/timeout " + user + " 1");
-					chat("Posting links is not allowed " + user);
-					
-					System.out.println("Removed " + user + "s message due to links disabled.");
-					break;
+		if((Twitch.settings.get("excemptSubs") == true && !Twitch.isSubscribed(user)) || (Twitch.settings.get("excemptSubs") == false)) {
+			// Link check
+			if((Twitch.settings.get("preventLinks") == true) && !isModerator(e.getTags())) {
+				for(int i = 0; i < args.length; i++) {
+					Matcher m = pattern.matcher(args[i]);
+					if(m.find()) {
+						if(args[i].contains("clips.twitch.tv"))
+							continue;
+						
+						chat("/timeout " + user + " 1");
+						chat(user + " Links are not allowed! tejbzW (1s)");
+						
+						System.out.println("Removed " + user + "s message due to links disabled.");
+						break;
+					}
 				}
 			}
-		}
-		
-		// Blacklisted words check
-		if(!isModerator(e.getTags())) {
-			for(int i = 0; i < args.length; i++) {
-				if(BlackList.blockedPhrases.contains(args[i])) {
+			
+			// Blacklisted words check
+			if(!isModerator(e.getTags())) {
+				for(int i = 0; i < args.length; i++) {
+					if(BlackList.blockedPhrases.contains(args[i])) {
+						chat("/timeout " + user + " 1");
+						chat(user + " You're using a blacklisted word/phrase! (1s)");
+						
+						System.out.println("Removed " + user + "s message due to blacklisted word.");
+						return;
+					}
+				}
+			}
+			
+			// Used a /me prefix
+			if(!Twitch.settings.get("allowMe") && !isModerator(e.getTags())) {
+				if(args[0].equalsIgnoreCase("ACTION")) {
 					chat("/timeout " + user + " 1");
-					chat("You're using a blacklisted word/phrase " + user + "!");
-					
-					System.out.println("Removed " + user + "s message due to blacklisted word.");
+					chat(user + " you're not allowed to use /me (1s)");
 					return;
 				}
 			}
@@ -99,163 +110,88 @@ public class TwitchHandler {
 		}
 		
 		if(args[0].equalsIgnoreCase("!commands")) {
-			if(args.length > 1)
+			if(args.length == 1) {
+				chat("@" + user + " List of commands are available at: http://pgda.xyz/commands");
 				return;
-			
-			chat("@" + user + " List of commands are available at: http://pgda.xyz/commands");
-			return;
-		}
-		
-//		if(args[0].equalsIgnoreCase("!watchtime")) {
-//			if(args.length == 1) {
-//				if(user.equalsIgnoreCase("tejbz")) // The broadcaster has no watchtime..
-//					return;
-//				
-//				int total = (WatchTimer.watchList.containsKey(user.toLowerCase()) ? WatchTimer.watchList.get(user.toLowerCase()) : 0);
-//				int h = total / 60;
-//				int m = total % 60;
-//				
-//				chat(user + " has watched the stream for a total of " + h + "h " + m + "m.");
-//			} else {
-//				if(isModerator(e.getTags())) {
-//					int total = (WatchTimer.watchList.containsKey(args[1].toLowerCase()) ? WatchTimer.watchList.get(args[1].toLowerCase()) : 0);
-//					int h = total/60;
-//					int m = total%60;
-//					
-//					chat(args[1] + " has watched the stream for a total of " + h + "h " + m + "m.");
-//				}
-//			}
-//			
-//			return;
-//		}
-		
-//		if(args[0].equalsIgnoreCase("!followage")) {
-//			FollowList reslit = Twitch.twitchClient.getHelix().getFollowers(Twitch.OAuth2.getAccessToken(), Twitch.getUser(user).getId(), Twitch.getUser("tejbz").getId(), null, 1).execute();
-//			
-//			LocalDateTime followDate = reslit.getFollows().get(0).getFollowedAt();
-//			LocalDateTime currentDate = LocalDateTime.now();
-//			LocalDateTime tempDate = LocalDateTime.from(followDate);
-//			
-//			long years = tempDate.until(currentDate, ChronoUnit.YEARS);
-//			tempDate = tempDate.plusYears(years);
-//			
-//			long months = tempDate.until(currentDate, ChronoUnit.MONTHS);
-//			tempDate = tempDate.plusMonths(months);
-//			
-//			long days = tempDate.until(currentDate, ChronoUnit.DAYS);
-//			
-//			if(years > 0)
-//				chat(user + " has followed tejbz for " + years + " years, " + months + " months and " + days + " days.");
-//			else if(months > 1)
-//				chat(user + " has follow tejbz for " + months + " months and " + days + " days.");
-//			else
-//				chat(user + " has followed tejbz for " + days + " days.");
-//			return;
-//		}
-		
-		if(Twitch.commands.containsKey(args[0])) {
-			String reply = Twitch.commands.get(args[0])
-					.replace("[@user]", "@" + user)
-					.replace("[user]", user);
-			
-			if(reply.contains("[subcount]"))
-				reply = reply.replace("[subcount]", Twitch.getSubscribers("tejbz") + "");
-			if(reply.contains("[follows]"))
-				reply = reply.replace("[follows]", "" + Twitch.getFollowers("tejbz"));
-			if(reply.contains("[count]"))
-				reply = reply.replace("[count]", String.valueOf(CommandSQL.getUses(args[0])));
-			if(reply.contains("[watchtime]"))
-				reply = reply.replace("[watchtime]", Twitch.getWatchTime(user));
-			if(reply.contains("[followage]"))
-				reply = reply.replace("[followage]", Twitch.getFollowAge(user));
-			if(reply.contains("[uptime]")) {
-				Stream stream = Twitch.getStream("tejbz");
-				if(stream == null) {
-					reply = "Tejbz is offline.";
-				} else {
-					reply = reply.replace("[uptime]", App.formatDuration(stream.getUptime()));
-				}
 			}
-			
-			chat(reply);
-			CommandSQL.incrementUses(args[0]);
-			return;
 		}
 		
 		if(isModerator(e.getTags())) {
-			if(args[0].equalsIgnoreCase("!addcmd")) {
-				if(args.length < 3) {
-					chat("@" + user + " Not enough arguments.. Correct usage: !addcmd <!commandName> <reply>");
-					return;
+			if(args[0].equalsIgnoreCase("!commands")) {
+				if(args.length >= 3) {
+					
+					String setting = args[1];
+					
+					if(setting.equalsIgnoreCase("add")) {
+						if(args.length < 4) {
+							chat(user + " No reply specified.");
+							return;
+						}
+						
+						String cmdName = args[2];
+						String msg = "";
+						for(int i = 3; i < args.length; i++) {
+							msg = msg + " " + args[i];
+						}
+						
+						if(sql.getCommands().contains(cmdName)) {
+							chat("@" + user + " The command " + cmdName + " already exists. Did you mean to use !editcmd maybe?");
+							return;
+						}
+						
+						if(sql.addCommand(cmdName, msg)) {
+							chat("@" + user + " Command " + cmdName + " stored!");
+							Twitch.commands.put(cmdName, msg);
+							WebLog.addToWeblog("TWITCH", user, "Created the command <code>" + cmdName + "</code>");
+						}
+						
+						return;
+					}
+					
+					if(setting.equalsIgnoreCase("edit")) {
+						if(args.length < 4) {
+							chat(user + " No new reply specified.");
+							return;
+						}
+						
+						String cmdName = args[2];
+						String msg = "";
+						for(int i = 3; i < args.length; i++) {
+							msg = msg + " " + args[i];
+						}
+						
+						if(!sql.getCommands().contains(cmdName)) {
+							chat("@" + user + " There is no command named " + cmdName);
+							return;
+						}
+						
+						if(sql.editCommand(cmdName, msg)) {
+							chat("@" + user + " Command " + cmdName + " stored!");
+							Twitch.commands.replace(cmdName, msg);
+							WebLog.addToWeblog("TWITCH", user, "Edited the command <code>" + cmdName + "</code>");
+						} else {
+							chat("@" + user + " Failed editing the command " + cmdName);
+						}
+						
+						return;
+					}
+					
+					if(setting.equalsIgnoreCase("delete")) {
+						if(!sql.getCommands().contains(args[2])) {
+							chat("@" + user + " There is no command named " + args[2]);
+							return;
+						}
+						
+						if(sql.deleteCommand(args[2])) {
+							chat("@" + user + " Command " + args[2] + " successfully deleted!");
+							Twitch.commands.remove(args[2]);
+							WebLog.addToWeblog("TWITCH", user, "Deleted the command <code>" + args[2] + "</code>");
+						}
+						
+						return;
+					}
 				}
-				String cmdName = args[1];
-				String msg = "";
-				for(int i = 2; i < args.length; i++) {
-					msg = msg + " " + args[i];
-				}
-				
-				if(sql.getCommands().contains(cmdName)) {
-					chat("@" + user + " The command " + cmdName + " already exists. Did you mean to use !editcmd maybe?");
-					return;
-				}
-				
-				if(sql.addCommand(cmdName, msg)) {
-					chat("@" + user + " Command " + cmdName + " stored!");
-					Twitch.commands.put(cmdName, msg);
-					WebLog.addToWeblog("TWITCH", user, "Created the command <code>" + cmdName + "</code>");
-				}
-				
-				return;
 			}
-			
-			if(args[0].equalsIgnoreCase("!editcmd")) {
-				if(args.length < 3) {
-					chat("@" + user + " Not enough arguments.. Correct usage: !addcmd <!commandName> <reply>");
-					return;
-				}
-				
-				String cmdName = args[1];
-				String msg = "";
-				for(int i = 2; i < args.length; i++) {
-					msg = msg + " " + args[i];
-				}
-				
-				if(!sql.getCommands().contains(cmdName)) {
-					chat("@" + user + " There is no command named " + cmdName);
-					return;
-				}
-				
-				if(sql.editCommand(cmdName, msg)) {
-					chat("@" + user + " Command " + cmdName + " stored!");
-					Twitch.commands.replace(cmdName, msg);
-					WebLog.addToWeblog("TWITCH", user, "Edited the command <code>" + cmdName + "</code>");
-				} else {
-					chat("@" + user + " Failed editing the command " + cmdName);
-				}
-				
-				return;
-			}
-			
-			if(args[0].equalsIgnoreCase("!delcmd")) {
-				if(args.length < 2) {
-					chat("@" + user + " No command specified. Correct usage: !delcmd <!commandName>");
-					return;
-				}
-				
-				if(!sql.getCommands().contains(args[1])) {
-					chat("@" + user + " There is no command named " + args[1]);
-					return;
-				}
-				
-				if(sql.deleteCommand(args[1])) {
-					chat("@" + user + " Command " + args[1] + " successfully deleted!");
-					Twitch.commands.remove(args[1]);
-					WebLog.addToWeblog("TWITCH", user, "Deleted the command <code>" + args[1] + "</code>");
-				}
-				
-				return;
-			}
-			
 			if(args[0].equalsIgnoreCase("!automessage")) {
 				if(args.length < 3) {
 					chat("@" + user + " Invalid arguments. Visit http://pgda.xyz/commands for commands list.");
@@ -313,10 +249,67 @@ public class TwitchHandler {
 				
 			}
 			
-			if(args[0].equalsIgnoreCase("!format")) {
-				chat("@" + user + " Formatting rules are in the discord: https://discordapp.com/channels/124204242683559938/489590000556441603/732630257861132438");
+			if(args[0].equalsIgnoreCase("!title")) {
+				if(args.length < 2)
+					return;
+				
+				String title = "";
+				for(int i = 1; i < args.length; i++) {
+					title += args[i] + " ";
+				}
+				
+				Twitch.setTitle(title);
+				
+				chat("Title set to: " + title);
+			}
+			
+			if(args[0].equalsIgnoreCase("!help")) {
+				chat("@" + user + " Bot formatting and commands are available over at http://pgda.xyz/commands");
 				return;
 			}
+		}
+		
+		if(Twitch.commands.containsKey(args[0].toLowerCase())) {
+			String reply = Twitch.commands.get(args[0]);
+			
+			if(Twitch.specCommands.containsKey(args[0])) {
+				if(Twitch.specCommands.get(args[0]).equalsIgnoreCase("mod") && !isModerator(e.getTags()))
+					return;
+				if(Twitch.specCommands.get(args[0]).equalsIgnoreCase("sub") && !Twitch.isSubscribed(user))
+					return;
+			}
+			
+			if(reply.contains("[@user]"))
+				reply = reply.replace("[@user]", "@" + user);
+			if(reply.contains("[user]"))
+				reply = reply.replace("[user]", user);
+			if(reply.contains("[subcount]"))
+				reply = reply.replace("[subcount]", Twitch.getSubscribers("tejbz") + "");
+			if(reply.contains("[follows]"))
+				reply = reply.replace("[follows]", "" + Twitch.getFollowers("tejbz"));
+			if(reply.contains("[count]"))
+				reply = reply.replace("[count]", String.valueOf(CommandSQL.getUses(args[0])));
+			if(reply.contains("[watchtime]"))
+				reply = reply.replace("[watchtime]", Twitch.getWatchTime(user));
+			if(reply.contains("[followage]"))
+				reply = reply.replace("[followage]", Twitch.getFollowAge(user));
+			if(reply.contains("[uptime]")) {
+				Stream stream = Twitch.getStream("tejbz");
+				if(stream == null) {
+					reply = "Tejbz is offline.";
+				} else {
+					reply = reply.replace("[uptime]", App.formatDuration(stream.getUptime()));
+				}
+			}
+			if(reply.contains("[touser]"))
+				reply = reply.replace("[touser]", (args[1] != null ? args[1] : user));
+			if(reply.contains("[@touser]"))
+				reply = reply.replace("[@touser]", (args[1] != null ? "@" + args[1] : "@" + user));
+				
+			
+			chat(reply);
+			CommandSQL.incrementUses(args[0]);
+			return;
 		}
 	}
 	

@@ -38,6 +38,7 @@ public class Twitch {
 	public static OAuth2Credential chatBot = new OAuth2Credential("PGDABot", Credentials.BOTOAUTH.getValue());
 	
 	public static Map<String, String> commands = new HashMap<String, String>();
+	public static Map<String, String> specCommands = new HashMap<String, String>();
 	public static Map<String, Boolean> settings = new HashMap<String, Boolean>();
 	
 	public static void initTwitch() {
@@ -46,12 +47,13 @@ public class Twitch {
 		
 		twitchClient = TwitchClientBuilder.builder()
 				.withEnableHelix(true)
-				.withEventManager(eventManager)
-				.withDefaultAuthToken(OAuth2)
-				.withChatAccount(chatBot)
+				.withEnableKraken(true)
 				.withEnableChat(true)
 				.withEnablePubSub(false)
 				.withEnableTMI(true)
+				.withEventManager(eventManager)
+				.withDefaultAuthToken(OAuth2)
+				.withChatAccount(chatBot)
 				.withScheduledThreadPoolExecutor(new ScheduledThreadPoolExecutor(Runtime.getRuntime().availableProcessors()))
 				.build();
 		
@@ -69,6 +71,7 @@ public class Twitch {
 		AutoMessageSQL amSQL = new AutoMessageSQL();
 		
 		commands = sql.getCommandsMap();
+		specCommands = sql.getSpecialCommands();
 		AutoMessage.autoMessages = amSQL.getMessages();
 		sqlUpdater();
 		AutoMessage.autoMessageTimer();
@@ -136,6 +139,19 @@ public class Twitch {
 		return true;
 	}
 	
+	public static boolean isSubscribed(String user) {
+		SubscriptionList subList  = twitchClient.getHelix().getSubscriptionsByUser(OAuth2.getAccessToken(), getUser("tejbz").getId(), Arrays.asList(getUser(user).getId())).execute();
+		if(subList.getSubscriptions().size() > 0)
+			return true;
+		
+		return false;
+	}
+	
+	@SuppressWarnings("deprecation")
+	public static void setTitle(String title) {
+		twitchClient.getKraken().updateTitle(OAuth2.getAccessToken(), getUser("tejbz").getId(), title).execute();
+	}
+	
 	public static int getSubscribers(String channel) {
 		SubscriptionList reslist = twitchClient.getHelix().getSubscriptions(OAuth2.getAccessToken(), getUser(channel).getId(), null, null, 100).execute();
 		int subs = reslist.getSubscriptions().size();
@@ -161,10 +177,14 @@ public class Twitch {
 	
 	public static String getWatchTime(String user) {
 		int total = (WatchTimer.watchList.containsKey(user.toLowerCase()) ? WatchTimer.watchList.get(user.toLowerCase()) : 0);
-		int h = total / 60;
+		int d = total / 24 / 60;
+		int h = total / 60 % 24;
 		int m = total % 60;
 		
-		return h + " h " + m + " m";
+		if(d > 0)
+			return d + "days, " + h + " hours and " + m + " minutes";
+		else
+			return h + " hours and " + m + " minutes";
 	}
 	
 	public static String getFollowAge(String user) {
@@ -199,6 +219,7 @@ public class Twitch {
 			@Override
 			public void run() {
 				commands = sql.getCommandsMap();
+				specCommands = sql.getSpecialCommands();
 				
 				AutoMessage.updateAutoMessages();
 				
@@ -212,6 +233,8 @@ public class Twitch {
 		BlackList bList = new BlackList();
 		
 		settings.put("preventLinks", (sql.getSettingValue("preventLinks") == 1 ? true : false));
+		settings.put("allowMe", (sql.getSettingValue("allowMe") == 1 ? true : false));
+		settings.put("excemptSubs", (sql.getSettingValue("excemptSubs") == 1 ? true : false));
 		BlackList.blockedPhrases = bList.getBlacklist();
 	}
 }
