@@ -4,6 +4,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import com.jonteohr.discord.tejbz.App;
+import com.jonteohr.discord.tejbz.listener.commands.Join;
 import com.jonteohr.discord.tejbz.twitch.Twitch;
 
 import net.dv8tion.jda.api.entities.Activity;
@@ -18,7 +19,9 @@ public class GuildReady extends ListenerAdapter {
 		App.guild = e.getGuild();
 		App.general = e.getGuild().getTextChannelById("124204242683559938");
 		App.twitchLog = e.getGuild().getTextChannelById("735122823017791578");
-//		App.general = e.getGuild().getTextChannelById("732241829877252096");
+		Join.lobby = App.guild.getVoiceChannelById("124204246815080449");
+		Join.queue = App.guild.getVoiceChannelById("732569438326489139");
+		Join.live = App.guild.getVoiceChannelById("280730003484835860");
 		
 		setPresence(Twitch.getSubscribers("tejbz"));
 		

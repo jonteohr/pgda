@@ -22,10 +22,6 @@ public class Join extends ListenerAdapter {
 	public static VoiceChannel live;
 	
 	public void onGuildReady(GuildReadyEvent e) {
-		lobby = App.guild.getVoiceChannelById("124204246815080449");
-		queue = App.guild.getVoiceChannelById("732569438326489139");
-		live = App.guild.getVoiceChannelById("280730003484835860");
-		
 		ticketTimer();
 	}
 	
