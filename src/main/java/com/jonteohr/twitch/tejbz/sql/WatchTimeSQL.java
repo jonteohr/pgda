@@ -1,31 +1,33 @@
-package com.jonteohr.discord.tejbz.sql;
+package com.jonteohr.twitch.tejbz.sql;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 import com.jonteohr.discord.tejbz.credentials.Credentials;
 
-public class AutoMessageSQL {
+public class WatchTimeSQL {
 	
 	/**
-	 * 
-	 * @param message
-	 * @return
+	 * Increments the watch time for the specified user by 1.
+	 * @param viewer
+	 * @param time
+	 * @return {@code true} if successful
+	 * @see #addToWatchTime(String)
 	 */
-	public boolean addAutoMessage(String message) {
+	public boolean setWatchTime(String viewer, int time) {
 		try {
 			Class.forName("com.mysql.cj.jdbc.Driver");
 			Connection con = DriverManager.getConnection("jdbc:mysql://" + Credentials.DB_HOST.getValue() + ":3306/" + Credentials.DB_NAME.getValue() + "?serverTimezone=UTC",
 						Credentials.DB_USER.getValue(),
 						Credentials.DB_PASS.getValue());
 
-			PreparedStatement pstmt = con.prepareStatement("INSERT INTO messages(message) VALUES(?);");
-			pstmt.setString(1, message);
+			PreparedStatement pstmt = con.prepareStatement("UPDATE watchtime SET time=? WHERE viewer=?");
+			pstmt.setInt(1, time);
+			pstmt.setString(2, viewer);
 			pstmt.executeUpdate();
 
 			con.close();
@@ -38,19 +40,22 @@ public class AutoMessageSQL {
 	}
 	
 	/**
-	 * 
-	 * @param message
-	 * @return
+	 * Adds the specified viewer to the database table with 1 minutes of watchtime.
+	 * @param viewer
+	 * @param time
+	 * @return {@code true} if successful
+	 * @see #incrementWatchTime(String)
 	 */
-	public boolean removeAutoMessage(String message) {
+	public boolean addToWatchTime(String viewer, int time) {
 		try {
 			Class.forName("com.mysql.cj.jdbc.Driver");
 			Connection con = DriverManager.getConnection("jdbc:mysql://" + Credentials.DB_HOST.getValue() + ":3306/" + Credentials.DB_NAME.getValue() + "?serverTimezone=UTC",
 						Credentials.DB_USER.getValue(),
 						Credentials.DB_PASS.getValue());
 
-			PreparedStatement pstmt = con.prepareStatement("DELETE FROM messages WHERE message=?;");
-			pstmt.setString(1, message);
+			PreparedStatement pstmt = con.prepareStatement("INSERT INTO watchtime(viewer,time) VALUES(?, ?)");
+			pstmt.setString(1, viewer);
+			pstmt.setInt(2, time);
 			pstmt.executeUpdate();
 
 			con.close();
@@ -63,10 +68,11 @@ public class AutoMessageSQL {
 	}
 	
 	/**
-	 * 
-	 * @return
+	 * Retrieves the total watchtime of a viewer in minutes.
+	 * @param viewer
+	 * @return minutes in an {@link java.lang.Integer Integer}
 	 */
-	public List<String> getMessages() {
+	public int getWatchTime(String viewer) {
 		ResultSet result;
 		try {
 			Class.forName("com.mysql.cj.jdbc.Driver");
@@ -74,40 +80,14 @@ public class AutoMessageSQL {
 					Credentials.DB_USER.getValue(),
 					Credentials.DB_PASS.getValue());
 			
-			Statement pstmt = con.createStatement();
-			result = pstmt.executeQuery("SELECT message FROM messages;");
-
-			List<String> msgs = new ArrayList<String>();
-
-			while (result.next()) {
-				msgs.add(result.getString(1));
-			}
+			PreparedStatement pstmt = con.prepareStatement("SELECT time FROM watchtime WHERE viewer=?;");
+			pstmt.setString(1, viewer);
 			
-			result.close();
-			con.close();
-
-			return msgs;
-
-		} catch (Exception e) {
-			System.out.println(e);
-			return null;
-		}
-	}
-	
-	public int getInterval() {
-		ResultSet result;
-		try {
-			Class.forName("com.mysql.cj.jdbc.Driver");
-			Connection con = DriverManager.getConnection("jdbc:mysql://" + Credentials.DB_HOST.getValue() + ":3306/" + Credentials.DB_NAME.getValue() + "?serverTimezone=UTC",
-					Credentials.DB_USER.getValue(),
-					Credentials.DB_PASS.getValue());
-			
-			Statement pstmt = con.createStatement();
-			result = pstmt.executeQuery("SELECT status FROM settings WHERE setting='messageInterval';");
+			result = pstmt.executeQuery();
 
 			int res = 0;
 
-			while (result.next()) {
+			while(result.next()) {
 				res = result.getInt(1);
 			}
 			
@@ -122,23 +102,35 @@ public class AutoMessageSQL {
 		}
 	}
 	
-	public boolean setInterval(int interval) {
+	/**
+	 * Gets all saved watchtimes as a map.
+	 * @return a {@link java.util.Map Map} with every viewer and their watchtime.
+	 */
+	public Map<String, Integer> getWatchTimeList() {
+		ResultSet result;
 		try {
 			Class.forName("com.mysql.cj.jdbc.Driver");
 			Connection con = DriverManager.getConnection("jdbc:mysql://" + Credentials.DB_HOST.getValue() + ":3306/" + Credentials.DB_NAME.getValue() + "?serverTimezone=UTC",
-						Credentials.DB_USER.getValue(),
-						Credentials.DB_PASS.getValue());
+					Credentials.DB_USER.getValue(),
+					Credentials.DB_PASS.getValue());
+			
+			PreparedStatement pstmt = con.prepareStatement("SELECT viewer, time FROM watchtime;");
+			result = pstmt.executeQuery();
 
-			PreparedStatement pstmt = con.prepareStatement("UPDATE settings SET status=" + interval + " WHERE setting='messageInterval';");
-			pstmt.setInt(1, interval);
-			pstmt.executeUpdate();
+			Map<String, Integer> res = new HashMap<String, Integer>();
 
+			while(result.next()) {
+				res.put(result.getString(1), result.getInt(2));
+			}
+			
+			result.close();
 			con.close();
 
-			return true;
+			return res;
+
 		} catch (Exception e) {
 			System.out.println(e);
-			return false;
+			return null;
 		}
 	}
 }

@@ -1,4 +1,4 @@
-package com.jonteohr.discord.tejbz.sql;
+package com.jonteohr.twitch.tejbz.sql;
 
 import java.sql.Connection;
 import java.sql.DriverManager;

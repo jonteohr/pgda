@@ -1,4 +1,4 @@
-package com.jonteohr.discord.tejbz.twitch.automessage;
+package com.jonteohr.twitch.tejbz.automessage;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,8 +6,8 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import com.jonteohr.discord.tejbz.PropertyHandler;
-import com.jonteohr.discord.tejbz.sql.AutoMessageSQL;
-import com.jonteohr.discord.tejbz.twitch.Twitch;
+import com.jonteohr.twitch.tejbz.Twitch;
+import com.jonteohr.twitch.tejbz.sql.AutoMessageSQL;
 
 public class AutoMessage {
 	public static int count = 0;

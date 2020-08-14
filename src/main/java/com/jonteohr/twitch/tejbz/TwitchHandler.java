@@ -1,4 +1,4 @@
-package com.jonteohr.discord.tejbz.twitch;
+package com.jonteohr.twitch.tejbz;
 
 import java.util.Map;
 import java.util.Timer;
@@ -14,11 +14,11 @@ import com.github.twitch4j.events.ChannelGoLiveEvent;
 import com.github.twitch4j.helix.domain.CreateClipList;
 import com.github.twitch4j.helix.domain.Stream;
 import com.jonteohr.discord.tejbz.App;
-import com.jonteohr.discord.tejbz.sql.AutoMessageSQL;
-import com.jonteohr.discord.tejbz.sql.BlackList;
-import com.jonteohr.discord.tejbz.sql.CommandSQL;
-import com.jonteohr.discord.tejbz.twitch.automessage.AutoMessage;
 import com.jonteohr.discord.tejbz.web.WebLog;
+import com.jonteohr.twitch.tejbz.automessage.AutoMessage;
+import com.jonteohr.twitch.tejbz.sql.AutoMessageSQL;
+import com.jonteohr.twitch.tejbz.sql.BlackList;
+import com.jonteohr.twitch.tejbz.sql.CommandSQL;
 
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.TextChannel;

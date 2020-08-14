@@ -1,4 +1,4 @@
-package com.jonteohr.discord.tejbz.twitch;
+package com.jonteohr.twitch.tejbz;
 
 import java.util.HashMap;
 import java.util.List;
@@ -7,7 +7,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import com.github.twitch4j.tmi.domain.Chatters;
-import com.jonteohr.discord.tejbz.sql.WatchTimeSQL;
+import com.jonteohr.twitch.tejbz.sql.WatchTimeSQL;
 
 public class WatchTimer {
 	

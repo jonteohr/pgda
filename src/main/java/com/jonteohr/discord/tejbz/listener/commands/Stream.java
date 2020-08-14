@@ -6,7 +6,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import com.jonteohr.discord.tejbz.App;
-import com.jonteohr.discord.tejbz.twitch.Twitch;
+import com.jonteohr.twitch.tejbz.Twitch;
 
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
