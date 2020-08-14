@@ -1,7 +1,7 @@
 package com.jonteohr.discord.tejbz.listener.commands;
 
 import com.jonteohr.discord.tejbz.App;
-import com.jonteohr.discord.tejbz.twitch.Twitch;
+import com.jonteohr.twitch.tejbz.Twitch;
 
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;

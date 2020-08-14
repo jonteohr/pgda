@@ -1,4 +1,4 @@
-package com.jonteohr.discord.tejbz.twitch;
+package com.jonteohr.twitch.tejbz;
 
 import java.util.ArrayList;
 import java.util.List;

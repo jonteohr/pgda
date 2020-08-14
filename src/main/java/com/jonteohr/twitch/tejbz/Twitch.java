@@ -1,4 +1,4 @@
-package com.jonteohr.discord.tejbz.twitch;
+package com.jonteohr.twitch.tejbz;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -24,12 +24,12 @@ import com.github.twitch4j.helix.domain.SubscriptionList;
 import com.github.twitch4j.helix.domain.User;
 import com.github.twitch4j.helix.domain.UserList;
 import com.jonteohr.discord.tejbz.credentials.Credentials;
-import com.jonteohr.discord.tejbz.sql.AutoMessageSQL;
-import com.jonteohr.discord.tejbz.sql.BlackList;
-import com.jonteohr.discord.tejbz.sql.CommandSQL;
-import com.jonteohr.discord.tejbz.sql.SettingsSQL;
-import com.jonteohr.discord.tejbz.sql.WatchTimeSQL;
-import com.jonteohr.discord.tejbz.twitch.automessage.AutoMessage;
+import com.jonteohr.twitch.tejbz.automessage.AutoMessage;
+import com.jonteohr.twitch.tejbz.sql.AutoMessageSQL;
+import com.jonteohr.twitch.tejbz.sql.BlackList;
+import com.jonteohr.twitch.tejbz.sql.CommandSQL;
+import com.jonteohr.twitch.tejbz.sql.SettingsSQL;
+import com.jonteohr.twitch.tejbz.sql.WatchTimeSQL;
 
 public class Twitch {
 	public static TwitchClient twitchClient;
