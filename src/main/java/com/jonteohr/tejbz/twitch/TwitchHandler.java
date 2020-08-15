@@ -250,8 +250,11 @@ public class TwitchHandler {
 			}
 			
 			if(args[0].equalsIgnoreCase("!title")) {
-				if(args.length < 2)
+				if(args.length < 2) {
+					String title = Twitch.getChannelInfo().getTitle();
+					chat("Current title set to: " + title);
 					return;
+				}
 				
 				String title = "";
 				for(int i = 1; i < args.length; i++) {
@@ -261,6 +264,30 @@ public class TwitchHandler {
 				Twitch.setTitle(title);
 				
 				chat("Title set to: " + title);
+				
+				return;
+			}
+			
+			if(args[0].equalsIgnoreCase("!game")) {
+				if(args.length < 2) {
+					String game = Twitch.getChannelInfo().getGameName();
+					chat("Tejbz is currently playing " + game);
+					return;
+				}
+				
+				String game = "";
+				for(int i = 1; i < args.length; i++) {
+					if(i == args.length-1)
+						game += args[i];
+					else
+						game += args[i] + " ";
+				}
+				
+				Twitch.setGame(game);
+				
+				chat("Game set to: " + game);
+				
+				return;
 			}
 			
 			if(args[0].equalsIgnoreCase("!help")) {

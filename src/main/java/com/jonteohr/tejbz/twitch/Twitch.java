@@ -2,10 +2,8 @@ package com.jonteohr.tejbz.twitch;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -16,7 +14,9 @@ import com.github.philippheuer.events4j.core.EventManager;
 import com.github.philippheuer.events4j.simple.SimpleEventHandler;
 import com.github.twitch4j.TwitchClient;
 import com.github.twitch4j.TwitchClientBuilder;
+import com.github.twitch4j.helix.domain.ChannelInformation;
 import com.github.twitch4j.helix.domain.FollowList;
+import com.github.twitch4j.helix.domain.Game;
 import com.github.twitch4j.helix.domain.GameList;
 import com.github.twitch4j.helix.domain.Stream;
 import com.github.twitch4j.helix.domain.StreamList;
@@ -96,13 +96,10 @@ public class Twitch {
 	public static String getGameById(String id) {
 		if(id == null || id == "")
 			return "No game set...";
-		GameList resList = twitchClient.getHelix().getGames(OAuth2.getAccessToken(), Arrays.asList(id), null).execute();
-		List<String> gamename = new ArrayList<String>();
-		resList.getGames().forEach(game -> {
-			gamename.add(game.getName());
-		});
 		
-		return gamename.get(0);
+		GameList resList = twitchClient.getHelix().getGames(OAuth2.getAccessToken(), Arrays.asList(id), null).execute();
+		
+		return resList.getGames().get(0).getName();
 	}
 	
 	/**
@@ -150,6 +147,23 @@ public class Twitch {
 	@SuppressWarnings("deprecation")
 	public static void setTitle(String title) {
 		twitchClient.getKraken().updateTitle(OAuth2.getAccessToken(), getUser("tejbz").getId(), title).execute();
+	}
+	
+	public static void setGame(String game) {
+		GameList res = twitchClient.getHelix().getGames(OAuth2.getAccessToken(), null, Arrays.asList(game)).execute();
+		Game fetchedGame = res.getGames().get(0);
+		
+		ChannelInformation channelInfo = new ChannelInformation()
+				.withGameId(fetchedGame.getId())
+				.withGameName(fetchedGame.getName());
+		
+		twitchClient.getHelix().updateChannelInformation(OAuth2.getAccessToken(), getUser("tejbz").getId(), channelInfo).execute();	
+	}
+	
+	public static ChannelInformation getChannelInfo() {
+		ChannelInformation channelInfo = twitchClient.getHelix().getChannelInformation(OAuth2.getAccessToken(), Arrays.asList(getUser("tejbz").getId())).execute().getChannels().get(0);
+		
+		return channelInfo;
 	}
 	
 	public static int getSubscribers(String channel) {

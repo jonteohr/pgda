@@ -7,7 +7,7 @@ Discord & Twitch chat bot for [Tejbz](https://twitch.tv/tejbz)
 1. Fork the repo.
 2. Create your feature branch
     * `git checkout -b my-feature`
-3. Edit `src/main/java/com/jonteohr/discord/tejbz/credentials/Credentials.java` to match your setup.
+3. Edit `src/main/java/com/jonteohr/tejbz/credentials/Credentials.java` to match your setup.
 4. Commit your changes
     * `git commit -m "Digested changelog"`
 5. Push to your branch
