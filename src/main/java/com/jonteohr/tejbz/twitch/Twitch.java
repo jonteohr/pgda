@@ -24,6 +24,7 @@ import com.github.twitch4j.helix.domain.SubscriptionList;
 import com.github.twitch4j.helix.domain.User;
 import com.github.twitch4j.helix.domain.UserList;
 import com.jonteohr.tejbz.credentials.Credentials;
+import com.jonteohr.tejbz.credentials.Identity;
 import com.jonteohr.tejbz.twitch.automessage.AutoMessage;
 import com.jonteohr.tejbz.twitch.sql.AutoMessageSQL;
 import com.jonteohr.tejbz.twitch.sql.BlackList;
@@ -34,7 +35,7 @@ import com.jonteohr.tejbz.twitch.sql.WatchTimeSQL;
 public class Twitch {
 	public static TwitchClient twitchClient;
 
-	public static OAuth2Credential OAuth2 = new OAuth2Credential("tejbz", Credentials.OAUTH.getValue());
+	public static OAuth2Credential OAuth2 = new OAuth2Credential("tejbz", Credentials.OAUTH.getValue(), Credentials.OAUTH.getRefreshToken(), null, null, null, null);
 	public static OAuth2Credential chatBot = new OAuth2Credential("PGDABot", Credentials.BOTOAUTH.getValue());
 	
 	public static Map<String, String> commands = new HashMap<String, String>();
@@ -44,6 +45,10 @@ public class Twitch {
 	public static void initTwitch() {
 		EventManager eventManager = new EventManager();
 		eventManager.registerEventHandler(new SimpleEventHandler());
+		
+		// Refresh the token!
+		Identity identity = new Identity();
+		OAuth2.setAccessToken(identity.refreshToken(OAuth2).getAccessToken());
 		
 		twitchClient = TwitchClientBuilder.builder()
 				.withEnableHelix(true)
@@ -154,8 +159,7 @@ public class Twitch {
 		Game fetchedGame = res.getGames().get(0);
 		
 		ChannelInformation channelInfo = new ChannelInformation()
-				.withGameId(fetchedGame.getId())
-				.withGameName(fetchedGame.getName());
+				.withGameId(fetchedGame.getId());
 		
 		twitchClient.getHelix().updateChannelInformation(OAuth2.getAccessToken(), getUser("tejbz").getId(), channelInfo).execute();	
 	}
