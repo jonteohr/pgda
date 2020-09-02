@@ -14,6 +14,7 @@ import com.github.twitch4j.events.ChannelGoLiveEvent;
 import com.github.twitch4j.helix.domain.CreateClipList;
 import com.github.twitch4j.helix.domain.Stream;
 import com.jonteohr.tejbz.App;
+import com.jonteohr.tejbz.credentials.Identity;
 import com.jonteohr.tejbz.twitch.automessage.AutoMessage;
 import com.jonteohr.tejbz.twitch.sql.AutoMessageSQL;
 import com.jonteohr.tejbz.twitch.sql.BlackList;
@@ -95,7 +96,7 @@ public class TwitchHandler {
 			if(clipTime > 0) // Clip cooldown
 				return;
 			
-			CreateClipList clipData = Twitch.twitchClient.getHelix().createClip(Twitch.OAuth2.getAccessToken(), "25622462", false).execute();
+			CreateClipList clipData = Twitch.twitchClient.getHelix().createClip(Identity.getAccessToken(Twitch.OAuth2), "25622462", false).execute();
 			String clipLink = "https://clips.twitch.tv/" + clipData.getData().get(0).getId();
 			chat("@" + user + " " + clipLink);
 
