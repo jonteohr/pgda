@@ -23,6 +23,7 @@ import com.github.twitch4j.helix.domain.StreamList;
 import com.github.twitch4j.helix.domain.SubscriptionList;
 import com.github.twitch4j.helix.domain.User;
 import com.github.twitch4j.helix.domain.UserList;
+import com.jonteohr.tejbz.PropertyHandler;
 import com.jonteohr.tejbz.credentials.Credentials;
 import com.jonteohr.tejbz.credentials.Identity;
 import com.jonteohr.tejbz.twitch.automessage.AutoMessage;
@@ -35,8 +36,8 @@ import com.jonteohr.tejbz.twitch.sql.WatchTimeSQL;
 public class Twitch {
 	public static TwitchClient twitchClient;
 
-	public static OAuth2Credential OAuth2 = new OAuth2Credential("tejbz", Credentials.OAUTH.getValue(), Credentials.OAUTH.getRefreshToken(), null, null, null, null);
-	public static OAuth2Credential chatBot = new OAuth2Credential("PGDABot", Credentials.BOTOAUTH.getValue());
+	public static OAuth2Credential OAuth2;
+	public static OAuth2Credential chatBot = new OAuth2Credential("twitch", Credentials.BOTOAUTH.getValue());
 	
 	public static Map<String, String> commands = new HashMap<String, String>();
 	public static Map<String, String> specCommands = new HashMap<String, String>();
@@ -46,10 +47,7 @@ public class Twitch {
 		EventManager eventManager = new EventManager();
 		eventManager.registerEventHandler(new SimpleEventHandler());
 		
-		// Refresh the token!
-		Identity identity = new Identity();
-		OAuth2.setAccessToken(identity.refreshToken(OAuth2).getAccessToken());
-		
+		// Build the twitch instance
 		twitchClient = TwitchClientBuilder.builder()
 				.withEnableHelix(true)
 				.withEnableKraken(true)
@@ -62,6 +60,13 @@ public class Twitch {
 				.withScheduledThreadPoolExecutor(new ScheduledThreadPoolExecutor(Runtime.getRuntime().availableProcessors()))
 				.build();
 		
+		// Refresh the OAuth2 token!
+		Identity identity = new Identity();
+		PropertyHandler props = new PropertyHandler();
+		OAuth2 = new OAuth2Credential("twitch", props.getPropertyValue("access_token"), props.getPropertyValue("refresh_token"), null, null, null, null);
+		OAuth2 = identity.refreshToken(OAuth2);
+		
+		// Do Twitch stuff
 		twitchClient.getChat().joinChannel("tejbz");
 		
 		TwitchHandler twitchHandler = new TwitchHandler();
@@ -102,7 +107,7 @@ public class Twitch {
 		if(id == null || id == "")
 			return "No game set...";
 		
-		GameList resList = twitchClient.getHelix().getGames(OAuth2.getAccessToken(), Arrays.asList(id), null).execute();
+		GameList resList = twitchClient.getHelix().getGames(Identity.getAccessToken(OAuth2), Arrays.asList(id), null).execute();
 		
 		return resList.getGames().get(0).getName();
 	}
@@ -113,7 +118,7 @@ public class Twitch {
 	 * @return
 	 */
 	public static Stream getStream(String channel) {
-		StreamList streamlist = twitchClient.getHelix().getStreams(OAuth2.getAccessToken(), null, null, 1, null, null, null, null, Arrays.asList(channel)).execute();
+		StreamList streamlist = twitchClient.getHelix().getStreams(Identity.getAccessToken(OAuth2), null, null, 1, null, null, null, null, Arrays.asList(channel)).execute();
 
 		if(streamlist.getStreams().size() < 1)
 			return null;
@@ -127,13 +132,13 @@ public class Twitch {
 	 * @return
 	 */
 	public static int getFollowers(String channel) {
-		FollowList reslist = twitchClient.getHelix().getFollowers(OAuth2.getAccessToken(), null, getUser(channel).getId(), null, null).execute();
+		FollowList reslist = twitchClient.getHelix().getFollowers(Identity.getAccessToken(OAuth2), null, getUser(channel).getId(), null, null).execute();
 		
 		return reslist.getTotal();
 	}
 	
 	public static boolean isFollowing(String channel) {
-		FollowList reslist = twitchClient.getHelix().getFollowers(OAuth2.getAccessToken(), getUser(channel).getId(), getUser("tejbz").getId(), null, 1).execute();
+		FollowList reslist = twitchClient.getHelix().getFollowers(Identity.getAccessToken(OAuth2), getUser(channel).getId(), getUser("tejbz").getId(), null, 1).execute();
 		
 		if(reslist.getFollows().size() < 1)
 			return false;
@@ -142,7 +147,7 @@ public class Twitch {
 	}
 	
 	public static boolean isSubscribed(String user) {
-		SubscriptionList subList  = twitchClient.getHelix().getSubscriptionsByUser(OAuth2.getAccessToken(), getUser("tejbz").getId(), Arrays.asList(getUser(user).getId())).execute();
+		SubscriptionList subList  = twitchClient.getHelix().getSubscriptionsByUser(Identity.getAccessToken(OAuth2), getUser("tejbz").getId(), Arrays.asList(getUser(user).getId())).execute();
 		if(subList.getSubscriptions().size() > 0)
 			return true;
 		
@@ -151,33 +156,33 @@ public class Twitch {
 	
 	@SuppressWarnings("deprecation")
 	public static void setTitle(String title) {
-		twitchClient.getKraken().updateTitle(OAuth2.getAccessToken(), getUser("tejbz").getId(), title).execute();
+		twitchClient.getKraken().updateTitle(Identity.getAccessToken(OAuth2), getUser("tejbz").getId(), title).execute();
 	}
 	
 	public static void setGame(String game) {
-		GameList res = twitchClient.getHelix().getGames(OAuth2.getAccessToken(), null, Arrays.asList(game)).execute();
+		GameList res = twitchClient.getHelix().getGames(Identity.getAccessToken(OAuth2), null, Arrays.asList(game)).execute();
 		Game fetchedGame = res.getGames().get(0);
 		
 		ChannelInformation channelInfo = new ChannelInformation()
 				.withGameId(fetchedGame.getId());
 		
-		twitchClient.getHelix().updateChannelInformation(OAuth2.getAccessToken(), getUser("tejbz").getId(), channelInfo).execute();	
+		twitchClient.getHelix().updateChannelInformation(Identity.getAccessToken(OAuth2), getUser("tejbz").getId(), channelInfo).execute();	
 	}
 	
 	public static ChannelInformation getChannelInfo() {
-		ChannelInformation channelInfo = twitchClient.getHelix().getChannelInformation(OAuth2.getAccessToken(), Arrays.asList(getUser("tejbz").getId())).execute().getChannels().get(0);
+		ChannelInformation channelInfo = twitchClient.getHelix().getChannelInformation(Identity.getAccessToken(OAuth2), Arrays.asList(getUser("tejbz").getId())).execute().getChannels().get(0);
 		
 		return channelInfo;
 	}
 	
 	public static int getSubscribers(String channel) {
-		SubscriptionList reslist = twitchClient.getHelix().getSubscriptions(OAuth2.getAccessToken(), getUser(channel).getId(), null, null, 100).execute();
+		SubscriptionList reslist = twitchClient.getHelix().getSubscriptions(Identity.getAccessToken(OAuth2), getUser(channel).getId(), null, null, 100).execute();
 		int subs = reslist.getSubscriptions().size();
 		int response = reslist.getSubscriptions().size();
 		String pagination = reslist.getPagination().getCursor();
 		
 		do {
-			reslist = twitchClient.getHelix().getSubscriptions(OAuth2.getAccessToken(), getUser(channel).getId(), pagination, null, 100).execute();
+			reslist = twitchClient.getHelix().getSubscriptions(Identity.getAccessToken(OAuth2), getUser(channel).getId(), pagination, null, 100).execute();
 			subs += reslist.getSubscriptions().size();
 			response = reslist.getSubscriptions().size();
 			pagination = reslist.getPagination().getCursor();
@@ -188,7 +193,11 @@ public class Twitch {
 	}
 	
 	public static User getUser(String channel) {
-		UserList usr = twitchClient.getHelix().getUsers(OAuth2.getAccessToken(), null, Arrays.asList(channel)).execute();
+		UserList usr = twitchClient.getHelix().getUsers(
+				chatBot.getAccessToken(), 
+				null, 
+				Arrays.asList(channel))
+				.execute();
 		
 		return usr.getUsers().get(0);
 	}
@@ -206,7 +215,7 @@ public class Twitch {
 	}
 	
 	public static String getFollowAge(String user) {
-		FollowList reslit = Twitch.twitchClient.getHelix().getFollowers(Twitch.OAuth2.getAccessToken(), Twitch.getUser(user).getId(), Twitch.getUser("tejbz").getId(), null, 1).execute();
+		FollowList reslit = Twitch.twitchClient.getHelix().getFollowers(Identity.getAccessToken(OAuth2), Twitch.getUser(user).getId(), Twitch.getUser("tejbz").getId(), null, 1).execute();
 		
 		LocalDateTime followDate = reslit.getFollows().get(0).getFollowedAt();
 		LocalDateTime currentDate = LocalDateTime.now();
