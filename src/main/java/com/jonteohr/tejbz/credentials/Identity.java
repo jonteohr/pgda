@@ -1,11 +1,8 @@
 package com.jonteohr.tejbz.credentials;
 
-import com.github.philippheuer.credentialmanager.CredentialManager;
-import com.github.philippheuer.credentialmanager.CredentialManagerBuilder;
 import com.github.philippheuer.credentialmanager.domain.OAuth2Credential;
-import com.github.philippheuer.credentialmanager.identityprovider.TwitchIdentityProvider;
+import com.github.twitch4j.auth.providers.TwitchIdentityProvider;
 import com.jonteohr.tejbz.PropertyHandler;
-import com.jonteohr.tejbz.twitch.Twitch;
 
 public class Identity {
 	private static final TwitchIdentityProvider identityProvider = new TwitchIdentityProvider("client_id", "client_secret", "redirect_uri");
@@ -17,16 +14,15 @@ public class Identity {
 		props.setProperty("access_token", newOauth.getAccessToken());
 		props.setProperty("refresh_token", newOauth.getRefreshToken());
 		
+		// revoke the old one
+		// okhttp3 is outdated, we need 4.6.0
+//		identityProvider.revokeCredential(getCredential(credential));
+		
 		return newOauth;
 	}
 	
 	public OAuth2Credential getCredential(OAuth2Credential credential) {
-		CredentialManager cred = CredentialManagerBuilder.builder().build();
-		
-		cred.registerIdentityProvider(identityProvider);
-		cred.addCredential("twitch", credential);
-		
-		return cred.getOAuth2CredentialByUserId(Twitch.getUser("tejbz").getId()).get();
+		return identityProvider.getAdditionalCredentialInformation(credential).get();
 	}
 	
 	public static String getAccessToken(OAuth2Credential credential) {
