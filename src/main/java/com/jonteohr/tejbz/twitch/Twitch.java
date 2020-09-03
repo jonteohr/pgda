@@ -26,6 +26,7 @@ import com.github.twitch4j.helix.domain.UserList;
 import com.jonteohr.tejbz.PropertyHandler;
 import com.jonteohr.tejbz.credentials.Credentials;
 import com.jonteohr.tejbz.credentials.Identity;
+import com.jonteohr.tejbz.credentials.RefreshToken;
 import com.jonteohr.tejbz.twitch.automessage.AutoMessage;
 import com.jonteohr.tejbz.twitch.sql.AutoMessageSQL;
 import com.jonteohr.tejbz.twitch.sql.BlackList;
@@ -65,6 +66,9 @@ public class Twitch {
 		PropertyHandler props = new PropertyHandler();
 		OAuth2 = new OAuth2Credential("twitch", props.getPropertyValue("access_token"), props.getPropertyValue("refresh_token"), null, null, null, null);
 		OAuth2 = identity.refreshToken(OAuth2);
+		
+		Timer timer = new Timer();
+		timer.scheduleAtFixedRate(new RefreshToken(), 60*60*1000, 60*60*1000); // Make sure we keep updating the token
 		
 		// Do Twitch stuff
 		twitchClient.getChat().joinChannel("tejbz");
@@ -193,11 +197,7 @@ public class Twitch {
 	}
 	
 	public static User getUser(String channel) {
-		UserList usr = twitchClient.getHelix().getUsers(
-				chatBot.getAccessToken(), 
-				null, 
-				Arrays.asList(channel))
-				.execute();
+		UserList usr = twitchClient.getHelix().getUsers(chatBot.getAccessToken(), null, Arrays.asList(channel)).execute();
 		
 		return usr.getUsers().get(0);
 	}
