@@ -117,6 +117,15 @@ public class TwitchHandler {
 			}
 		}
 		
+		if(args[0].equalsIgnoreCase("!vanish")) {
+			if(isModerator(e.getTags()))
+				return;
+			
+			chat("/timeout " + user + " 1");
+			chat(user + " Disappeared into the mist...");
+			return;
+		}
+		
 		if(isModerator(e.getTags())) {
 			if(args[0].equalsIgnoreCase("!commands")) {
 				if(args.length >= 3) {
