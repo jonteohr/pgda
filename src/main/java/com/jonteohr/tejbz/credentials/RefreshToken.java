@@ -2,6 +2,7 @@ package com.jonteohr.tejbz.credentials;
 
 import java.util.TimerTask;
 
+import com.github.philippheuer.credentialmanager.domain.OAuth2Credential;
 import com.jonteohr.tejbz.twitch.Twitch;
 
 public class RefreshToken extends TimerTask {
@@ -10,7 +11,9 @@ public class RefreshToken extends TimerTask {
 	public void run() {
 		Identity identity = new Identity();
 		
-		identity.refreshToken(Twitch.OAuth2);
+		OAuth2Credential newOauth = identity.refreshToken(Twitch.OAuth2);
+		
+		Twitch.OAuth2 = identity.getCredential(newOauth);
 	}
 
 }
