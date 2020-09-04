@@ -14,9 +14,8 @@ public class Identity {
 		props.setProperty("access_token", newOauth.getAccessToken());
 		props.setProperty("refresh_token", newOauth.getRefreshToken());
 		
-		// revoke the old one
-		// okhttp3 is outdated, we need 4.6.0
-//		identityProvider.revokeCredential(getCredential(credential));
+		// revoke the old one for safety
+		identityProvider.revokeCredential(getCredential(credential));
 		
 		return newOauth;
 	}
