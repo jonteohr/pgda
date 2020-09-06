@@ -14,6 +14,7 @@ import javax.security.auth.login.LoginException;
 import com.jonteohr.tejbz.credentials.Credentials;
 import com.jonteohr.tejbz.discord.listener.VideoAnnouncer;
 import com.jonteohr.tejbz.discord.listener.commands.Follow;
+import com.jonteohr.tejbz.discord.listener.commands.Github;
 import com.jonteohr.tejbz.discord.listener.commands.Help;
 import com.jonteohr.tejbz.discord.listener.commands.Join;
 import com.jonteohr.tejbz.discord.listener.commands.Schedule;
@@ -67,6 +68,7 @@ public class App {
 		jda.addEventListener(new Schedule());
 		jda.addEventListener(new Help());
 		jda.addEventListener(new Join());
+		jda.addEventListener(new Github());
 		
 		// Admin commands
 		jda.addEventListener(new SetVideo());
