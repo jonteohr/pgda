@@ -136,6 +136,10 @@ public class WatchTimeSQL {
 		}
 	}
 	
+	/**
+	 * Gets a list of known lurkers/bots usernames.
+	 * @return a {@link java.util.List List} containing {@link java.lang.String String} usernames
+	 */
 	public List<String> getBotList() {
 		ResultSet result;
 		try {
