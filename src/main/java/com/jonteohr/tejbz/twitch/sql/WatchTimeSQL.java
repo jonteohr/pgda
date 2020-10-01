@@ -4,7 +4,9 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.jonteohr.tejbz.credentials.Credentials;
@@ -127,6 +129,34 @@ public class WatchTimeSQL {
 			con.close();
 
 			return res;
+
+		} catch (Exception e) {
+			System.out.println(e);
+			return null;
+		}
+	}
+	
+	public List<String> getBotList() {
+		ResultSet result;
+		try {
+			Class.forName("com.mysql.cj.jdbc.Driver");
+			Connection con = DriverManager.getConnection("jdbc:mysql://" + Credentials.DB_HOST.getValue() + ":3306/" + Credentials.DB_NAME.getValue() + "?serverTimezone=UTC",
+					Credentials.DB_USER.getValue(),
+					Credentials.DB_PASS.getValue());
+			
+			PreparedStatement pstmt = con.prepareStatement("SELECT name FROM lurkers;");
+			result = pstmt.executeQuery();
+
+			List<String> list = new ArrayList<String>();
+
+			while(result.next()) {
+				list.add(result.getString(1));
+			}
+			
+			result.close();
+			con.close();
+
+			return list;
 
 		} catch (Exception e) {
 			System.out.println(e);

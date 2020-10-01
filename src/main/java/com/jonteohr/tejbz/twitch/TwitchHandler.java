@@ -55,7 +55,7 @@ public class TwitchHandler {
 						if(args[i].contains("clips.twitch.tv"))
 							continue;
 						
-						chat("/timeout " + user + " 1");
+						chat("/timeout " + user + " 3 Don't post links.");
 						chat(user + " Links are not allowed! tejbzW (1s)");
 						
 						System.out.println("Removed " + user + "s message due to links disabled.");
@@ -68,7 +68,7 @@ public class TwitchHandler {
 			if(!isModerator(e.getTags())) {
 				for(int i = 0; i < args.length; i++) {
 					if(BlackList.blockedPhrases.contains(args[i])) {
-						chat("/timeout " + user + " 1");
+						chat("/timeout " + user + " 3 Used a blacklisted word/phrase");
 						chat(user + " You're using a blacklisted word/phrase! (1s)");
 						
 						System.out.println("Removed " + user + "s message due to blacklisted word.");
@@ -80,7 +80,7 @@ public class TwitchHandler {
 			// Used a /me prefix
 			if(!Twitch.settings.get("allowMe") && !isModerator(e.getTags())) {
 				if(args[0].equalsIgnoreCase("ACTION")) {
-					chat("/timeout " + user + " 1");
+					chat("/timeout " + user + " 3 Not allowed to use /me");
 					chat(user + " you're not allowed to use /me (1s)");
 					return;
 				}
