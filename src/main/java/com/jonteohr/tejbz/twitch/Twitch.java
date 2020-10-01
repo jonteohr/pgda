@@ -7,7 +7,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
 
 import com.github.philippheuer.credentialmanager.domain.OAuth2Credential;
 import com.github.philippheuer.events4j.core.EventManager;
@@ -58,7 +57,6 @@ public class Twitch {
 				.withEventManager(eventManager)
 				.withDefaultAuthToken(OAuth2)
 				.withChatAccount(chatBot)
-				.withScheduledThreadPoolExecutor(new ScheduledThreadPoolExecutor(Runtime.getRuntime().availableProcessors()))
 				.build();
 		
 		// Refresh the OAuth2 token!
