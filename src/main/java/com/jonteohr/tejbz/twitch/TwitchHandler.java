@@ -19,6 +19,7 @@ import com.jonteohr.tejbz.twitch.automessage.AutoMessage;
 import com.jonteohr.tejbz.twitch.sql.AutoMessageSQL;
 import com.jonteohr.tejbz.twitch.sql.BlackList;
 import com.jonteohr.tejbz.twitch.sql.CommandSQL;
+import com.jonteohr.tejbz.twitch.threads.CommandTimer;
 import com.jonteohr.tejbz.web.WebLog;
 
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -87,6 +88,10 @@ public class TwitchHandler {
 			}
 		}
 		
+		// Check to see if command is in cooldown!
+		if(CommandTimer.isInCooldown(args[0]) && !isModerator(e.getTags()))
+			return;
+		
 		if(args[0].equalsIgnoreCase("!clip")) {
 			if(Twitch.getStream("tejbz") == null) {
 				chat("@" + user + " Tejbz is offline, there's nothing to clip!");
@@ -113,6 +118,10 @@ public class TwitchHandler {
 		if(args[0].equalsIgnoreCase("!commands")) {
 			if(args.length == 1) {
 				chat("@" + user + " List of commands are available at: http://pgda.xyz/commands");
+				
+				if(!isModerator(e.getTags()))
+					CommandTimer.addToCooldown(args[0]);
+				
 				return;
 			}
 		}
@@ -123,6 +132,8 @@ public class TwitchHandler {
 			
 			chat("/timeout " + user + " 1");
 			chat(user + " Disappeared into the mist...");
+			
+			CommandTimer.addToCooldown(args[0]);
 			return;
 		}
 		
@@ -346,12 +357,20 @@ public class TwitchHandler {
 			
 			chat(reply);
 			CommandSQL.incrementUses(args[0]);
+			
+			if(!isModerator(e.getTags()))
+				CommandTimer.addToCooldown(args[0]);
+			
 			return;
 		}
 	}
 	
 	@EventSubscriber
 	public void onLive(ChannelGoLiveEvent e) {
+		System.out.println("**********************");
+		System.out.println("Tejbz went live!");
+		System.out.println("**********************");
+		
 		EmbedBuilder msg = new EmbedBuilder();
 		msg.setAuthor("Tejbz", null, Twitch.getUser(e.getChannel().getName()).getProfileImageUrl());
 		msg.setColor(App.color);
