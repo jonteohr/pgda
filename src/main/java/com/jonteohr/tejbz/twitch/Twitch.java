@@ -1,6 +1,8 @@
 package com.jonteohr.tejbz.twitch;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -45,7 +47,8 @@ public class Twitch {
 	
 	public static void initTwitch() {
 		EventManager eventManager = new EventManager();
-		eventManager.registerEventHandler(new SimpleEventHandler());
+		eventManager.autoDiscovery();
+		eventManager.setDefaultEventHandler(SimpleEventHandler.class);
 		
 		// Build the twitch instance
 		twitchClient = TwitchClientBuilder.builder()
@@ -69,8 +72,6 @@ public class Twitch {
 		timer.scheduleAtFixedRate(new RefreshToken(), 60*60*1000, 60*60*1000); // Make sure we keep updating the token
 		
 		// Do Twitch stuff
-		twitchClient.getChat().joinChannel("tejbz");
-		
 		TwitchHandler twitchHandler = new TwitchHandler();
 		eventManager.getEventHandler(SimpleEventHandler.class).registerListener(twitchHandler);
 		
@@ -98,6 +99,8 @@ public class Twitch {
 		getSettings();
 		BlackList blackList = new BlackList();
 		BlackList.blockedPhrases = blackList.getBlacklist();
+		
+		twitchClient.getChat().joinChannel("tejbz");
 	}
 	
 	/**
@@ -120,7 +123,8 @@ public class Twitch {
 	 * @return
 	 */
 	public static Stream getStream(String channel) {
-		StreamList streamlist = twitchClient.getHelix().getStreams(Identity.getAccessToken(OAuth2), null, null, 1, null, null, null, null, Arrays.asList(channel)).execute();
+		StreamList streamlist = twitchClient.getHelix().getStreams(Identity.getAccessToken(OAuth2), null, null, 1, null, null, null, Arrays.asList(channel)).execute();
+//		StreamList streamlist = twitchClient.getHelix().getStreams(Identity.getAccessToken(OAuth2), null, null, 1, null, null, null, null, Arrays.asList(channel)).execute();
 
 		if(streamlist.getStreams().size() < 1)
 			return null;
@@ -213,11 +217,13 @@ public class Twitch {
 	}
 	
 	public static String getFollowAge(String user) {
-		FollowList reslit = Twitch.twitchClient.getHelix().getFollowers(Identity.getAccessToken(OAuth2), Twitch.getUser(user).getId(), Twitch.getUser("tejbz").getId(), null, 1).execute();
+		FollowList reslist = Twitch.twitchClient.getHelix().getFollowers(Identity.getAccessToken(OAuth2), Twitch.getUser(user).getId(), Twitch.getUser("tejbz").getId(), null, 1).execute();
 		
-		LocalDateTime followDate = reslit.getFollows().get(0).getFollowedAt();
+		Instant followDate = reslist.getFollows().get(0).getFollowedAtInstant();
+//		LocalDateTime followDate = reslist.getFollows().get(0).getFollowedAt();
 		LocalDateTime currentDate = LocalDateTime.now();
-		LocalDateTime tempDate = LocalDateTime.from(followDate);
+//		LocalDateTime tempDate = LocalDateTime.from(followDate);
+		LocalDateTime tempDate = LocalDateTime.ofInstant(followDate, ZoneOffset.UTC);
 		
 		long years = tempDate.until(currentDate, ChronoUnit.YEARS);
 		tempDate = tempDate.plusYears(years);
