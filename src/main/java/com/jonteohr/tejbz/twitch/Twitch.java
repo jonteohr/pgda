@@ -8,7 +8,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Timer;
-import java.util.TimerTask;
 
 import com.github.philippheuer.credentialmanager.domain.OAuth2Credential;
 import com.github.philippheuer.events4j.core.EventManager;
@@ -86,7 +85,6 @@ public class Twitch {
 		commands = sql.getCommandsMap();
 		specCommands = sql.getSpecialCommands();
 		AutoMessage.autoMessages = amSQL.getMessages();
-		sqlUpdater();
 		AutoMessage.autoMessageTimer();
 		
 		// Watch time timers
@@ -239,24 +237,6 @@ public class Twitch {
 			return months + " months and " + days + " days";
 		else
 			return days + " days";
-	}
-	
-	private static void sqlUpdater() {
-		Timer timer = new Timer();
-		CommandSQL sql = new CommandSQL();
-		
-		timer.scheduleAtFixedRate(new TimerTask() {
-			
-			@Override
-			public void run() {
-				commands = sql.getCommandsMap();
-				specCommands = sql.getSpecialCommands();
-				
-				AutoMessage.updateAutoMessages();
-				
-				getSettings();
-			}
-		}, 15*1000, 15*1000);
 	}
 	
 	private static void getSettings() {
