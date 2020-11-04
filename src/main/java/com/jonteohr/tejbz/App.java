@@ -4,6 +4,7 @@
 
 package com.jonteohr.tejbz;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.util.ArrayList;
@@ -27,6 +28,7 @@ import com.jonteohr.tejbz.discord.listener.commands.admin.SetSchedule;
 import com.jonteohr.tejbz.discord.listener.commands.admin.SetVideo;
 import com.jonteohr.tejbz.discord.listener.commands.admin.StartJoin;
 import com.jonteohr.tejbz.discord.listener.guild.GuildReady;
+import com.jonteohr.tejbz.web.DashboardSocket;
 
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
@@ -81,6 +83,13 @@ public class App {
 		jda.addEventListener(new VideoAnnouncer());
 		
 		VideoAnnouncer.videoTimer();
+		
+		DashboardSocket dashboardSocket = new DashboardSocket();
+		try {
+			dashboardSocket.start();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public static String formatDuration(Duration duration) {

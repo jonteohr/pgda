@@ -350,9 +350,9 @@ public class TwitchHandler {
 				}
 			}
 			if(reply.contains("[touser]"))
-				reply = reply.replace("[touser]", (args[1] != null ? args[1] : user));
+				reply = reply.replace("[touser]", (args.length > 1 ? args[1] : user));
 			if(reply.contains("[@touser]"))
-				reply = reply.replace("[@touser]", (args[1] != null ? "@" + args[1] : "@" + user));
+				reply = reply.replace("[@touser]", (args.length > 1 ? "@" + args[1] : "@" + user));
 				
 			
 			chat(reply);
