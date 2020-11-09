@@ -18,7 +18,7 @@ public class WatchTimeSQL {
 	 * @param viewer
 	 * @param time
 	 * @return {@code true} if successful
-	 * @see #addToWatchTime(String)
+	 * @see #addToWatchTime(String, int) 
 	 */
 	public boolean setWatchTime(String viewer, int time) {
 		try {
@@ -46,7 +46,7 @@ public class WatchTimeSQL {
 	 * @param viewer
 	 * @param time
 	 * @return {@code true} if successful
-	 * @see #incrementWatchTime(String)
+	 * @see #setWatchTime(String, int)
 	 */
 	public boolean addToWatchTime(String viewer, int time) {
 		try {
@@ -119,7 +119,7 @@ public class WatchTimeSQL {
 			PreparedStatement pstmt = con.prepareStatement("SELECT viewer, time FROM watchtime;");
 			result = pstmt.executeQuery();
 
-			Map<String, Integer> res = new HashMap<String, Integer>();
+			Map<String, Integer> res = new HashMap<>();
 
 			while(result.next()) {
 				res.put(result.getString(1), result.getInt(2));
@@ -151,7 +151,7 @@ public class WatchTimeSQL {
 			PreparedStatement pstmt = con.prepareStatement("SELECT name FROM lurkers;");
 			result = pstmt.executeQuery();
 
-			List<String> list = new ArrayList<String>();
+			List<String> list = new ArrayList<>();
 
 			while(result.next()) {
 				list.add(result.getString(1));

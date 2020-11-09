@@ -8,7 +8,7 @@ import java.util.TimerTask;
 import com.jonteohr.tejbz.twitch.CommandCooldown;
 
 public class CommandTimer {
-	public static List<CommandCooldown> cooldown = new ArrayList<CommandCooldown>();
+	public static List<CommandCooldown> cooldown = new ArrayList<>();
 	
 	public static void startCommandCooldown() {
 		cooldownTimer();
@@ -19,10 +19,10 @@ public class CommandTimer {
 	}
 	
 	public static boolean isInCooldown(String command) {
-		for(int i = 0; i < cooldown.size(); i++) {
-			String curCommand = cooldown.get(i).getCommand();
-			
-			if(curCommand.equalsIgnoreCase(command))
+		for (CommandCooldown commandCooldown : cooldown) {
+			String curCommand = commandCooldown.getCommand();
+
+			if (curCommand.equalsIgnoreCase(command))
 				return true;
 		}
 		

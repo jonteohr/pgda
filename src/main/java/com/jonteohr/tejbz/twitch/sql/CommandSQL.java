@@ -172,7 +172,7 @@ public class CommandSQL {
 			Statement pstmt = con.createStatement();
 			result = pstmt.executeQuery("SELECT cmd FROM commands;");
 
-			List<String> cmds = new ArrayList<String>();
+			List<String> cmds = new ArrayList<>();
 
 			while (result.next()) {
 				cmds.add(result.getString(1));
@@ -234,7 +234,7 @@ public class CommandSQL {
 			PreparedStatement pstmt = con.prepareStatement("SELECT * FROM commands;");
 			result = pstmt.executeQuery();
 
-			Map<String, String> response = new HashMap<String, String>();
+			Map<String, String> response = new HashMap<>();
 
 			while(result.next()) {
 				response.put(result.getString(1), result.getString(2));
@@ -262,7 +262,7 @@ public class CommandSQL {
 			PreparedStatement pstmt = con.prepareStatement("SELECT cmd, type FROM commands WHERE type <> NULL;");
 			result = pstmt.executeQuery();
 
-			Map<String, String> response = new HashMap<String, String>();
+			Map<String, String> response = new HashMap<>();
 
 			while(result.next()) {
 				response.put(result.getString(1), result.getString(2));

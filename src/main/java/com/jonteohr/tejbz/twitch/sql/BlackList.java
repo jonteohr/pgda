@@ -11,7 +11,7 @@ import com.jonteohr.tejbz.credentials.Credentials;
 
 public class BlackList {
 	
-	public static List<String> blockedPhrases = new ArrayList<String>();
+	public static List<String> blockedPhrases = new ArrayList<>();
 	
 	public List<String> getBlacklist() {
 		ResultSet result;
@@ -24,7 +24,7 @@ public class BlackList {
 			Statement pstmt = con.createStatement();
 			result = pstmt.executeQuery("SELECT * FROM blacklist;");
 
-			List<String> blacklist = new ArrayList<String>();
+			List<String> blacklist = new ArrayList<>();
 
 			while (result.next()) {
 				blacklist.add(result.getString(1));

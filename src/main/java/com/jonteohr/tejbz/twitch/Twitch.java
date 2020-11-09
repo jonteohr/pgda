@@ -40,9 +40,9 @@ public class Twitch {
 	public static OAuth2Credential OAuth2;
 	public static OAuth2Credential chatBot = new OAuth2Credential("twitch", Credentials.BOTOAUTH.getValue());
 	
-	public static Map<String, String> commands = new HashMap<String, String>();
-	public static Map<String, String> specCommands = new HashMap<String, String>();
-	public static Map<String, Boolean> settings = new HashMap<String, Boolean>();
+	public static Map<String, String> commands = new HashMap<>();
+	public static Map<String, String> specCommands = new HashMap<>();
+	public static Map<String, Boolean> settings = new HashMap<>();
 	
 	public static void initTwitch() {
 		EventManager eventManager = new EventManager();
@@ -107,7 +107,7 @@ public class Twitch {
 	 * @return {@link java.lang.String String} game-name
 	 */
 	public static String getGameById(String id) {
-		if(id == null || id == "")
+		if(id == null || id.equals(""))
 			return "No game set...";
 		
 		GameList resList = twitchClient.getHelix().getGames(Identity.getAccessToken(OAuth2), Arrays.asList(id), null).execute();
@@ -143,19 +143,13 @@ public class Twitch {
 	
 	public static boolean isFollowing(String channel) {
 		FollowList reslist = twitchClient.getHelix().getFollowers(Identity.getAccessToken(OAuth2), getUser(channel).getId(), getUser("tejbz").getId(), null, 1).execute();
-		
-		if(reslist.getFollows().size() < 1)
-			return false;
-		
-		return true;
+
+		return reslist.getFollows().size() >= 1;
 	}
 	
 	public static boolean isSubscribed(String user) {
 		SubscriptionList subList  = twitchClient.getHelix().getSubscriptionsByUser(Identity.getAccessToken(OAuth2), getUser("tejbz").getId(), Arrays.asList(getUser(user).getId())).execute();
-		if(subList.getSubscriptions().size() > 0)
-			return true;
-		
-		return false;
+		return subList.getSubscriptions().size() > 0;
 	}
 	
 	@SuppressWarnings("deprecation")
@@ -174,9 +168,7 @@ public class Twitch {
 	}
 	
 	public static ChannelInformation getChannelInfo() {
-		ChannelInformation channelInfo = twitchClient.getHelix().getChannelInformation(Identity.getAccessToken(OAuth2), Arrays.asList(getUser("tejbz").getId())).execute().getChannels().get(0);
-		
-		return channelInfo;
+		return twitchClient.getHelix().getChannelInformation(Identity.getAccessToken(OAuth2), Arrays.asList(getUser("tejbz").getId())).execute().getChannels().get(0);
 	}
 	
 	public static int getSubscribers(String channel) {
@@ -243,9 +235,9 @@ public class Twitch {
 		SettingsSQL sql = new SettingsSQL();
 		BlackList bList = new BlackList();
 		
-		settings.put("preventLinks", (sql.getSettingValue("preventLinks") == 1 ? true : false));
-		settings.put("allowMe", (sql.getSettingValue("allowMe") == 1 ? true : false));
-		settings.put("excemptSubs", (sql.getSettingValue("excemptSubs") == 1 ? true : false));
+		settings.put("preventLinks", (sql.getSettingValue("preventLinks") == 1));
+		settings.put("allowMe", (sql.getSettingValue("allowMe") == 1));
+		settings.put("excemptSubs", (sql.getSettingValue("excemptSubs") == 1));
 		BlackList.blockedPhrases = bList.getBlacklist();
 	}
 }

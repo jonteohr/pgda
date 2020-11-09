@@ -11,7 +11,7 @@ import com.jonteohr.tejbz.twitch.sql.WatchTimeSQL;
 
 public class WatchTimer {
 	
-	public static Map<String, Integer> watchList = new HashMap<String, Integer>();
+	public static Map<String, Integer> watchList = new HashMap<>();
 	
 	public static void countWatchTime() {
 		Timer timer = new Timer();
@@ -41,13 +41,13 @@ public class WatchTimer {
 				Map<String, Integer> savedList = sql.getWatchTimeList();
 				watchList.forEach((viewer, time) -> {
 					if(savedList.containsKey(viewer)) {
-						if(savedList.get(viewer) != watchList.get(viewer))
+						if(!savedList.get(viewer).equals(watchList.get(viewer)))
 							sql.setWatchTime(viewer, time);
 					} else {
 						sql.addToWatchTime(viewer, time);
 					}
 				});
 			}
-		}, 1*60*1000, 1*60*1000);
+		}, 60 * 1000, 60 * 1000);
 	}
 }

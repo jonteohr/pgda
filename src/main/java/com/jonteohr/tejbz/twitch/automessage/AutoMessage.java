@@ -14,7 +14,7 @@ public class AutoMessage {
 	
 	private static int pagination = 0;
 	
-	public static List<String> autoMessages = new ArrayList<String>();
+	public static List<String> autoMessages = new ArrayList<>();
 	
 	public static void autoMessageTimer() {
 		Timer timer = new Timer();
@@ -55,8 +55,8 @@ public class AutoMessage {
 				autoMessages.remove(i);
 		
 		// Add new ones
-		for(int i = 0; i < newMessages.size(); i++)
-			if(!autoMessages.contains(newMessages.get(i)))
-				autoMessages.add(newMessages.get(i));
+		for (String newMessage : newMessages)
+			if (!autoMessages.contains(newMessage))
+				autoMessages.add(newMessage);
 	}
 }
