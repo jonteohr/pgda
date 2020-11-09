@@ -28,7 +28,7 @@ import net.dv8tion.jda.api.entities.TextChannel;
 public class TwitchHandler {
 	
 	private int clipTime = 0;
-	private String URL_REGEX = "^((https?|ftp)://|(www|ftp)\\.)?[a-z0-9-]+(\\.[a-z0-9-]+)+([/?].*)?$";
+	private final String URL_REGEX = "^((https?|ftp)://|(www|ftp)\\.)?[a-z0-9-]+(\\.[a-z0-9-]+)+([/?].*)?$";
 	Pattern pattern = Pattern.compile(URL_REGEX);
 	
 	@EventSubscriber
@@ -47,18 +47,18 @@ public class TwitchHandler {
 		
 		String user = e.getTags().get("display-name");
 		
-		if((Twitch.settings.get("excemptSubs") == true && !Twitch.isSubscribed(user)) || (Twitch.settings.get("excemptSubs") == false)) {
+		if((Twitch.settings.get("excemptSubs") && !Twitch.isSubscribed(user)) || (!Twitch.settings.get("excemptSubs"))) {
 			// Link check
-			if((Twitch.settings.get("preventLinks") == true) && !isModerator(e.getTags())) {
-				for(int i = 0; i < args.length; i++) {
-					Matcher m = pattern.matcher(args[i]);
+			if((Twitch.settings.get("preventLinks")) && !isModerator(e.getTags())) {
+				for(String arg : args) {
+					Matcher m = pattern.matcher(arg);
 					if(m.find()) {
-						if(args[i].contains("clips.twitch.tv"))
+						if(arg.contains("clips.twitch.tv"))
 							continue;
-						
+
 						chat("/timeout " + user + " 3 Don't post links.");
 						chat(user + " Links are not allowed! tejbzW (1s)");
-						
+
 						System.out.println("Removed " + user + "s message due to links disabled.");
 						break;
 					}
@@ -67,11 +67,11 @@ public class TwitchHandler {
 			
 			// Blacklisted words check
 			if(!isModerator(e.getTags())) {
-				for(int i = 0; i < args.length; i++) {
-					if(BlackList.blockedPhrases.contains(args[i])) {
+				for (String arg : args) {
+					if (BlackList.blockedPhrases.contains(arg)) {
 						chat("/timeout " + user + " 3 Used a blacklisted word/phrase");
 						chat(user + " You're using a blacklisted word/phrase! (1s)");
-						
+
 						System.out.println("Removed " + user + "s message due to blacklisted word.");
 						return;
 					}
@@ -150,9 +150,9 @@ public class TwitchHandler {
 						}
 						
 						String cmdName = args[2];
-						String msg = "";
+						StringBuilder msg = new StringBuilder();
 						for(int i = 3; i < args.length; i++) {
-							msg = msg + " " + args[i];
+							msg.append(" ").append(args[i]);
 						}
 						
 						if(sql.getCommands().contains(cmdName)) {
@@ -160,9 +160,9 @@ public class TwitchHandler {
 							return;
 						}
 						
-						if(sql.addCommand(cmdName, msg)) {
+						if(sql.addCommand(cmdName, msg.toString())) {
 							chat("@" + user + " Command " + cmdName + " stored!");
-							Twitch.commands.put(cmdName, msg);
+							Twitch.commands.put(cmdName, msg.toString());
 							WebLog.addToWeblog("TWITCH", user, "Created the command <code>" + cmdName + "</code>");
 						}
 						
@@ -176,9 +176,9 @@ public class TwitchHandler {
 						}
 						
 						String cmdName = args[2];
-						String msg = "";
+						StringBuilder msg = new StringBuilder();
 						for(int i = 3; i < args.length; i++) {
-							msg = msg + " " + args[i];
+							msg.append(" ").append(args[i]);
 						}
 						
 						if(!sql.getCommands().contains(cmdName)) {
@@ -186,9 +186,9 @@ public class TwitchHandler {
 							return;
 						}
 						
-						if(sql.editCommand(cmdName, msg)) {
+						if(sql.editCommand(cmdName, msg.toString())) {
 							chat("@" + user + " Command " + cmdName + " stored!");
-							Twitch.commands.replace(cmdName, msg);
+							Twitch.commands.replace(cmdName, msg.toString());
 							WebLog.addToWeblog("TWITCH", user, "Edited the command <code>" + cmdName + "</code>");
 						} else {
 							chat("@" + user + " Failed editing the command " + cmdName);
@@ -230,14 +230,14 @@ public class TwitchHandler {
 						return;
 					}
 				} else if(setting.equalsIgnoreCase("add")) {
-					String message = "";
+					StringBuilder message = new StringBuilder();
 					for(int i = 2; i < args.length; i++) {
-						message += args[i] + " ";
+						message.append(args[i]).append(" ");
 					}
 					
 					AutoMessageSQL amSql = new AutoMessageSQL();
 					
-					if(!amSql.addAutoMessage(message)) {
+					if(!amSql.addAutoMessage(message.toString())) {
 						chat("Failed to add/update playlist. Try again later!");
 						return;
 					}
@@ -249,14 +249,14 @@ public class TwitchHandler {
 					WebLog.addToWeblog("TWITCH", user, "Added a message to auto-message: <code>" + message + "</code>");
 					return;
 				} else if(setting.equalsIgnoreCase("remove")) {
-					String message = "";
+					StringBuilder message = new StringBuilder();
 					for(int i = 2; i < args.length; i++) {
-						message += args[i] + " ";
+						message.append(args[i]).append(" ");
 					}
 					
 					AutoMessageSQL amSql = new AutoMessageSQL();
 					
-					if(!amSql.removeAutoMessage(message)) {
+					if(!amSql.removeAutoMessage(message.toString())) {
 						chat("Failed to remove/update playlist. Try again later!");
 						return;
 					}
@@ -277,12 +277,12 @@ public class TwitchHandler {
 					return;
 				}
 				
-				String title = "";
+				StringBuilder title = new StringBuilder();
 				for(int i = 1; i < args.length; i++) {
-					title += args[i] + " ";
+					title.append(args[i]).append(" ");
 				}
 				
-				Twitch.setTitle(title);
+				Twitch.setTitle(title.toString());
 				
 				chat("Title set to: " + title);
 				
@@ -296,15 +296,15 @@ public class TwitchHandler {
 					return;
 				}
 				
-				String game = "";
+				StringBuilder game = new StringBuilder();
 				for(int i = 1; i < args.length; i++) {
 					if(i == args.length-1)
-						game += args[i];
+						game.append(args[i]);
 					else
-						game += args[i] + " ";
+						game.append(args[i]).append(" ");
 				}
 				
-				Twitch.setGame(game);
+				Twitch.setGame(game.toString());
 				
 				chat("Game set to: " + game);
 				
@@ -476,9 +476,7 @@ public class TwitchHandler {
 	 */
 	private boolean isModerator(Map<String, String> tags) {
 		if(tags.containsKey("badges") && tags.get("badges") != null) {
-			if(tags.get("badges").contains("broadcaster") || tags.get("badges").contains("moderator")) {
-				return true;
-			}
+			return tags.get("badges").contains("broadcaster") || tags.get("badges").contains("moderator");
 		}
 		
 		return false;

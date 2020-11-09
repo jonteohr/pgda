@@ -35,7 +35,7 @@ public class DashboardSocket {
 	}
 	
 	private void onReceived(String message) {
-		String args[] = message.split("\\s+");
+		String[] args = message.split("\\s+");
 		
 		CommandSQL sql = new CommandSQL();
 		
@@ -54,9 +54,9 @@ public class DashboardSocket {
 			SettingsSQL settingsSql = new SettingsSQL();
 			BlackList bList = new BlackList();
 			
-			Twitch.settings.put("preventLinks", (settingsSql.getSettingValue("preventLinks") == 1 ? true : false));
-			Twitch.settings.put("allowMe", (settingsSql.getSettingValue("allowMe") == 1 ? true : false));
-			Twitch.settings.put("excemptSubs", (settingsSql.getSettingValue("excemptSubs") == 1 ? true : false));
+			Twitch.settings.put("preventLinks", (settingsSql.getSettingValue("preventLinks") == 1));
+			Twitch.settings.put("allowMe", (settingsSql.getSettingValue("allowMe") == 1));
+			Twitch.settings.put("excemptSubs", (settingsSql.getSettingValue("excemptSubs") == 1));
 			BlackList.blockedPhrases = bList.getBlacklist();
 			
 			System.out.println("Updated local settings");

@@ -51,11 +51,10 @@ public class App {
 	public static boolean enableJoin = false;
 	public static int joinLimit = 4;
 	
-	public static SimpleDateFormat sdf = new SimpleDateFormat("YYYY-MM-dd HH:mm:ss");
+	public static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	
 	public static void main(String[] args) throws LoginException {
-		Collection<GatewayIntent> intents = new ArrayList<GatewayIntent>();
-		intents.addAll(GatewayIntent.getIntents(GatewayIntent.ALL_INTENTS));
+		Collection<GatewayIntent> intents = new ArrayList<>(GatewayIntent.getIntents(GatewayIntent.ALL_INTENTS));
 		
 		jda = JDABuilder.create(Credentials.TOKEN.getValue(), intents)
 				.build();

@@ -30,7 +30,7 @@ public class GuildReady extends ListenerAdapter {
 	
 	/**
 	 * 
-	 * @param members a {@link java.lang.Integer Integer} of total member count.
+	 * @param subs a {@link java.lang.Integer Integer} of total member count.
 	 */
 	public void setPresence(int subs) {
 		App.jda.getPresence().setActivity(Activity.watching(subs + " subs | Twitch.tv/Tejbz"));

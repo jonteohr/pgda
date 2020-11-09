@@ -77,7 +77,7 @@ public class AutoMessageSQL {
 			Statement pstmt = con.createStatement();
 			result = pstmt.executeQuery("SELECT message FROM messages;");
 
-			List<String> msgs = new ArrayList<String>();
+			List<String> msgs = new ArrayList<>();
 
 			while (result.next()) {
 				msgs.add(result.getString(1));
