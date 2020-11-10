@@ -187,6 +187,15 @@ public class Twitch {
 	}
 
 	public static void runAd(int time) {
+		if(time < 30)
+			time = 30;
+		else if(time > 45)
+			time = 60;
+		else if(time > 75)
+			time = 90;
+		else if(time > 105)
+			time = 120;
+
 		CommercialList commercialList = twitchClient.getHelix().startCommercial(Identity.getAccessToken(OAuth2), getUser("tejbz").getId(), time).execute();
 
 		if(commercialList.getCommercials().size() < 1) {
