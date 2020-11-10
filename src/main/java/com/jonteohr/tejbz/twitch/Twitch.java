@@ -14,15 +14,7 @@ import com.github.philippheuer.events4j.core.EventManager;
 import com.github.philippheuer.events4j.simple.SimpleEventHandler;
 import com.github.twitch4j.TwitchClient;
 import com.github.twitch4j.TwitchClientBuilder;
-import com.github.twitch4j.helix.domain.ChannelInformation;
-import com.github.twitch4j.helix.domain.FollowList;
-import com.github.twitch4j.helix.domain.Game;
-import com.github.twitch4j.helix.domain.GameList;
-import com.github.twitch4j.helix.domain.Stream;
-import com.github.twitch4j.helix.domain.StreamList;
-import com.github.twitch4j.helix.domain.SubscriptionList;
-import com.github.twitch4j.helix.domain.User;
-import com.github.twitch4j.helix.domain.UserList;
+import com.github.twitch4j.helix.domain.*;
 import com.jonteohr.tejbz.PropertyHandler;
 import com.jonteohr.tejbz.credentials.Credentials;
 import com.jonteohr.tejbz.credentials.Identity;
@@ -192,6 +184,18 @@ public class Twitch {
 		UserList usr = twitchClient.getHelix().getUsers(chatBot.getAccessToken(), null, Arrays.asList(channel)).execute();
 		
 		return usr.getUsers().get(0);
+	}
+
+	public static void runAd(int time) {
+		CommercialList commercialList = twitchClient.getHelix().startCommercial(Identity.getAccessToken(OAuth2), getUser("tejbz").getId(), time).execute();
+
+		if(commercialList.getCommercials().size() < 1) {
+			System.out.println("Couldn't run ad..");
+			return;
+		}
+
+		System.out.println("length of ad: " + commercialList.getCommercials().get(0).getLength());
+		System.out.println("message returned: " + commercialList.getCommercials().get(0).getMessage());
 	}
 	
 	public static String getWatchTime(String user) {
