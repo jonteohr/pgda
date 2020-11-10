@@ -310,6 +310,27 @@ public class TwitchHandler {
 				
 				return;
 			}
+
+			if(args[0].equalsIgnoreCase("!ad")) {
+				if(Twitch.getStream("tejbz") == null) {
+					chat("Tejbz is not live.");
+					return;
+				}
+
+				int time = 30;
+				if(args.length > 1) {
+					try {
+						time = Integer.parseInt(args[1]);
+					} catch(NumberFormatException ex) {
+						chat("@" + user + " Invalid argument");
+						return;
+					}
+				}
+
+				chat("Running a " + time + " second ad.");
+				Twitch.runAd(time);
+				return;
+			}
 			
 			if(args[0].equalsIgnoreCase("!help")) {
 				chat("@" + user + " Bot formatting and commands are available over at http://pgda.xyz/commands");
