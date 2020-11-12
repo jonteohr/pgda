@@ -327,8 +327,10 @@ public class TwitchHandler {
 					}
 				}
 
-				chat("Running a " + time + " second ad.");
-				Twitch.runAd(time);
+				if(Twitch.runAd(time))
+					chat("Running a " + time + " second ad.");
+				else
+					chat("Couldn't start the ad.");
 				return;
 			}
 			
