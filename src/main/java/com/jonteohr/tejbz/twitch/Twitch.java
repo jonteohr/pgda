@@ -1,5 +1,6 @@
 package com.jonteohr.tejbz.twitch;
 
+import java.lang.reflect.InvocationTargetException;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
@@ -25,6 +26,7 @@ import com.jonteohr.tejbz.twitch.sql.BlackList;
 import com.jonteohr.tejbz.twitch.sql.CommandSQL;
 import com.jonteohr.tejbz.twitch.sql.SettingsSQL;
 import com.jonteohr.tejbz.twitch.sql.WatchTimeSQL;
+import com.netflix.hystrix.exception.HystrixRuntimeException;
 
 public class Twitch {
 	public static TwitchClient twitchClient;
@@ -40,7 +42,14 @@ public class Twitch {
 		EventManager eventManager = new EventManager();
 		eventManager.autoDiscovery();
 		eventManager.setDefaultEventHandler(SimpleEventHandler.class);
-		
+
+		// Refresh the OAuth2 token!
+		Identity identity = new Identity();
+		PropertyHandler props = new PropertyHandler();
+
+		OAuth2 = new OAuth2Credential("twitch", props.getPropertyValue("access_token"), props.getPropertyValue("refresh_token"), null, null, null, null);
+		OAuth2 = identity.refreshToken(OAuth2);
+
 		// Build the twitch instance
 		twitchClient = TwitchClientBuilder.builder()
 				.withEnableHelix(true)
@@ -49,15 +58,9 @@ public class Twitch {
 				.withEnablePubSub(false)
 				.withEnableTMI(true)
 				.withEventManager(eventManager)
-				.withDefaultAuthToken(OAuth2)
+				.withDefaultAuthToken(identity.getCredential(OAuth2))
 				.withChatAccount(chatBot)
 				.build();
-		
-		// Refresh the OAuth2 token!
-		Identity identity = new Identity();
-		PropertyHandler props = new PropertyHandler();
-		OAuth2 = new OAuth2Credential("twitch", props.getPropertyValue("access_token"), props.getPropertyValue("refresh_token"), null, null, null, null);
-		OAuth2 = identity.refreshToken(OAuth2);
 		
 		Timer timer = new Timer();
 		timer.scheduleAtFixedRate(new RefreshToken(), 60*60*1000, 60*60*1000); // Make sure we keep updating the token
@@ -66,8 +69,8 @@ public class Twitch {
 		TwitchHandler twitchHandler = new TwitchHandler();
 		eventManager.getEventHandler(SimpleEventHandler.class).registerListener(twitchHandler);
 		
-		twitchClient.getClientHelper().enableStreamEventListener("25622462", "tejbz");
-		
+		twitchClient.getClientHelper().enableStreamEventListener("tejbz");
+
 		System.out.println("Twitch4J Finished loading and initiated.");
 		System.out.println("Tejbz user ID: " + getUser("tejbz").getId());
 		
@@ -186,7 +189,7 @@ public class Twitch {
 		return usr.getUsers().get(0);
 	}
 
-	public static void runAd(int time) {
+	public static boolean runAd(int time) {
 		if(time < 30)
 			time = 30;
 		else if(time > 45)
@@ -195,16 +198,23 @@ public class Twitch {
 			time = 90;
 		else if(time > 105)
 			time = 120;
+		try {
+			CommercialList commercialList = twitchClient.getHelix().startCommercial(Identity.getAccessToken(OAuth2), getUser("tejbz").getId(), time).execute();
 
-		CommercialList commercialList = twitchClient.getHelix().startCommercial(Identity.getAccessToken(OAuth2), getUser("tejbz").getId(), time).execute();
+			if(commercialList.getCommercials().size() < 1) {
+				System.out.println("Couldn't run ad..");
+				return false;
+			}
 
-		if(commercialList.getCommercials().size() < 1) {
-			System.out.println("Couldn't run ad..");
-			return;
+			System.out.println("length of ad: " + commercialList.getCommercials().get(0).getLength());
+			System.out.println("message returned: " + commercialList.getCommercials().get(0).getMessage());
+
+			return true;
+		} catch(HystrixRuntimeException ex) {
+			ex.printStackTrace();
+			return false;
 		}
 
-		System.out.println("length of ad: " + commercialList.getCommercials().get(0).getLength());
-		System.out.println("message returned: " + commercialList.getCommercials().get(0).getMessage());
 	}
 	
 	public static String getWatchTime(String user) {
