@@ -9,8 +9,7 @@
   <version>0.0.1</version>
 
   <name>tejbz</name>
-  <!-- FIXME change it to the project's website -->
-  <url>https://discord.gg/tejbz</url>
+  <url>http://pgda.xyz></url>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

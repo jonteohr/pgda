@@ -118,9 +118,8 @@ public class TwitchHandler {
 		if(args[0].equalsIgnoreCase("!commands")) {
 			if(args.length == 1) {
 				chat("@" + user + " List of commands are available at: http://pgda.xyz/commands");
-				
-				if(!isModerator(e.getTags()))
-					CommandTimer.addToCooldown(args[0]);
+
+				CommandTimer.addToCooldown(args[0]);
 				
 				return;
 			}
@@ -380,9 +379,8 @@ public class TwitchHandler {
 			
 			chat(reply);
 			CommandSQL.incrementUses(args[0]);
-			
-			if(!isModerator(e.getTags()))
-				CommandTimer.addToCooldown(args[0]);
+
+			CommandTimer.addToCooldown(args[0]);
 			
 			return;
 		}
