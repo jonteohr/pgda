@@ -15,7 +15,7 @@ public class CommandTimer {
 	}
 	
 	public static void addToCooldown(String command) {
-		cooldown.add(new CommandCooldown(command, 15));
+		cooldown.add(new CommandCooldown(command, 7));
 	}
 	
 	public static boolean isInCooldown(String command) {
