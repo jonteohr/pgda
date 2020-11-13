@@ -26,6 +26,7 @@ import com.jonteohr.tejbz.twitch.sql.BlackList;
 import com.jonteohr.tejbz.twitch.sql.CommandSQL;
 import com.jonteohr.tejbz.twitch.sql.SettingsSQL;
 import com.jonteohr.tejbz.twitch.sql.WatchTimeSQL;
+import com.jonteohr.tejbz.twitch.threads.CommandTimer;
 import com.netflix.hystrix.exception.HystrixRuntimeException;
 
 public class Twitch {
@@ -80,6 +81,7 @@ public class Twitch {
 		
 		commands = sql.getCommandsMap();
 		specCommands = sql.getSpecialCommands();
+		CommandTimer.startCommandCooldown();
 		AutoMessage.autoMessages = amSQL.getMessages();
 		AutoMessage.autoMessageTimer();
 		

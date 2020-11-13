@@ -61,5 +61,14 @@ public class DashboardSocket {
 			
 			System.out.println("Updated local settings");
 		}
+
+		if(args[0].equalsIgnoreCase("commercial")) {
+			if(args.length < 2)
+				return;
+
+			int time = Integer.parseInt(args[1]);
+
+			Twitch.runAd(time);
+		}
 	}
 }
