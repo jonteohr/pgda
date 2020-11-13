@@ -13,7 +13,9 @@ import com.github.twitch4j.chat.events.channel.SubscriptionEvent;
 import com.github.twitch4j.events.ChannelGoLiveEvent;
 import com.github.twitch4j.helix.domain.CreateClipList;
 import com.github.twitch4j.helix.domain.Stream;
+import com.github.twitch4j.pubsub.events.RewardRedeemedEvent;
 import com.jonteohr.tejbz.App;
+import com.jonteohr.tejbz.PropertyHandler;
 import com.jonteohr.tejbz.credentials.Identity;
 import com.jonteohr.tejbz.twitch.automessage.AutoMessage;
 import com.jonteohr.tejbz.twitch.sql.AutoMessageSQL;
@@ -375,8 +377,11 @@ public class TwitchHandler {
 				reply = reply.replace("[touser]", (args.length > 1 ? args[1] : user));
 			if(reply.contains("[@touser]"))
 				reply = reply.replace("[@touser]", (args.length > 1 ? "@" + args[1] : "@" + user));
-				
-			
+			if(reply.contains("[recent_video]")) {
+				PropertyHandler propertyHandler = new PropertyHandler();
+				reply = reply.replace("[recent_video]", propertyHandler.getPropertyValue("recent_video"));
+			}
+
 			chat(reply);
 			CommandSQL.incrementUses(args[0]);
 
@@ -455,6 +460,17 @@ public class TwitchHandler {
 		msg.setDescription("Just gifted " + count + " subs to the community! They've gifted a total of " + totalGifted + " subs.");
 		
 		channel.sendMessage(msg.build()).queue();
+	}
+
+	@EventSubscriber
+	public void onChannelPoints(RewardRedeemedEvent e) {
+		String rewardId = e.getRedemption().getReward().getId();
+		String user = e.getRedemption().getUser().getDisplayName();
+
+		if(rewardId.equalsIgnoreCase("6b82416f-1197-4e92-b787-486967de076a")) {
+			chatMe(user + " WENT ZOOM ZOOM ZOOM");
+			return;
+		}
 	}
 	
 	/**
