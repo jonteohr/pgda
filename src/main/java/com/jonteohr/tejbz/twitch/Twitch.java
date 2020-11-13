@@ -55,7 +55,7 @@ public class Twitch {
 				.withEnableHelix(true)
 				.withEnableKraken(true)
 				.withEnableChat(true)
-				.withEnablePubSub(false)
+				.withEnablePubSub(true)
 				.withEnableTMI(true)
 				.withEventManager(eventManager)
 				.withDefaultAuthToken(identity.getCredential(OAuth2))
@@ -70,6 +70,7 @@ public class Twitch {
 		eventManager.getEventHandler(SimpleEventHandler.class).registerListener(twitchHandler);
 		
 		twitchClient.getClientHelper().enableStreamEventListener("tejbz");
+		twitchClient.getPubSub().listenForChannelPointsRedemptionEvents(identity.getCredential(OAuth2), "25622462");
 
 		System.out.println("Twitch4J Finished loading and initiated.");
 		System.out.println("Tejbz user ID: " + getUser("tejbz").getId());
