@@ -405,7 +405,7 @@ public class TwitchHandler {
 		msg.addField("Title", e.getStream().getTitle(), false);
 		msg.addField("Playing", Twitch.getGameById(e.getStream().getGameId()), false);
 		
-		App.general.sendMessage(App.guild.getPublicRole().getAsMention()).queue();
+		App.general.sendMessage(App.guild.getPublicRole().getAsMention() + " Tejbz just went live!").queue();
 		App.general.sendMessage(msg.build()).queue();
 	}
 	
@@ -475,7 +475,7 @@ public class TwitchHandler {
 	
 	/**
 	 * Sends a message to Tejbz chat
-	 * @param msg
+	 * @param msg a message to print
 	 */
 	private void chat(String msg) {
 		Twitch.twitchClient.getChat().sendMessage("tejbz", msg);
@@ -483,7 +483,7 @@ public class TwitchHandler {
 	
 	/**
 	 * Sends a colored message to Tejbz chat
-	 * @param msg
+	 * @param msg a message to print
 	 */
 	private void chatMe(String msg) {
 		Twitch.twitchClient.getChat().sendMessage("tejbz", "/me " + msg);
