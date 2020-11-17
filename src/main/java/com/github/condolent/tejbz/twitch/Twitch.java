@@ -4,10 +4,7 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Timer;
+import java.util.*;
 
 import com.github.condolent.tejbz.credentials.Credentials;
 import com.github.condolent.tejbz.credentials.Identity;
@@ -34,8 +31,8 @@ public class Twitch {
 	public static OAuth2Credential OAuth2;
 	public static OAuth2Credential chatBot = new OAuth2Credential("twitch", Credentials.BOTOAUTH.getValue());
 	
-	public static Map<String, String> commands = new HashMap<>();
-	public static Map<String, String> specCommands = new HashMap<>();
+	public static Map<String, String> commands = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
+	public static Map<String, String> specCommands = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
 	public static Map<String, Boolean> settings = new HashMap<>();
 	
 	public static void initTwitch() {
