@@ -5,10 +5,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import com.github.condolent.tejbz.credentials.Credentials;
 
@@ -234,7 +231,7 @@ public class CommandSQL {
 			PreparedStatement pstmt = con.prepareStatement("SELECT * FROM commands;");
 			result = pstmt.executeQuery();
 
-			Map<String, String> response = new HashMap<>();
+			Map<String, String> response = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
 
 			while(result.next()) {
 				response.put(result.getString(1), result.getString(2));
@@ -262,7 +259,7 @@ public class CommandSQL {
 			PreparedStatement pstmt = con.prepareStatement("SELECT cmd, type FROM commands WHERE type <> NULL;");
 			result = pstmt.executeQuery();
 
-			Map<String, String> response = new HashMap<>();
+			Map<String, String> response = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
 
 			while(result.next()) {
 				response.put(result.getString(1), result.getString(2));
