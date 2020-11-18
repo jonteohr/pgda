@@ -427,7 +427,7 @@ public class TwitchHandler {
 			if(months <= 1)
 				chatMe("tejbzWave Welcome to the squad, @" + user + " tejbzLove");
 			else
-				chatMe("tejbzWave Welcome back @" + user + " tejbzLove");
+				chatMe("pepeD Welcome back @" + user + " pepeD");
 		
 		EmbedBuilder msg = new EmbedBuilder();
 		msg.setColor(App.color);
