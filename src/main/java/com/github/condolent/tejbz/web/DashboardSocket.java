@@ -11,6 +11,7 @@ import com.github.condolent.tejbz.twitch.Twitch;
 import com.github.condolent.tejbz.twitch.automessage.AutoMessage;
 import com.github.condolent.tejbz.twitch.sql.BlackList;
 import com.github.condolent.tejbz.twitch.sql.CommandSQL;
+import com.github.condolent.tejbz.twitch.sql.Giveaway;
 import com.github.condolent.tejbz.twitch.sql.SettingsSQL;
 
 public class DashboardSocket {
@@ -69,6 +70,15 @@ public class DashboardSocket {
 			int time = Integer.parseInt(args[1]);
 
 			Twitch.runAd(time);
+		}
+
+		if(args[0].equalsIgnoreCase("giveaway_winner")) {
+			if(args.length < 2)
+				return;
+
+			Twitch.chatMe("THE WINNER OF THE GIVEAWAY IS @" + args[1] + "! Congratulations!");
+			Giveaway.resetList();
+			return;
 		}
 	}
 }
