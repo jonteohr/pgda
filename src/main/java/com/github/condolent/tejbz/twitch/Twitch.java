@@ -10,6 +10,8 @@ import com.github.condolent.tejbz.credentials.Credentials;
 import com.github.condolent.tejbz.credentials.Identity;
 import com.github.condolent.tejbz.credentials.RefreshToken;
 import com.github.condolent.tejbz.twitch.automessage.AutoMessage;
+import com.github.condolent.tejbz.twitch.giveaway.GiveawayCommand;
+import com.github.condolent.tejbz.twitch.threads.CoinsTimer;
 import com.github.condolent.tejbz.twitch.threads.CommandTimer;
 import com.github.philippheuer.credentialmanager.domain.OAuth2Credential;
 import com.github.philippheuer.events4j.core.EventManager;
@@ -27,6 +29,8 @@ import com.netflix.hystrix.exception.HystrixRuntimeException;
 
 public class Twitch {
 	public static TwitchClient twitchClient;
+
+	public static boolean isStreamLive = false;
 
 	public static OAuth2Credential OAuth2;
 	public static OAuth2Credential chatBot = new OAuth2Credential("twitch", Credentials.BOTOAUTH.getValue());
@@ -63,8 +67,9 @@ public class Twitch {
 		timer.scheduleAtFixedRate(new RefreshToken(), 60*60*1000, 60*60*1000); // Make sure we keep updating the token
 		
 		// Do Twitch stuff
-		TwitchHandler twitchHandler = new TwitchHandler();
-		eventManager.getEventHandler(SimpleEventHandler.class).registerListener(twitchHandler);
+		eventManager.getEventHandler(SimpleEventHandler.class).registerListener(new TwitchHandler());
+		eventManager.getEventHandler(SimpleEventHandler.class).registerListener(new GiveawayCommand());
+		eventManager.getEventHandler(SimpleEventHandler.class).registerListener(new BankHandler());
 		
 		twitchClient.getClientHelper().enableStreamEventListener("tejbz");
 		twitchClient.getPubSub().listenForChannelPointsRedemptionEvents(identity.getCredential(OAuth2), "25622462");
@@ -80,6 +85,7 @@ public class Twitch {
 		CommandTimer.startCommandCooldown();
 		AutoMessage.autoMessages = amSQL.getMessages();
 		AutoMessage.autoMessageTimer();
+		CoinsTimer.start();
 		
 		// Watch time timers
 		WatchTimer.countWatchTime();
@@ -93,6 +99,9 @@ public class Twitch {
 		BlackList.blockedPhrases = blackList.getBlacklist();
 		
 		twitchClient.getChat().joinChannel("tejbz");
+
+		if(getStream("tejbz") != null)
+			isStreamLive = true;
 	}
 	
 	/**
@@ -179,7 +188,7 @@ public class Twitch {
 		}
 		while(response > 0);
 		
-		return subs;
+		return subs - 3;
 	}
 	
 	public static User getUser(String channel) {
@@ -261,5 +270,43 @@ public class Twitch {
 		settings.put("allowMe", (sql.getSettingValue("allowMe") == 1));
 		settings.put("excemptSubs", (sql.getSettingValue("excemptSubs") == 1));
 		BlackList.blockedPhrases = bList.getBlacklist();
+	}
+
+	/**
+	 * Sends a message to Tejbz chat
+	 * @param msg a message to print
+	 */
+	public static void chat(String msg) {
+		Twitch.twitchClient.getChat().sendMessage("tejbz", msg);
+	}
+
+	/**
+	 * Sends a colored message to Tejbz chat
+	 * @param msg a message to print
+	 */
+	public static void chatMe(String msg) {
+		Twitch.twitchClient.getChat().sendMessage("tejbz", "/me " + msg);
+	}
+
+	/**
+	 * TODO
+	 * @param user
+	 * @param msg
+	 */
+	public static void sendPm(String user, String msg) {
+		Twitch.twitchClient.getChat().sendPrivateMessage(user, msg);
+	}
+
+	/**
+	 * Checks to see if the user is a moderator or above
+	 * @param tags a {@link java.util.Map Map} with the users' tags
+	 * @return {@code true} if yes
+	 */
+	public static boolean isModerator(Map<String, String> tags) {
+		if(tags.containsKey("badges") && tags.get("badges") != null) {
+			return tags.get("badges").contains("broadcaster") || tags.get("badges").contains("moderator");
+		}
+
+		return false;
 	}
 }

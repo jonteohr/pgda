@@ -1,38 +1,38 @@
 package com.github.condolent.tejbz.twitch;
 
-import java.util.Map;
-import java.util.Timer;
-import java.util.TimerTask;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
+import com.github.condolent.tejbz.App;
+import com.github.condolent.tejbz.PropertyHandler;
 import com.github.condolent.tejbz.credentials.Identity;
 import com.github.condolent.tejbz.twitch.automessage.AutoMessage;
 import com.github.condolent.tejbz.twitch.sql.AutoMessageSQL;
 import com.github.condolent.tejbz.twitch.sql.BlackList;
 import com.github.condolent.tejbz.twitch.sql.CommandSQL;
+import com.github.condolent.tejbz.twitch.sql.Giveaway;
 import com.github.condolent.tejbz.twitch.threads.CommandTimer;
+import com.github.condolent.tejbz.web.WebLog;
 import com.github.philippheuer.events4j.simple.domain.EventSubscriber;
 import com.github.twitch4j.chat.events.channel.GiftSubscriptionsEvent;
 import com.github.twitch4j.chat.events.channel.IRCMessageEvent;
 import com.github.twitch4j.chat.events.channel.SubscriptionEvent;
 import com.github.twitch4j.events.ChannelGoLiveEvent;
+import com.github.twitch4j.events.ChannelGoOfflineEvent;
 import com.github.twitch4j.helix.domain.CreateClipList;
 import com.github.twitch4j.helix.domain.Stream;
 import com.github.twitch4j.pubsub.events.RewardRedeemedEvent;
-import com.github.condolent.tejbz.App;
-import com.github.condolent.tejbz.PropertyHandler;
-import com.github.condolent.tejbz.web.WebLog;
-
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.TextChannel;
+
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class TwitchHandler {
 	
 	private int clipTime = 0;
 	private final String URL_REGEX = "^((https?|ftp)://|(www|ftp)\\.)?[a-z0-9-]+(\\.[a-z0-9-]+)+([/?].*)?$";
 	Pattern pattern = Pattern.compile(URL_REGEX);
-	
+
 	@EventSubscriber
 	public void onTwitchChat(IRCMessageEvent e) {
 		if(!e.getChannel().getName().equalsIgnoreCase("tejbz"))
@@ -51,15 +51,15 @@ public class TwitchHandler {
 		
 		if((Twitch.settings.get("excemptSubs") && !Twitch.isSubscribed(user)) || (!Twitch.settings.get("excemptSubs"))) {
 			// Link check
-			if((Twitch.settings.get("preventLinks")) && !isModerator(e.getTags())) {
+			if((Twitch.settings.get("preventLinks")) && !Twitch.isModerator(e.getTags())) {
 				for(String arg : args) {
 					Matcher m = pattern.matcher(arg);
 					if(m.find()) {
 						if(arg.contains("clips.twitch.tv"))
 							continue;
 
-						chat("/timeout " + user + " 3 Don't post links.");
-						chat(user + " Links are not allowed! tejbzW (1s)");
+						Twitch.chat("/timeout " + user + " 3 Don't post links.");
+						Twitch.chat(user + " Links are not allowed! tejbzW (1s)");
 
 						System.out.println("Removed " + user + "s message due to links disabled.");
 						break;
@@ -68,11 +68,11 @@ public class TwitchHandler {
 			}
 			
 			// Blacklisted words check
-			if(!isModerator(e.getTags())) {
+			if(!Twitch.isModerator(e.getTags())) {
 				for (String arg : args) {
 					if (BlackList.blockedPhrases.contains(arg)) {
-						chat("/timeout " + user + " 3 Used a blacklisted word/phrase");
-						chat(user + " You're using a blacklisted word/phrase! (1s)");
+						Twitch.chat("/timeout " + user + " 3 Used a blacklisted word/phrase");
+						Twitch.chat(user + " You're using a blacklisted word/phrase! (1s)");
 
 						System.out.println("Removed " + user + "s message due to blacklisted word.");
 						return;
@@ -81,22 +81,22 @@ public class TwitchHandler {
 			}
 			
 			// Used a /me prefix
-			if(!Twitch.settings.get("allowMe") && !isModerator(e.getTags())) {
+			if(!Twitch.settings.get("allowMe") && !Twitch.isModerator(e.getTags())) {
 				if(args[0].equalsIgnoreCase("ACTION")) {
-					chat("/timeout " + user + " 3 Not allowed to use /me");
-					chat(user + " you're not allowed to use /me (1s)");
+					Twitch.chat("/timeout " + user + " 3 Not allowed to use /me");
+					Twitch.chat(user + " you're not allowed to use /me (1s)");
 					return;
 				}
 			}
 		}
 		
 		// Check to see if command is in cooldown!
-		if(CommandTimer.isInCooldown(args[0]) && !isModerator(e.getTags()))
+		if(CommandTimer.isInCooldown(args[0]) && !Twitch.isModerator(e.getTags()))
 			return;
 		
 		if(args[0].equalsIgnoreCase("!clip")) {
-			if(Twitch.getStream("tejbz") == null) {
-				chat("@" + user + " Tejbz is offline, there's nothing to clip!");
+			if(!Twitch.isStreamLive) {
+				Twitch.chat("@" + user + " Tejbz is offline, there's nothing to clip!");
 				return;
 			}
 			
@@ -105,7 +105,7 @@ public class TwitchHandler {
 			
 			CreateClipList clipData = Twitch.twitchClient.getHelix().createClip(Identity.getAccessToken(Twitch.OAuth2), "25622462", false).execute();
 			String clipLink = "https://clips.twitch.tv/" + clipData.getData().get(0).getId();
-			chat("@" + user + " " + clipLink);
+			Twitch.chat("@" + user + " " + clipLink);
 
 			EmbedBuilder msg = new EmbedBuilder();
 			msg.setAuthor(user, "https://twitch.tv/" + user, Twitch.getUser(user).getProfileImageUrl());
@@ -119,7 +119,7 @@ public class TwitchHandler {
 		
 		if(args[0].equalsIgnoreCase("!commands")) {
 			if(args.length == 1) {
-				chat("@" + user + " List of commands are available at: http://pgda.xyz/commands");
+				Twitch.chat("@" + user + " List of commands are available at: http://pgda.xyz/commands");
 
 				CommandTimer.addToCooldown(args[0]);
 				
@@ -128,17 +128,17 @@ public class TwitchHandler {
 		}
 		
 		if(args[0].equalsIgnoreCase("!vanish")) {
-			if(isModerator(e.getTags()))
+			if(Twitch.isModerator(e.getTags()))
 				return;
 			
-			chat("/timeout " + user + " 1");
-			chat(user + " Disappeared into the mist...");
+			Twitch.chat("/timeout " + user + " 1");
+			Twitch.chat(user + " Disappeared into the mist...");
 			
 			CommandTimer.addToCooldown(args[0]);
 			return;
 		}
 		
-		if(isModerator(e.getTags())) {
+		if(Twitch.isModerator(e.getTags())) {
 			if(args[0].equalsIgnoreCase("!commands")) {
 				if(args.length >= 3) {
 					
@@ -146,7 +146,7 @@ public class TwitchHandler {
 					
 					if(setting.equalsIgnoreCase("add")) {
 						if(args.length < 4) {
-							chat(user + " No reply specified.");
+							Twitch.chat(user + " No reply specified.");
 							return;
 						}
 						
@@ -157,12 +157,12 @@ public class TwitchHandler {
 						}
 						
 						if(sql.getCommands().contains(cmdName)) {
-							chat("@" + user + " The command " + cmdName + " already exists. Did you mean to use !editcmd maybe?");
+							Twitch.chat("@" + user + " The command " + cmdName + " already exists. Did you mean to use !editcmd maybe?");
 							return;
 						}
 						
 						if(sql.addCommand(cmdName, msg.toString())) {
-							chat("@" + user + " Command " + cmdName + " stored!");
+							Twitch.chat("@" + user + " Command " + cmdName + " stored!");
 							Twitch.commands.put(cmdName, msg.toString());
 							WebLog.addToWeblog("TWITCH", user, "Created the command <code>" + cmdName + "</code>");
 						}
@@ -172,7 +172,7 @@ public class TwitchHandler {
 					
 					if(setting.equalsIgnoreCase("edit")) {
 						if(args.length < 4) {
-							chat(user + " No new reply specified.");
+							Twitch.chat(user + " No new reply specified.");
 							return;
 						}
 						
@@ -183,16 +183,16 @@ public class TwitchHandler {
 						}
 						
 						if(!sql.getCommands().contains(cmdName)) {
-							chat("@" + user + " There is no command named " + cmdName);
+							Twitch.chat("@" + user + " There is no command named " + cmdName);
 							return;
 						}
 						
 						if(sql.editCommand(cmdName, msg.toString())) {
-							chat("@" + user + " Command " + cmdName + " stored!");
+							Twitch.chat("@" + user + " Command " + cmdName + " stored!");
 							Twitch.commands.replace(cmdName, msg.toString());
 							WebLog.addToWeblog("TWITCH", user, "Edited the command <code>" + cmdName + "</code>");
 						} else {
-							chat("@" + user + " Failed editing the command " + cmdName);
+							Twitch.chat("@" + user + " Failed editing the command " + cmdName);
 						}
 						
 						return;
@@ -200,12 +200,12 @@ public class TwitchHandler {
 					
 					if(setting.equalsIgnoreCase("delete")) {
 						if(!sql.getCommands().contains(args[2])) {
-							chat("@" + user + " There is no command named " + args[2]);
+							Twitch.chat("@" + user + " There is no command named " + args[2]);
 							return;
 						}
 						
 						if(sql.deleteCommand(args[2])) {
-							chat("@" + user + " Command " + args[2] + " successfully deleted!");
+							Twitch.chat("@" + user + " Command " + args[2] + " successfully deleted!");
 							Twitch.commands.remove(args[2]);
 							WebLog.addToWeblog("TWITCH", user, "Deleted the command <code>" + args[2] + "</code>");
 						}
@@ -216,7 +216,7 @@ public class TwitchHandler {
 			}
 			if(args[0].equalsIgnoreCase("!automessage")) {
 				if(args.length < 3) {
-					chat("@" + user + " Invalid arguments. Visit http://pgda.xyz/commands for commands list.");
+					Twitch.chat("@" + user + " Invalid arguments. Visit http://pgda.xyz/commands for commands list.");
 					return;
 				}
 				
@@ -226,7 +226,7 @@ public class TwitchHandler {
 					AutoMessageSQL amSql = new AutoMessageSQL();
 					
 					if(amSql.setInterval(Integer.parseInt(args[2]))) {
-						chat("@" + user + " Successfully saved the auto-message delay to: " + args[2] + "!");
+						Twitch.chat("@" + user + " Successfully saved the auto-message delay to: " + args[2] + "!");
 						WebLog.addToWeblog("TWITCH", user, "Changed the automessage interval to " + args[2]);
 						return;
 					}
@@ -239,13 +239,13 @@ public class TwitchHandler {
 					AutoMessageSQL amSql = new AutoMessageSQL();
 					
 					if(!amSql.addAutoMessage(message.toString())) {
-						chat("Failed to add/update playlist. Try again later!");
+						Twitch.chat("Failed to add/update playlist. Try again later!");
 						return;
 					}
 					
 					AutoMessage.updateAutoMessages();
 					
-					chat("Added message and updated playlist.");
+					Twitch.chat("Added message and updated playlist.");
 					
 					WebLog.addToWeblog("TWITCH", user, "Added a message to auto-message: <code>" + message + "</code>");
 					return;
@@ -258,13 +258,13 @@ public class TwitchHandler {
 					AutoMessageSQL amSql = new AutoMessageSQL();
 					
 					if(!amSql.removeAutoMessage(message.toString())) {
-						chat("Failed to remove/update playlist. Try again later!");
+						Twitch.chat("Failed to remove/update playlist. Try again later!");
 						return;
 					}
 					
 					AutoMessage.updateAutoMessages();
 					
-					chat("Removed the message from the playlist!");
+					Twitch.chat("Removed the message from the playlist!");
 					WebLog.addToWeblog("TWITCH", user, "Removed a message from auto-message: <code>" + message + "</code>");
 					return;
 				}
@@ -274,7 +274,7 @@ public class TwitchHandler {
 			if(args[0].equalsIgnoreCase("!title")) {
 				if(args.length < 2) {
 					String title = Twitch.getChannelInfo().getTitle();
-					chat("Current title set to: " + title);
+					Twitch.chat("Current title set to: " + title);
 					return;
 				}
 				
@@ -285,7 +285,7 @@ public class TwitchHandler {
 				
 				Twitch.setTitle(title.toString());
 				
-				chat("Title set to: " + title);
+				Twitch.chat("Title set to: " + title);
 				
 				return;
 			}
@@ -293,7 +293,7 @@ public class TwitchHandler {
 			if(args[0].equalsIgnoreCase("!game")) {
 				if(args.length < 2) {
 					String game = Twitch.getChannelInfo().getGameName();
-					chat("Tejbz is currently playing " + game);
+					Twitch.chat("Tejbz is currently playing " + game);
 					return;
 				}
 				
@@ -307,14 +307,14 @@ public class TwitchHandler {
 				
 				Twitch.setGame(game.toString());
 				
-				chat("Game set to: " + game);
+				Twitch.chat("Game set to: " + game);
 				
 				return;
 			}
 
 			if(args[0].equalsIgnoreCase("!ad")) {
-				if(Twitch.getStream("tejbz") == null) {
-					chat("Tejbz is not live.");
+				if(!Twitch.isStreamLive) {
+					Twitch.chat("Tejbz is not live.");
 					return;
 				}
 
@@ -323,20 +323,20 @@ public class TwitchHandler {
 					try {
 						time = Integer.parseInt(args[1]);
 					} catch(NumberFormatException ex) {
-						chat("@" + user + " Invalid argument");
+						Twitch.chat("@" + user + " Invalid argument");
 						return;
 					}
 				}
 
 				if(Twitch.runAd(time))
-					chat("Running a " + time + " second ad.");
+					Twitch.chat("Running a " + time + " second ad.");
 				else
-					chat("Couldn't start the ad.");
+					Twitch.chat("Couldn't start the ad.");
 				return;
 			}
 			
 			if(args[0].equalsIgnoreCase("!help")) {
-				chat("@" + user + " Bot formatting and commands are available over at http://pgda.xyz/commands");
+				Twitch.chat("@" + user + " Bot formatting and commands are available over at http://pgda.xyz/commands");
 				return;
 			}
 		}
@@ -345,7 +345,7 @@ public class TwitchHandler {
 			String reply = Twitch.commands.get(args[0]);
 			
 			if(Twitch.specCommands.containsKey(args[0])) {
-				if(Twitch.specCommands.get(args[0]).equalsIgnoreCase("mod") && !isModerator(e.getTags()))
+				if(Twitch.specCommands.get(args[0]).equalsIgnoreCase("mod") && !Twitch.isModerator(e.getTags()))
 					return;
 				if(Twitch.specCommands.get(args[0]).equalsIgnoreCase("sub") && !Twitch.isSubscribed(user))
 					return;
@@ -382,7 +382,7 @@ public class TwitchHandler {
 				reply = reply.replace("[recent_video]", propertyHandler.getPropertyValue("recent_video"));
 			}
 
-			chat(reply);
+			Twitch.chat(reply);
 			CommandSQL.incrementUses(args[0]);
 
 			CommandTimer.addToCooldown(args[0]);
@@ -396,6 +396,8 @@ public class TwitchHandler {
 		System.out.println("**********************");
 		System.out.println("Tejbz went live!");
 		System.out.println("**********************");
+
+		Twitch.isStreamLive = true;
 		
 		EmbedBuilder msg = new EmbedBuilder();
 		msg.setAuthor("Tejbz", null, Twitch.getUser(e.getChannel().getName()).getProfileImageUrl());
@@ -407,6 +409,13 @@ public class TwitchHandler {
 		
 		App.general.sendMessage(App.guild.getPublicRole().getAsMention() + " Tejbz just went live!").queue();
 		App.general.sendMessage(msg.build()).queue();
+
+		Twitch.chatMe("Tejbz Just went live! You can now collect your daily PGDA Coins with !collect");
+	}
+
+	@EventSubscriber
+	public void onOffline(ChannelGoOfflineEvent e) {
+		Twitch.isStreamLive = false;
 	}
 	
 	@EventSubscriber
@@ -424,10 +433,13 @@ public class TwitchHandler {
 		 * Twitch Chat
 		 */
 		if(Twitch.twitchClient.getChat().isChannelJoined("tejbz"))
-			if(months <= 1)
-				chatMe("tejbzWave Welcome to the squad, @" + user + " tejbzLove");
-			else
-				chatMe("pepeD Welcome back @" + user + " pepeD");
+			if(months <= 1) {
+				Twitch.chatMe("tejbzWave Welcome to the squad, @" + user + " tejbzLove");
+				BankHandler.onFirstSub(user);
+			} else {
+				Twitch.chatMe("pepeD Welcome back @" + user + " pepeD");
+				BankHandler.onResub(user);
+			}
 		
 		EmbedBuilder msg = new EmbedBuilder();
 		msg.setColor(App.color);
@@ -450,7 +462,7 @@ public class TwitchHandler {
 		
 		// Twitch Chat
 		if(Twitch.twitchClient.getChat().isChannelJoined("tejbz"))
-			chatMe("tejbzPog Thanks for the gifted, @" + user + " tejbzLove");
+			Twitch.chatMe("tejbzPog Thanks for the gifted, @" + user + " tejbzLove");
 		
 		TextChannel channel = App.twitchLog;
 		
@@ -468,25 +480,19 @@ public class TwitchHandler {
 		String user = e.getRedemption().getUser().getDisplayName();
 
 		if(rewardId.equalsIgnoreCase("6b82416f-1197-4e92-b787-486967de076a")) {
-			chatMe(user + " WENT ZOOM ZOOM ZOOM");
+			Twitch.chatMe(user + " WENT ZOOM ZOOM ZOOM");
 			return;
 		}
-	}
-	
-	/**
-	 * Sends a message to Tejbz chat
-	 * @param msg a message to print
-	 */
-	private void chat(String msg) {
-		Twitch.twitchClient.getChat().sendMessage("tejbz", msg);
-	}
-	
-	/**
-	 * Sends a colored message to Tejbz chat
-	 * @param msg a message to print
-	 */
-	private void chatMe(String msg) {
-		Twitch.twitchClient.getChat().sendMessage("tejbz", "/me " + msg);
+
+		// Giveaway Reward
+		if(rewardId.equalsIgnoreCase("2d4c2121-f036-4521-8060-9af23f53dadf")) {
+			Giveaway giveaway = new Giveaway();
+
+			if(giveaway.addToGiveawayList(e.getRedemption().getUser().getDisplayName(), Twitch.isSubscribed(e.getRedemption().getUser().getDisplayName())))
+				Twitch.sendPm(user, "You're entered in the giveaway!");
+
+			return;
+		}
 	}
 	
 	private void clipTimer() {
@@ -504,19 +510,6 @@ public class TwitchHandler {
 				clipTime--;
 			}
 		}, 30*1000);
-	}
-	
-	/**
-	 * Checks to see if the user is a moderator or above
-	 * @param tags a {@link java.util.Map Map} with the users' tags
-	 * @return {@code true} if yes
-	 */
-	private boolean isModerator(Map<String, String> tags) {
-		if(tags.containsKey("badges") && tags.get("badges") != null) {
-			return tags.get("badges").contains("broadcaster") || tags.get("badges").contains("moderator");
-		}
-		
-		return false;
 	}
 	
 }

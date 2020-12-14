@@ -4,37 +4,24 @@
 
 package com.github.condolent.tejbz;
 
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.time.Duration;
-import java.util.ArrayList;
-import java.util.Collection;
-
-import javax.security.auth.login.LoginException;
-
 import com.github.condolent.tejbz.credentials.Credentials;
 import com.github.condolent.tejbz.discord.listener.VideoAnnouncer;
-import com.github.condolent.tejbz.web.DashboardSocket;
-import com.github.condolent.tejbz.discord.listener.commands.Follow;
-import com.github.condolent.tejbz.discord.listener.commands.Github;
-import com.github.condolent.tejbz.discord.listener.commands.Help;
-import com.github.condolent.tejbz.discord.listener.commands.Join;
-import com.github.condolent.tejbz.discord.listener.commands.Schedule;
-import com.github.condolent.tejbz.discord.listener.commands.Social;
-import com.github.condolent.tejbz.discord.listener.commands.Stream;
-import com.github.condolent.tejbz.discord.listener.commands.Video;
-import com.github.condolent.tejbz.discord.listener.commands.admin.ModHelp;
-import com.github.condolent.tejbz.discord.listener.commands.admin.Mute;
-import com.github.condolent.tejbz.discord.listener.commands.admin.SetSchedule;
-import com.github.condolent.tejbz.discord.listener.commands.admin.SetVideo;
-import com.github.condolent.tejbz.discord.listener.commands.admin.StartJoin;
+import com.github.condolent.tejbz.discord.listener.commands.*;
+import com.github.condolent.tejbz.discord.listener.commands.admin.*;
 import com.github.condolent.tejbz.discord.listener.guild.GuildReady;
-
+import com.github.condolent.tejbz.web.DashboardSocket;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.requests.GatewayIntent;
+
+import javax.security.auth.login.LoginException;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.time.Duration;
+import java.util.ArrayList;
+import java.util.Collection;
 
 public class App {
 	public static JDA jda;
