@@ -4,10 +4,7 @@ import com.github.condolent.tejbz.App;
 import com.github.condolent.tejbz.PropertyHandler;
 import com.github.condolent.tejbz.credentials.Identity;
 import com.github.condolent.tejbz.twitch.automessage.AutoMessage;
-import com.github.condolent.tejbz.twitch.sql.AutoMessageSQL;
-import com.github.condolent.tejbz.twitch.sql.BlackList;
-import com.github.condolent.tejbz.twitch.sql.CommandSQL;
-import com.github.condolent.tejbz.twitch.sql.Giveaway;
+import com.github.condolent.tejbz.twitch.sql.*;
 import com.github.condolent.tejbz.twitch.threads.CommandTimer;
 import com.github.condolent.tejbz.web.WebLog;
 import com.github.philippheuer.events4j.simple.domain.EventSubscriber;
@@ -135,6 +132,23 @@ public class TwitchHandler {
 			Twitch.chat(user + " Disappeared into the mist...");
 			
 			CommandTimer.addToCooldown(args[0]);
+			return;
+		}
+
+		if(args[0].equalsIgnoreCase("!connect")) {
+			if(args.length < 2) {
+				Twitch.chat("@" + user + " You need to specify your Minecraft username like this: !connect username");
+				return;
+			}
+
+			String username = args[1];
+
+			if(!MinecraftSQL.connectToMinecraft(user, username)) {
+				Twitch.chat("@" + user + " Couldn't connect your minecraft at the moment. Have you already connected yours?");
+				return;
+			}
+
+			Twitch.chat("@" + user + " You've been connected with the account \"" + username + "\".");
 			return;
 		}
 		
