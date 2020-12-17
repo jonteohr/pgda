@@ -25,7 +25,7 @@ public class BankSQL {
 			if(isUserInDatabase(user))
 				pstmt = con.prepareStatement("UPDATE bank SET amount=amount+? WHERE user=?;");
 			else
-				pstmt = con.prepareStatement("INSERT INTO bank(user,amount) VALUES(?,?);");
+				pstmt = con.prepareStatement("INSERT INTO bank(amount,user) VALUES(?,?);");
 
 			pstmt.setInt(1, coins);
 			pstmt.setString(2, user);
