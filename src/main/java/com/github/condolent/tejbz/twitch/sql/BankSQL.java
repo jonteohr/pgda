@@ -3,7 +3,9 @@ package com.github.condolent.tejbz.twitch.sql;
 import com.github.condolent.tejbz.credentials.Credentials;
 
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class BankSQL {
 
@@ -202,6 +204,82 @@ public class BankSQL {
 
 			return size > 0;
 
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
+
+	public static List<String> getAllUsers() {
+		ResultSet result;
+		try {
+			Class.forName("com.mysql.cj.jdbc.Driver");
+			Connection con = DriverManager.getConnection("jdbc:mysql://" + Credentials.DB_HOST.getValue() + ":3306/" + Credentials.DB_NAME.getValue() + "?serverTimezone=UTC",
+					Credentials.DB_USER.getValue(),
+					Credentials.DB_PASS.getValue());
+
+			PreparedStatement pstmt = con.prepareStatement("SELECT user FROM bank;");
+			result = pstmt.executeQuery();
+
+			List<String> users = new ArrayList<>();
+
+			while (result.next()) {
+				users.add(result.getString(1));
+			}
+
+			result.close();
+			con.close();
+			pstmt.close();
+
+			return users;
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+	public static boolean updateSubscriptionslist(List<String> subbedUsers) {
+		try {
+			Class.forName("com.mysql.cj.jdbc.Driver");
+			Connection con = DriverManager.getConnection("jdbc:mysql://" + Credentials.DB_HOST.getValue() + ":3306/" + Credentials.DB_NAME.getValue() + "?serverTimezone=UTC",
+					Credentials.DB_USER.getValue(),
+					Credentials.DB_PASS.getValue());
+
+			PreparedStatement pstmt;
+			pstmt = con.prepareStatement("UPDATE bank SET sub=1 WHERE user=?;");
+			pstmt.setString(1, subbedUsers.get(0));
+
+			for(int i = 1; i < subbedUsers.size(); i++) {
+				pstmt.clearParameters();
+				pstmt.setString(1, subbedUsers.get(i));
+				pstmt.addBatch();
+			}
+
+			pstmt.executeBatch();
+
+			List<String> all = getAllUsers();
+			List<String> nonSubs = new ArrayList<>();
+			for(String user : all) {
+				if(!subbedUsers.contains(user))
+					nonSubs.add(user);
+			}
+
+			pstmt = con.prepareStatement("UPDATE bank SET sub=0 WHERE user=?;");
+			pstmt.setString(1, nonSubs.get(0));
+
+			for(int i = 1; i < nonSubs.size(); i++) {
+				pstmt.clearParameters();
+				pstmt.setString(1, nonSubs.get(i));
+				pstmt.addBatch();
+			}
+
+			pstmt.executeBatch();
+
+			con.close();
+			pstmt.close();
+
+			return true;
 		} catch (Exception e) {
 			e.printStackTrace();
 			return false;
