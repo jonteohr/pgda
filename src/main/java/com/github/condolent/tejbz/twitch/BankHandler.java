@@ -26,9 +26,9 @@ public class BankHandler {
 		String user = e.getTags().get("display-name");
 
 		if(!args[0].equalsIgnoreCase("!bank")
-		|| !args[0].equalsIgnoreCase("!collect")
-		|| !args[0].equalsIgnoreCase("!roll")
-		|| !args[0].equalsIgnoreCase("!givecoins"))
+		&& !args[0].equalsIgnoreCase("!collect")
+		&& !args[0].equalsIgnoreCase("!roll")
+		&& !args[0].equalsIgnoreCase("!givecoins"))
 			return;
 
 		BankSQL bankSQL = new BankSQL();

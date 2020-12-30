@@ -11,6 +11,7 @@ import com.github.condolent.tejbz.credentials.Identity;
 import com.github.condolent.tejbz.credentials.RefreshToken;
 import com.github.condolent.tejbz.twitch.automessage.AutoMessage;
 import com.github.condolent.tejbz.twitch.giveaway.GiveawayCommand;
+import com.github.condolent.tejbz.twitch.sql.*;
 import com.github.condolent.tejbz.twitch.threads.CoinsTimer;
 import com.github.condolent.tejbz.twitch.threads.CommandTimer;
 import com.github.philippheuer.credentialmanager.domain.OAuth2Credential;
@@ -18,13 +19,9 @@ import com.github.philippheuer.events4j.core.EventManager;
 import com.github.philippheuer.events4j.simple.SimpleEventHandler;
 import com.github.twitch4j.TwitchClient;
 import com.github.twitch4j.TwitchClientBuilder;
+import com.github.twitch4j.common.util.CollectionUtils;
 import com.github.twitch4j.helix.domain.*;
 import com.github.condolent.tejbz.PropertyHandler;
-import com.github.condolent.tejbz.twitch.sql.AutoMessageSQL;
-import com.github.condolent.tejbz.twitch.sql.BlackList;
-import com.github.condolent.tejbz.twitch.sql.CommandSQL;
-import com.github.condolent.tejbz.twitch.sql.SettingsSQL;
-import com.github.condolent.tejbz.twitch.sql.WatchTimeSQL;
 import com.netflix.hystrix.exception.HystrixRuntimeException;
 
 public class Twitch {
@@ -102,6 +99,9 @@ public class Twitch {
 
 		if(getStream("tejbz") != null)
 			isStreamLive = true;
+
+		// basically just for the minecraft server
+		checkBankSubscribers();
 	}
 	
 	/**
@@ -308,5 +308,41 @@ public class Twitch {
 		}
 
 		return false;
+	}
+
+	private static void checkBankSubscribers() {
+		Timer timer = new Timer();
+
+		timer.scheduleAtFixedRate(new TimerTask() {
+			@Override
+			public void run() {
+
+				List<String> bankEntries = BankSQL.getAllUsers();
+				List<String> userIds = new ArrayList<>();
+
+				CollectionUtils.chunked(bankEntries, 100).forEach(list -> {
+					UserList userList = twitchClient.getHelix().getUsers(
+							Identity.getAccessToken(OAuth2),
+							null,
+							list
+					).execute();
+					userList.getUsers().forEach(user -> userIds.add(user.getId()));
+
+				});
+
+				List<String> subbedUsers = new ArrayList<>();
+				CollectionUtils.chunked(userIds, 100).forEach(list -> {
+					SubscriptionList subscriptionList = twitchClient.getHelix().getSubscriptionsByUser(
+							Identity.getAccessToken(OAuth2),
+							"25622462",
+							list
+					).execute();
+
+					subscriptionList.getSubscriptions().forEach(sub -> subbedUsers.add(sub.getUserName()));
+				});
+
+				BankSQL.updateSubscriptionslist(subbedUsers);
+			}
+		}, 5*1000, 120*60*1000);
 	}
 }
