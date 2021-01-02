@@ -11,7 +11,7 @@ import java.util.Random;
 
 public class BankHandler {
 
-	private final int minDaily = 50;
+	private final int minDaily = 500;
 	private final int maxDaily = 1000;
 
 	@EventSubscriber
