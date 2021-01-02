@@ -33,9 +33,8 @@ public class BankHandler {
 
 		BankSQL bankSQL = new BankSQL();
 
-		if(!Twitch.isSubscribed(user)) {
+		if(!Twitch.isSubscribed(user))
 			return;
-		}
 
 		if(args[0].equalsIgnoreCase("!bank")) {
 			int coins = bankSQL.getCoins(user);
@@ -45,6 +44,44 @@ public class BankHandler {
 			return;
 		}
 
+		/*
+			MODERATOR
+			COMMANDS
+		 */
+		if(args[0].equalsIgnoreCase("!givecoins") && Twitch.isModerator(e.getTags())) {
+			if(args.length < 3) {
+				Twitch.sendPm(user, "Correct usage: !givecoins [user] [amount]");
+				return;
+			}
+
+			User target = Twitch.getUser(args[1]);
+			if(target == null) {
+				Twitch.sendPm(user, "Couldn't find user " + args[1]);
+				return;
+			}
+
+			if(!bankSQL.isUserInDatabase(target.getDisplayName())) {
+				Twitch.sendPm(user, target.getDisplayName() + " has never collected any coins. They must have done this at least once!");
+				return;
+			}
+
+			try {
+				int amount = Integer.parseInt(args[2]);
+				bankSQL.incrementCoins(target.getDisplayName(), amount);
+				Twitch.sendPm(user, "You've awarded " + target.getDisplayName() + " " + amount + " PGDA Coins.");
+				Twitch.sendPm(target.getDisplayName(), user + " has awarded you " + amount + " PGDA Coins.");
+				return;
+			} catch(NumberFormatException ex) {
+				Twitch.sendPm(user, args[2] + " is not a valid number.");
+				return;
+			}
+		}
+
+		/*
+			REGULAR
+			COMMANDS
+		 */
+
 		if(!Twitch.isStreamLive) { // Stream must be live
 			Twitch.sendPm(e.getTags().get("display-name"),"Tejbz must be live to manage your PGDA coins, and he is currently offline.");
 			return;
@@ -52,9 +89,16 @@ public class BankHandler {
 
 		if(args[0].equalsIgnoreCase("!collect")) {
 			Calendar current = Calendar.getInstance();
+			current.set(Calendar.HOUR_OF_DAY, 0);
+			current.set(Calendar.MINUTE, 0);
+			current.set(Calendar.SECOND, 0);
+			current.set(Calendar.MILLISECOND, 0);
 			Calendar last = Calendar.getInstance();
 			last.setTime(bankSQL.getLastCollected(user));
-			int lastDate = last.get(Calendar.DAY_OF_MONTH);
+			last.set(Calendar.HOUR_OF_DAY, 0);
+			last.set(Calendar.MINUTE, 0);
+			last.set(Calendar.SECOND, 0);
+			last.set(Calendar.MILLISECOND, 0);
 
 			Random random = new Random();
 			int coins = random.nextInt(maxDaily - minDaily) + minDaily;
@@ -68,7 +112,7 @@ public class BankHandler {
 				return;
 			}
 
-			if(current.get(Calendar.DAY_OF_MONTH) > lastDate) {
+			if(last.compareTo(current) < 0) {
 				if(bankSQL.collectDaily(user, coins)) {
 					Twitch.sendPm(user, "You've collected your daily " + fCoins + " PGDA coins!");
 				}
@@ -128,39 +172,6 @@ public class BankHandler {
 
 			} catch(NumberFormatException ex) {
 				Twitch.chat("@" + user + " Bet amount was not a valid number.");
-				return;
-			}
-		}
-
-		/*
-			MODERATOR
-			COMMANDS
-		 */
-		if(args[0].equalsIgnoreCase("!givecoins") && Twitch.isModerator(e.getTags())) {
-			if(args.length < 3) {
-				Twitch.sendPm(user, "Correct usage: !givecoins [user] [amount]");
-				return;
-			}
-
-			User target = Twitch.getUser(args[1]);
-			if(target == null) {
-				Twitch.sendPm(user, "Couldn't find user " + args[1]);
-				return;
-			}
-
-			if(!bankSQL.isUserInDatabase(target.getDisplayName())) {
-				Twitch.sendPm(user, target.getDisplayName() + " has never collected any coins. They must have done this at least once!");
-				return;
-			}
-
-			try {
-				int amount = Integer.parseInt(args[2]);
-				bankSQL.incrementCoins(target.getDisplayName(), amount);
-				Twitch.sendPm(user, "You've awarded " + target.getDisplayName() + " " + amount + " PGDA Coins.");
-				Twitch.sendPm(target.getDisplayName(), user + " has awarded you " + amount + " PGDA Coins.");
-				return;
-			} catch(NumberFormatException ex) {
-				Twitch.sendPm(user, args[2] + " is not a valid number.");
 				return;
 			}
 		}
