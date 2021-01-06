@@ -28,7 +28,8 @@ public class BankHandler {
 		if(!args[0].equalsIgnoreCase("!bank")
 		&& !args[0].equalsIgnoreCase("!collect")
 		&& !args[0].equalsIgnoreCase("!roll")
-		&& !args[0].equalsIgnoreCase("!givecoins"))
+		&& !args[0].equalsIgnoreCase("!givecoins")
+		&& !args[0].equalsIgnoreCase("!transfer"))
 			return;
 
 		BankSQL bankSQL = new BankSQL();
@@ -82,10 +83,10 @@ public class BankHandler {
 			COMMANDS
 		 */
 
-		if(!Twitch.isStreamLive) { // Stream must be live
-			Twitch.sendPm(e.getTags().get("display-name"),"Tejbz must be live to manage your PGDA coins, and he is currently offline.");
-			return;
-		}
+//		if(!Twitch.isStreamLive) { // Stream must be live
+//			Twitch.sendPm(e.getTags().get("display-name"),"Tejbz must be live to manage your PGDA coins, and he is currently offline.");
+//			return;
+//		}
 
 		if(args[0].equalsIgnoreCase("!collect")) {
 			Calendar current = Calendar.getInstance();
@@ -174,6 +175,41 @@ public class BankHandler {
 				Twitch.chat("@" + user + " Bet amount was not a valid number.");
 				return;
 			}
+		}
+
+		if(args[0].equalsIgnoreCase("!transfer")) {
+			if(args.length < 3) {
+				Twitch.sendPm(user, "Invalid arguments. Need to specify who you want to give coins and how much. Like this: !transfer rlHypr 1337");
+				return;
+			}
+
+			try {
+				User target = Twitch.getUser(args[1]);
+				int amount = Integer.parseInt(args[2]);
+
+				if(target == null) {
+					Twitch.sendPm(user, "Could not find user " + args[1]);
+					return;
+				}
+
+				if(bankSQL.getCoins(user) < amount) {
+					Twitch.sendPm(user, "You don't have " + amount + " coins.");
+					return;
+				}
+
+				if(!bankSQL.incrementCoins(target.getDisplayName(), amount) && bankSQL.decrementCoins(user, amount)) {
+					Twitch.sendPm(user, "Couldn't transfer at the moment. Please try again later!");
+					return;
+				}
+
+				Twitch.sendPm(user, "You've given " + target + " " + amount + " Coins!");
+				Twitch.sendPm(target.getDisplayName(), user + " has given you " + amount + " Coins!");
+
+			} catch(NumberFormatException ex) {
+				Twitch.sendPm(user, args[2] + " is not a valid number.");
+				return;
+			}
+
 		}
 	}
 
