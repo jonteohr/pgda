@@ -89,6 +89,17 @@ public class BankHandler {
 //		}
 
 		if(args[0].equalsIgnoreCase("!collect")) {
+			Random random = new Random();
+			int coins = random.nextInt(maxDaily - minDaily) + minDaily;
+
+			String fCoins = String.format("%,d", coins);
+			if(!bankSQL.isUserInDatabase(user)) {
+				if(bankSQL.collectDaily(user, coins)) {
+					Twitch.sendPm(user, "You've collected your daily " + fCoins + " PGDA coins!");
+				}
+				return;
+			}
+
 			Calendar current = Calendar.getInstance();
 			current.set(Calendar.HOUR_OF_DAY, 0);
 			current.set(Calendar.MINUTE, 0);
@@ -100,11 +111,6 @@ public class BankHandler {
 			last.set(Calendar.MINUTE, 0);
 			last.set(Calendar.SECOND, 0);
 			last.set(Calendar.MILLISECOND, 0);
-
-			Random random = new Random();
-			int coins = random.nextInt(maxDaily - minDaily) + minDaily;
-
-			String fCoins = String.format("%,d", coins);
 
 			if(!bankSQL.isUserInDatabase(user)) {
 				if(bankSQL.collectDaily(user, coins)) {
