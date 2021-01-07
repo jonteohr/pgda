@@ -112,13 +112,6 @@ public class BankHandler {
 			last.set(Calendar.SECOND, 0);
 			last.set(Calendar.MILLISECOND, 0);
 
-			if(!bankSQL.isUserInDatabase(user)) {
-				if(bankSQL.collectDaily(user, coins)) {
-					Twitch.sendPm(user, "You've collected your daily " + fCoins + " PGDA coins!");
-				}
-				return;
-			}
-
 			if(last.compareTo(current) < 0) {
 				if(bankSQL.collectDaily(user, coins)) {
 					Twitch.sendPm(user, "You've collected your daily " + fCoins + " PGDA coins!");
