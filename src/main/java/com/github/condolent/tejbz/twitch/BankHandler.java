@@ -5,6 +5,7 @@ import com.github.condolent.tejbz.twitch.threads.CoinsTimer;
 import com.github.philippheuer.events4j.simple.domain.EventSubscriber;
 import com.github.twitch4j.chat.events.channel.IRCMessageEvent;
 import com.github.twitch4j.helix.domain.User;
+import com.github.twitch4j.pubsub.events.RewardRedeemedEvent;
 
 import java.util.Calendar;
 import java.util.Random;
@@ -209,6 +210,21 @@ public class BankHandler {
 				return;
 			}
 
+		}
+	}
+
+	@EventSubscriber
+	public void onRewardRedeemed(RewardRedeemedEvent e) {
+		String rewardId = e.getRedemption().getReward().getId();
+		String user = e.getRedemption().getUser().getDisplayName();
+		long cost = e.getRedemption().getReward().getCost();
+		int coins = 1500;
+
+		if(rewardId.equalsIgnoreCase("dcaa91f7-7e6f-4746-b081-9e444a010def")) {
+			BankSQL bankSQL = new BankSQL();
+
+			bankSQL.incrementCoins(user, coins);
+			Twitch.sendPm(user, "You just bought " + String.format("%,d", coins) + " PGDA Coins for " + String.format("%,d", cost) + " Channel Points.");
 		}
 	}
 
