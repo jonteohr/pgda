@@ -218,7 +218,7 @@ public class BankHandler {
 		String rewardId = e.getRedemption().getReward().getId();
 		String user = e.getRedemption().getUser().getDisplayName();
 		long cost = e.getRedemption().getReward().getCost();
-		int coins = 1500;
+		int coins = 2000;
 
 		if(rewardId.equalsIgnoreCase("dcaa91f7-7e6f-4746-b081-9e444a010def")) {
 			BankSQL bankSQL = new BankSQL();
