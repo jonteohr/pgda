@@ -19,6 +19,7 @@ import com.github.twitch4j.pubsub.events.RewardRedeemedEvent;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.TextChannel;
 
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.regex.Matcher;
@@ -348,7 +349,35 @@ public class TwitchHandler {
 					Twitch.chat("Couldn't start the ad.");
 				return;
 			}
-			
+
+			if(args[0].equalsIgnoreCase("!dropcoins")) {
+				int coins;
+
+				if(args.length < 2) {
+					coins = 100;
+				} else {
+					try {
+						coins = Integer.parseInt(args[1]);
+					} catch (NumberFormatException ex) {
+						ex.printStackTrace();
+						Twitch.chat(user + " " + args[1] + " is not a valid number.");
+						return;
+					}
+				}
+
+				BankSQL bankSQL = new BankSQL();
+
+				List<String> chatters = Twitch.twitchClient.getMessagingInterface().getChatters("tejbz").execute().getAllViewers();
+				int finalCoins = coins;
+				chatters.forEach(chatter -> {
+					if(bankSQL.isUserInDatabase(chatter))
+						bankSQL.incrementCoins(chatter, finalCoins);
+				});
+
+				Twitch.chatMe(user + " Just awarded all viewers with " + coins + " PGDA Coins!");
+				return;
+			}
+
 			if(args[0].equalsIgnoreCase("!help")) {
 				Twitch.chat("@" + user + " Bot formatting and commands are available over at http://pgda.xyz/commands");
 				return;
