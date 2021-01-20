@@ -101,7 +101,7 @@ public class TwitchHandler {
 			if(clipTime > 0) // Clip cooldown
 				return;
 			
-			CreateClipList clipData = Twitch.twitchClient.getHelix().createClip(Identity.getAccessToken(Twitch.OAuth2), "25622462", false).execute();
+			CreateClipList clipData = Twitch.twitchClient.getHelix().createClip(Identity.getAccessToken(Twitch.getOAuth2()), "25622462", false).execute();
 			String clipLink = "https://clips.twitch.tv/" + clipData.getData().get(0).getId();
 			Twitch.chat("@" + user + " " + clipLink);
 
