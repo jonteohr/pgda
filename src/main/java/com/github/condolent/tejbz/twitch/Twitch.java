@@ -29,7 +29,7 @@ public class Twitch {
 
 	public static boolean isStreamLive = false;
 
-	public static OAuth2Credential OAuth2;
+	private static OAuth2Credential OAuth2;
 	public static OAuth2Credential chatBot = new OAuth2Credential("twitch", Credentials.BOTOAUTH.getValue());
 	
 	public static Map<String, String> commands = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
@@ -42,11 +42,10 @@ public class Twitch {
 		eventManager.setDefaultEventHandler(SimpleEventHandler.class);
 
 		// Refresh the OAuth2 token!
-		Identity identity = new Identity();
 		PropertyHandler props = new PropertyHandler();
 
 		OAuth2 = new OAuth2Credential("twitch", props.getPropertyValue("access_token"), props.getPropertyValue("refresh_token"), null, null, null, null);
-		OAuth2 = identity.refreshToken(OAuth2);
+		OAuth2 = Identity.refreshToken(OAuth2);
 
 		// Build the twitch instance
 		twitchClient = TwitchClientBuilder.builder()
@@ -67,9 +66,10 @@ public class Twitch {
 		eventManager.getEventHandler(SimpleEventHandler.class).registerListener(new TwitchHandler());
 		eventManager.getEventHandler(SimpleEventHandler.class).registerListener(new GiveawayCommand());
 		eventManager.getEventHandler(SimpleEventHandler.class).registerListener(new BankHandler());
+		eventManager.getEventHandler(SimpleEventHandler.class).registerListener(new Predictions());
 		
 		twitchClient.getClientHelper().enableStreamEventListener("tejbz");
-		twitchClient.getPubSub().listenForChannelPointsRedemptionEvents(identity.getCredential(OAuth2), "25622462");
+		twitchClient.getPubSub().listenForChannelPointsRedemptionEvents(Identity.getCredential(OAuth2), "25622462");
 
 		System.out.println("Twitch4J Finished loading and initiated.");
 		System.out.println("Tejbz user ID: " + getUser("tejbz").getId());
@@ -125,7 +125,6 @@ public class Twitch {
 	 */
 	public static Stream getStream(String channel) {
 		StreamList streamlist = twitchClient.getHelix().getStreams(Identity.getAccessToken(OAuth2), null, null, 1, null, null, null, Arrays.asList(channel)).execute();
-//		StreamList streamlist = twitchClient.getHelix().getStreams(Identity.getAccessToken(OAuth2), null, null, 1, null, null, null, null, Arrays.asList(channel)).execute();
 
 		if(streamlist.getStreams().size() < 1)
 			return null;
@@ -226,7 +225,7 @@ public class Twitch {
 	}
 	
 	public static String getWatchTime(String user) {
-		int total = (WatchTimer.watchList.containsKey(user.toLowerCase()) ? WatchTimer.watchList.get(user.toLowerCase()) : 0);
+		int total = (WatchTimer.watchList.getOrDefault(user.toLowerCase(), 0));
 		int d = total / 24 / 60;
 		int h = total / 60 % 24;
 		int m = total % 60;
@@ -320,6 +319,9 @@ public class Twitch {
 				List<String> bankEntries = BankSQL.getAllUsers();
 				List<String> userIds = new ArrayList<>();
 
+				if(bankEntries == null)
+					return;
+
 				CollectionUtils.chunked(bankEntries, 100).forEach(list -> {
 					UserList userList = twitchClient.getHelix().getUsers(
 							Identity.getAccessToken(OAuth2),
@@ -344,5 +346,13 @@ public class Twitch {
 				BankSQL.updateSubscriptionslist(subbedUsers);
 			}
 		}, 5*1000, 120*60*1000);
+	}
+
+	public static OAuth2Credential getOAuth2() {
+		return OAuth2;
+	}
+
+	public static void setOAuth2(OAuth2Credential oauth) {
+		OAuth2 = oauth;
 	}
 }

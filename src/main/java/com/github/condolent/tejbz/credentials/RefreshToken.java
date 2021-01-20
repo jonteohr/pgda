@@ -9,11 +9,12 @@ public class RefreshToken extends TimerTask {
 
 	@Override
 	public void run() {
-		Identity identity = new Identity();
-		
-		OAuth2Credential newOauth = identity.refreshToken(Twitch.OAuth2);
-		
-		Twitch.OAuth2 = identity.getCredential(newOauth);
+		OAuth2Credential oldOauth = Twitch.getOAuth2();
+
+		Twitch.setOAuth2(Identity.getCredential(Identity.refreshToken(oldOauth)));
+		System.out.println("###########");
+		System.out.println("Refreshed token!");
+		System.out.println("###########");
 	}
 
 }
