@@ -172,8 +172,12 @@ public class BankHandler {
 				return;
 
 			} catch(NumberFormatException ex) {
-				Twitch.chat("@" + user + " Bet amount was not a valid number.");
-				return;
+				if(!args[1].equalsIgnoreCase("all")) {
+					Twitch.chat("@" + user + " Bet amount was not a valid number.");
+					return;
+				}
+
+				// TODO allin
 			}
 		}
 
