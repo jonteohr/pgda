@@ -528,7 +528,7 @@ public class TwitchHandler {
 		}
 
 		// Giveaway Reward
-		if(rewardId.equalsIgnoreCase("2d4c2121-f036-4521-8060-9af23f53dadf")) {
+		if(rewardId.equalsIgnoreCase("2018bc02-7604-44a8-a9ad-4b578bfdbe3c")) {
 			Giveaway giveaway = new Giveaway();
 
 			if(giveaway.addToGiveawayList(e.getRedemption().getUser().getDisplayName(), Twitch.isSubscribed(e.getRedemption().getUser().getDisplayName())))
