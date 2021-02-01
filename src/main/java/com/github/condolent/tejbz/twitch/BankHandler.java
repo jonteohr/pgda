@@ -104,6 +104,8 @@ public class BankHandler {
 			if(bankSQL.getLastCollected(user) == null) {
 				if(bankSQL.collectDaily(user, coins))
 					Twitch.sendPm(user, "You've collected your daily " + fCoins + " PGDA coins!");
+
+				return;
 			}
 
 			Calendar current = Calendar.getInstance();
