@@ -101,6 +101,13 @@ public class BankHandler {
 				return;
 			}
 
+			if(bankSQL.getLastCollected(user) == null) {
+				if(bankSQL.collectDaily(user, coins))
+					Twitch.sendPm(user, "You've collected your daily " + fCoins + " PGDA coins!");
+
+				return;
+			}
+
 			Calendar current = Calendar.getInstance();
 			current.set(Calendar.HOUR_OF_DAY, 0);
 			current.set(Calendar.MINUTE, 0);
@@ -172,8 +179,12 @@ public class BankHandler {
 				return;
 
 			} catch(NumberFormatException ex) {
-				Twitch.chat("@" + user + " Bet amount was not a valid number.");
-				return;
+				if(!args[1].equalsIgnoreCase("all")) {
+					Twitch.chat("@" + user + " Bet amount was not a valid number.");
+					return;
+				}
+
+				// TODO allin
 			}
 		}
 
