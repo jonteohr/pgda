@@ -137,38 +137,8 @@ public class BankHandler {
 
 			try {
 				int bet = Integer.parseInt(args[1]);
-				if(bet < 100) {
-					Twitch.sendPm(user, "Bet needs to be at least 100 PGDA coins.");
-					return;
-				}
-				if(bankSQL.getCoins(user) < bet) {
-					Twitch.chat("@" + user + " You don't have enough PGDA coins.");
-					return;
-				}
 
-				int returned = (int) Math.round(bet*0.75);
-
-				Random random = new Random();
-				double r = random.nextDouble();
-				boolean result;
-
-				result = r <= 0.5;
-
-				if(result) {
-					if(bankSQL.incrementCoins(user, returned)) {
-						CoinsTimer.activateCooldown(user);
-						Twitch.chatMe(user + " Rolled and won " + (returned + bet) + " PGDA Coins, with a profit of " + returned + ".");
-					} else
-						Twitch.chat("@" + user + " Error while rolling. Please try again!");
-
-				} else {
-					if(bankSQL.decrementCoins(user, bet)) {
-						CoinsTimer.activateCooldown(user);
-						Twitch.chat("@" + user + " You lost " + bet + " PGDA Coins.");
-					} else
-						Twitch.chat("@" + user + " Error while rolling. Please try again!");
-
-				}
+				rollCoins(user, bet);
 				return;
 
 			} catch(NumberFormatException ex) {
@@ -177,7 +147,8 @@ public class BankHandler {
 					return;
 				}
 
-				// TODO allin
+				rollCoins(user, bankSQL.getCoins(user));
+				return;
 			}
 		}
 
@@ -250,6 +221,43 @@ public class BankHandler {
 
 		if(bankSQL.incrementCoins(user, coins))
 			Twitch.sendPm(user, "You've received " + coins + " PGDA Coins for re-subbing!");
+	}
+
+	private void rollCoins(String user, int bet) {
+		BankSQL bankSQL = new BankSQL();
+
+		if(bet < 100) {
+			Twitch.sendPm(user, "Bet needs to be at least 100 PGDA coins.");
+			return;
+		}
+		if(bankSQL.getCoins(user) < bet) {
+			Twitch.chat("@" + user + " You don't have enough PGDA coins.");
+			return;
+		}
+
+		int returned = (int) Math.round(bet*0.75);
+
+		Random random = new Random();
+		double r = random.nextDouble();
+		boolean result;
+
+		result = r <= 0.5;
+
+		if(result) {
+			if(bankSQL.incrementCoins(user, returned)) {
+				CoinsTimer.activateCooldown(user);
+				Twitch.chatMe(user + " Rolled and won " + (returned + bet) + " PGDA Coins, with a profit of " + returned + ".");
+			} else
+				Twitch.chat("@" + user + " Error while rolling. Please try again!");
+
+		} else {
+			if(bankSQL.decrementCoins(user, bet)) {
+				CoinsTimer.activateCooldown(user);
+				Twitch.chat("@" + user + " You lost " + bet + " PGDA Coins.");
+			} else
+				Twitch.chat("@" + user + " Error while rolling. Please try again!");
+
+		}
 	}
 
 }
