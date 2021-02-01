@@ -1,9 +1,7 @@
 package com.github.condolent.tejbz.discord.listener.commands;
 
 import com.github.condolent.tejbz.App;
-import com.github.condolent.tejbz.mcping.MinecraftPing;
-import com.github.condolent.tejbz.mcping.MinecraftPingOptions;
-import com.github.condolent.tejbz.mcping.MinecraftPingReply;
+import com.github.condolent.tejbz.mcping.MinecraftStats;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -22,12 +20,12 @@ public class Server extends ListenerAdapter {
 		embedBuilder.setColor(App.color);
 
 		try {
-			MinecraftPingReply data = new MinecraftPing().getPing(new MinecraftPingOptions().setHostname("mc.pgda.xyz").setPort(25565));
+			MinecraftStats data = new MinecraftStats();
 
 			embedBuilder.setDescription("Current information on the minecraft server.");
 
-			embedBuilder.addField("Players", data.getPlayers().getOnline() + "/" + data.getPlayers().getMax(), true);
-			embedBuilder.addField("Version", data.getVersion().getName() + "", true);
+			embedBuilder.addField("Players", data.getCurrentPlayers() + "/" + data.getMaxPlayers(), true);
+			embedBuilder.addField("Version", data.getVersion() + "", true);
 			embedBuilder.addField("Adress", "mc.pgda.xyz", false);
 		} catch (IOException ioException) {
 			embedBuilder.setDescription("Server is currently offline.");
