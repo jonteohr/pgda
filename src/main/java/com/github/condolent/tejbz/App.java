@@ -5,6 +5,7 @@
 package com.github.condolent.tejbz;
 
 import com.github.condolent.tejbz.credentials.Credentials;
+import com.github.condolent.tejbz.discord.listener.commands.Server;
 import com.github.condolent.tejbz.discord.listener.VideoAnnouncer;
 import com.github.condolent.tejbz.discord.listener.commands.*;
 import com.github.condolent.tejbz.discord.listener.commands.admin.*;
@@ -57,6 +58,7 @@ public class App {
 		jda.addEventListener(new Help());
 		jda.addEventListener(new Join());
 		jda.addEventListener(new Github());
+		jda.addEventListener(new Server());
 		
 		// Admin commands
 		jda.addEventListener(new SetVideo());
