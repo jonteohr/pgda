@@ -79,6 +79,16 @@ public class App {
 			e.printStackTrace();
 		}
 	}
+
+	public static void onDisable() {
+		System.out.println("Saving data...");
+		/*
+			TODO Fill with saves and such.
+		 */
+
+		System.out.println("Stopping the bot...");
+//		System.exit(1);
+	}
 	
 	public static String formatDuration(Duration duration) {
 	    long seconds = duration.getSeconds();
