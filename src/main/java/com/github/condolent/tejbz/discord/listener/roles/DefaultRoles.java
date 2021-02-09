@@ -33,6 +33,7 @@ public class DefaultRoles {
 		System.out.println("Starting too loop and giving roles");
 		System.out.println("Going through " + guild.getMembers().size() + " members.");
 		guild.getMembers().forEach(member -> {
+			System.out.println("Checking " + member.getUser().getAsTag());
 			// Dividers
 			if(!member.getRoles().contains(DefaultRoles.supporterDivider))
 				guild.addRoleToMember(member, DefaultRoles.supporterDivider).complete();
