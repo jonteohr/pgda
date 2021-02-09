@@ -10,6 +10,7 @@ import com.github.condolent.tejbz.discord.listener.VideoAnnouncer;
 import com.github.condolent.tejbz.discord.listener.commands.*;
 import com.github.condolent.tejbz.discord.listener.commands.admin.*;
 import com.github.condolent.tejbz.discord.listener.guild.GuildReady;
+import com.github.condolent.tejbz.discord.listener.guild.NewMember;
 import com.github.condolent.tejbz.web.DashboardSocket;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
@@ -48,6 +49,7 @@ public class App {
 				.build();
 		
 		jda.addEventListener(new GuildReady());
+		jda.addEventListener(new NewMember());
 		
 		// Commands
 		jda.addEventListener(new Social());
