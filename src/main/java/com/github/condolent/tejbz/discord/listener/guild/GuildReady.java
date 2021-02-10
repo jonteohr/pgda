@@ -54,7 +54,7 @@ public class GuildReady extends ListenerAdapter {
 		WaitingQueue.supporterRoom = e.getGuild().getVoiceChannelById("808995441428660254");
 		WaitingQueue.queueMessage = WaitingQueue.infoChannel.retrieveMessageById("809003922072535051").complete();
 
-		WaitingQueue.editQueue();
+		WaitingQueue.updateQueue();
 	}
 
 	/**

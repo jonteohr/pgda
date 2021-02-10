@@ -6,12 +6,17 @@ import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.VoiceChannel;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class WaitingQueue {
 	public static VoiceChannel waitingRoom;
 	public static VoiceChannel supporterRoom;
 	public static TextChannel infoChannel;
 
 	public static Message queueMessage;
+
+	public static Map<String, String> queue = new HashMap<>();
 
 	public static void editInfo() {
 		EmbedBuilder eb = new EmbedBuilder();
@@ -27,13 +32,16 @@ public class WaitingQueue {
 //		infoChannel.sendMessage(eb.build()).queue();
 	}
 
-	public static void editQueue() {
+	public static void updateQueue() {
 		EmbedBuilder eb = new EmbedBuilder();
 		eb.setColor(App.color);
 		eb.setTitle("__Queue__");
 		eb.setDescription("Please be patient and wait until one of the spots in the voice call opens up.\n\n" +
-				"**Supporter waiting queue**\n\n" +
-				"**Waiting queue**");
+				"**Supporter waiting queue**\n" +
+						(queue.size() < 1 ? "_Queue is empty!_" : "in the works..") +
+				"\n\n**Waiting queue**\n" +
+				(queue.size() < 1 ? "_Queue is empty!_" : "in the works..") +
+				"");
 
 		queueMessage.editMessage(eb.build()).queue();
 	}
