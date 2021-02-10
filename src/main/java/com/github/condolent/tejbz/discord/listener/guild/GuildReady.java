@@ -3,6 +3,7 @@ package com.github.condolent.tejbz.discord.listener.guild;
 import com.github.condolent.tejbz.App;
 import com.github.condolent.tejbz.discord.listener.commands.Join;
 import com.github.condolent.tejbz.discord.listener.roles.DefaultRoles;
+import com.github.condolent.tejbz.discord.queue.WaitingQueue;
 import com.github.condolent.tejbz.twitch.Twitch;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.events.guild.GuildReadyEvent;
@@ -46,6 +47,14 @@ public class GuildReady extends ListenerAdapter {
 
 //		RoleRequest.editmsg();
 //		RoleRequest.sendMsg();
+
+		// Waiting queue
+		WaitingQueue.infoChannel = e.getGuild().getTextChannelById("808994821866782740");
+		WaitingQueue.waitingRoom = e.getGuild().getVoiceChannelById("808994976431997030");
+		WaitingQueue.supporterRoom = e.getGuild().getVoiceChannelById("808995441428660254");
+		WaitingQueue.queueMessage = WaitingQueue.infoChannel.retrieveMessageById("809003922072535051").complete();
+
+		WaitingQueue.editQueue();
 	}
 
 	/**
