@@ -21,11 +21,10 @@ public class AutomaticRoles {
 			return;
 
 		Guild guild = memberRole.getGuild();
-
 		OffsetDateTime current = OffsetDateTime.now();
 
+		System.out.println("Checking member status...");
 		guild.getMembers().forEach(member -> {
-			System.out.println("Checking " + member.getUser().getAsTag());
 			int daysDiff = new Long(ChronoUnit.DAYS.between(member.getTimeJoined(), current)).intValue();
 			int monthsDiff = new Long(ChronoUnit.MONTHS.between(member.getTimeJoined(), current)).intValue();
 
@@ -37,17 +36,17 @@ public class AutomaticRoles {
 				guild.addRoleToMember(member, veteranDivider).complete();
 				guild.removeRoleFromMember(member, memberRole).complete();
 				guild.removeRoleFromMember(member, DefaultRoles.fresh).complete();
-			}
 
-			// Set veteran tiers
-			if(monthsDiff >= 3 && monthsDiff < 6)
-				guild.addRoleToMember(member, threeMonths).complete();
-			else if(monthsDiff >= 6 && monthsDiff < 12) {
-				guild.addRoleToMember(member, sixMonths).complete();
-				guild.removeRoleFromMember(member, threeMonths).complete();
-			} else if(monthsDiff >= 12) {
-				guild.addRoleToMember(member, twelveMonths).complete();
-				guild.removeRoleFromMember(member, sixMonths).complete();
+				// Set veteran tiers
+				if(monthsDiff >= 3 && monthsDiff < 6) {
+					guild.addRoleToMember(member, threeMonths).complete();
+				} else if(monthsDiff >= 6 && monthsDiff < 12) {
+					guild.addRoleToMember(member, sixMonths).complete();
+					guild.removeRoleFromMember(member, threeMonths).complete();
+				} else if(monthsDiff >= 12) {
+					guild.addRoleToMember(member, twelveMonths).complete();
+					guild.removeRoleFromMember(member, sixMonths).complete();
+				}
 			}
 		});
 
