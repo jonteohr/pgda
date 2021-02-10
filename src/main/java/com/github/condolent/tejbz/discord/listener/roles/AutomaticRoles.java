@@ -36,6 +36,7 @@ public class AutomaticRoles {
 				guild.addRoleToMember(member, veteranRole).complete();
 				guild.addRoleToMember(member, veteranDivider).complete();
 				guild.removeRoleFromMember(member, memberRole).complete();
+				guild.removeRoleFromMember(member, DefaultRoles.fresh).complete();
 			}
 
 			// Set veteran tiers
