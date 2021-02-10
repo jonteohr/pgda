@@ -3,6 +3,7 @@ package com.github.condolent.tejbz.discord.listener.guild;
 import com.github.condolent.tejbz.App;
 import com.github.condolent.tejbz.discord.listener.commands.Join;
 import com.github.condolent.tejbz.discord.listener.roles.DefaultRoles;
+import com.github.condolent.tejbz.discord.listener.roles.MemberRole;
 import com.github.condolent.tejbz.twitch.Twitch;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.events.guild.GuildReadyEvent;
@@ -46,6 +47,10 @@ public class GuildReady extends ListenerAdapter {
 
 //		RoleRequest.editmsg();
 //		RoleRequest.sendMsg();
+
+		// Member roles
+		MemberRole.memberRole = e.getGuild().getRoleById("809140872733786152");
+		MemberRole.checkMemberStatus();
 	}
 
 	/**
