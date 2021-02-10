@@ -5,6 +5,7 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
 
 public class DefaultRoles {
+
 	public static Role fresh;
 
 	// Dividers
@@ -29,7 +30,7 @@ public class DefaultRoles {
 		guild.addRoleToMember(member, otherDivider).complete();
 	}
 
-	public static void rewardCurrentMembers(Guild guild) {
+	public static void loopAllMembers(Guild guild) {
 		System.out.println("Starting too loop and giving roles");
 		System.out.println("Going through " + guild.getMembers().size() + " members.");
 		guild.getMembers().forEach(member -> {

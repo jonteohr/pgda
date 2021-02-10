@@ -1,16 +1,15 @@
 package com.github.condolent.tejbz.discord.listener.guild;
 
-import java.util.Timer;
-import java.util.TimerTask;
-
 import com.github.condolent.tejbz.App;
 import com.github.condolent.tejbz.discord.listener.commands.Join;
 import com.github.condolent.tejbz.discord.listener.roles.DefaultRoles;
 import com.github.condolent.tejbz.twitch.Twitch;
-
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.events.guild.GuildReadyEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class GuildReady extends ListenerAdapter {
 
@@ -31,7 +30,22 @@ public class GuildReady extends ListenerAdapter {
 		// Set the role variables
 		DefaultRoles.setRoles(e.getGuild());
 
-		DefaultRoles.rewardCurrentMembers(e.getGuild());
+		// Role requests
+		RoleRequest.roleRequest = e.getGuild().getTextChannelById("808783594020798514");
+		RoleRequest.regionRequestMessage = RoleRequest.roleRequest.retrieveMessageById("808948588360106044").complete();
+		RoleRequest.gameRequestMessage = RoleRequest.roleRequest.retrieveMessageById("808960926992039937").complete();
+		RoleRequest.roleEU = e.getGuild().getRoleById("808958342277496842");
+		RoleRequest.roleNA = e.getGuild().getRoleById("808958423618027530");
+		RoleRequest.roleSA = e.getGuild().getRoleById("808958497784987688");
+		RoleRequest.roleAS = e.getGuild().getRoleById("808958387696959550");
+		RoleRequest.gameMc = e.getGuild().getRoleById("808964559292858378");
+		RoleRequest.gameMisc = e.getGuild().getRoleById("808964641312210964");
+		RoleRequest.gameRl = e.getGuild().getRoleById("808964875396841483");
+		RoleRequest.gameSot = e.getGuild().getRoleById("808964794341916674");
+		RoleRequest.gameWz = e.getGuild().getRoleById("808964608579731485");
+
+//		RoleRequest.editmsg();
+//		RoleRequest.sendMsg();
 	}
 
 	/**

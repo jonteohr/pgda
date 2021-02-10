@@ -11,6 +11,7 @@ import com.github.condolent.tejbz.discord.listener.commands.*;
 import com.github.condolent.tejbz.discord.listener.commands.admin.*;
 import com.github.condolent.tejbz.discord.listener.guild.GuildReady;
 import com.github.condolent.tejbz.discord.listener.guild.NewMember;
+import com.github.condolent.tejbz.discord.listener.guild.RoleRequest;
 import com.github.condolent.tejbz.web.DashboardSocket;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
@@ -50,6 +51,7 @@ public class App {
 		
 		jda.addEventListener(new GuildReady());
 		jda.addEventListener(new NewMember());
+		jda.addEventListener(new RoleRequest());
 		
 		// Commands
 		jda.addEventListener(new Social());
