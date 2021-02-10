@@ -25,6 +25,9 @@ public class AutomaticRoles {
 
 		System.out.println("Checking member status...");
 		guild.getMembers().forEach(member -> {
+			if(member.getUser().isBot())
+				return;
+
 			int daysDiff = new Long(ChronoUnit.DAYS.between(member.getTimeJoined(), current)).intValue();
 			int monthsDiff = new Long(ChronoUnit.MONTHS.between(member.getTimeJoined(), current)).intValue();
 
