@@ -32,7 +32,7 @@ public class AutomaticRoles {
 			if((daysDiff >= 7 && monthsDiff < 3) && !member.getRoles().contains(memberRole)) {
 				guild.addRoleToMember(member, memberRole).complete();
 				guild.removeRoleFromMember(member, DefaultRoles.fresh).complete();
-			} else if((monthsDiff >= 3 && monthsDiff < 6) && !member.getRoles().contains(veteranRole)) {
+			} else if(monthsDiff >= 3 && !member.getRoles().contains(veteranRole)) {
 				guild.addRoleToMember(member, veteranRole).complete();
 				guild.addRoleToMember(member, veteranDivider).complete();
 				guild.removeRoleFromMember(member, memberRole).complete();
