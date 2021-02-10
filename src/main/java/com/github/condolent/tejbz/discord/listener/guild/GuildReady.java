@@ -2,8 +2,8 @@ package com.github.condolent.tejbz.discord.listener.guild;
 
 import com.github.condolent.tejbz.App;
 import com.github.condolent.tejbz.discord.listener.commands.Join;
+import com.github.condolent.tejbz.discord.listener.roles.AutomaticRoles;
 import com.github.condolent.tejbz.discord.listener.roles.DefaultRoles;
-import com.github.condolent.tejbz.discord.listener.roles.MemberRole;
 import com.github.condolent.tejbz.twitch.Twitch;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.events.guild.GuildReadyEvent;
@@ -49,8 +49,13 @@ public class GuildReady extends ListenerAdapter {
 //		RoleRequest.sendMsg();
 
 		// Member roles
-		MemberRole.memberRole = e.getGuild().getRoleById("809140872733786152");
-		MemberRole.checkMemberStatus();
+		AutomaticRoles.memberRole = e.getGuild().getRoleById("809140872733786152");
+		AutomaticRoles.veteranRole = e.getGuild().getRoleById("809148853751250945");
+		AutomaticRoles.veteranDivider = e.getGuild().getRoleById("809148571650752614");
+		AutomaticRoles.threeMonths = e.getGuild().getRoleById("809148668183052309");
+		AutomaticRoles.sixMonths = e.getGuild().getRoleById("809148919786242058");
+		AutomaticRoles.twelveMonths = e.getGuild().getRoleById("809148966780403793");
+		AutomaticRoles.checkMemberStatus();
 	}
 
 	/**
