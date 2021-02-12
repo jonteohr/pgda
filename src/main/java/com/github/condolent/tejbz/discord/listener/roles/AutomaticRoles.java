@@ -10,9 +10,9 @@ public class AutomaticRoles {
 	public static Role memberRole;
 	public static Role veteranRole;
 	public static Role veteranDivider;
-	public static Role threeMonths;
-	public static Role sixMonths;
 	public static Role twelveMonths;
+	public static Role eighteenMonths;
+	public static Role twentyfourMonths;
 
 	private static boolean checkedToday = false;
 
@@ -31,24 +31,23 @@ public class AutomaticRoles {
 			int daysDiff = new Long(ChronoUnit.DAYS.between(member.getTimeJoined(), current)).intValue();
 			int monthsDiff = new Long(ChronoUnit.MONTHS.between(member.getTimeJoined(), current)).intValue();
 
-			if((daysDiff >= 7 && monthsDiff < 3) && !member.getRoles().contains(memberRole)) {
+			if((daysDiff >= 7 && monthsDiff < 12) && !member.getRoles().contains(memberRole)) {
 				guild.addRoleToMember(member, memberRole).complete();
 				guild.removeRoleFromMember(member, DefaultRoles.fresh).complete();
-			} else if(monthsDiff >= 3 && !member.getRoles().contains(veteranRole)) {
+			} else if(monthsDiff >= 12 && !member.getRoles().contains(veteranRole)) {
 				guild.addRoleToMember(member, veteranRole).complete();
 				guild.addRoleToMember(member, veteranDivider).complete();
 				guild.removeRoleFromMember(member, memberRole).complete();
-				guild.removeRoleFromMember(member, DefaultRoles.fresh).complete();
 
 				// Set veteran tiers
-				if(monthsDiff >= 3 && monthsDiff < 6) {
-					guild.addRoleToMember(member, threeMonths).complete();
-				} else if(monthsDiff >= 6 && monthsDiff < 12) {
-					guild.addRoleToMember(member, sixMonths).complete();
-					guild.removeRoleFromMember(member, threeMonths).complete();
-				} else if(monthsDiff >= 12) {
+				if(monthsDiff >= 12 && monthsDiff < 18) {
 					guild.addRoleToMember(member, twelveMonths).complete();
-					guild.removeRoleFromMember(member, sixMonths).complete();
+				} else if(monthsDiff >= 18 && monthsDiff < 24) {
+					guild.addRoleToMember(member, eighteenMonths).complete();
+					guild.removeRoleFromMember(member, twelveMonths).complete();
+				} else if(monthsDiff >= 24) {
+					guild.addRoleToMember(member, twentyfourMonths).complete();
+					guild.removeRoleFromMember(member, eighteenMonths).complete();
 				}
 			}
 		});
