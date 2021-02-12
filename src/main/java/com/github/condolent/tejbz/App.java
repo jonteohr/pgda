@@ -5,6 +5,7 @@
 package com.github.condolent.tejbz;
 
 import com.github.condolent.tejbz.credentials.Credentials;
+import com.github.condolent.tejbz.discord.listener.BotMessage;
 import com.github.condolent.tejbz.discord.listener.commands.Server;
 import com.github.condolent.tejbz.discord.listener.VideoAnnouncer;
 import com.github.condolent.tejbz.discord.listener.commands.*;
@@ -54,6 +55,7 @@ public class App {
 		jda.addEventListener(new NewMember());
 		jda.addEventListener(new RoleRequest());
 		jda.addEventListener(new SupporterRole());
+		jda.addEventListener(new BotMessage());
 		
 		// Commands
 		jda.addEventListener(new Social());
