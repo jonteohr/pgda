@@ -63,6 +63,8 @@ public class RoleRequest extends ListenerAdapter {
 		Region roles
 	 */
 	public void onMessageReactionAdd(MessageReactionAddEvent e) {
+		if(!e.getChannel().getId().equalsIgnoreCase("808783594020798514"))
+			return;
 		Guild guild = e.getGuild();
 		Member member = e.getMember();
 		String code = e.getReactionEmote().getAsReactionCode();
