@@ -24,8 +24,8 @@ public class DefaultRoles {
 
 	public static void grantDefaultRoles(Member member, Guild guild) {
 		guild.addRoleToMember(member, fresh).complete();
-		guild.addRoleToMember(member, supporterDivider).complete();
-		guild.addRoleToMember(member, tierDivider).complete();
+//		guild.addRoleToMember(member, supporterDivider).complete();
+//		guild.addRoleToMember(member, tierDivider).complete();
 		guild.addRoleToMember(member, gameDivider).complete();
 		guild.addRoleToMember(member, otherDivider).complete();
 	}
@@ -35,25 +35,29 @@ public class DefaultRoles {
 		System.out.println("Going through " + guild.getMembers().size() + " members.");
 		guild.getMembers().forEach(member -> {
 			System.out.println("Checking " + member.getUser().getAsTag());
+			if(!member.getRoles().contains(guild.getRoleById("808968542007197707"))) {
+				guild.removeRoleFromMember(member, supporterDivider).complete();
+				guild.removeRoleFromMember(member, tierDivider).complete();
+			}
 			// Dividers
-			if(!member.getRoles().contains(DefaultRoles.supporterDivider))
-				guild.addRoleToMember(member, DefaultRoles.supporterDivider).complete();
-			if(!member.getRoles().contains(DefaultRoles.gameDivider))
-				guild.addRoleToMember(member, DefaultRoles.gameDivider).complete();
-			if(!member.getRoles().contains(DefaultRoles.otherDivider))
-				guild.addRoleToMember(member, DefaultRoles.otherDivider).complete();
-			if(!member.getRoles().contains(DefaultRoles.tierDivider))
-				guild.addRoleToMember(member, DefaultRoles.tierDivider).complete();
-
-			if(
-					!member.getRoles().contains(DefaultRoles.fresh) &&
-							!member.getRoles().contains(guild.getRoleById("124204787628507136")) && // Admin role
-							!member.getRoles().contains(guild.getRoleById("280730890945036288")) && // PGDA Boys role
-							!member.getRoles().contains(guild.getRoleById("124204592941629442")) && // Twitch Moderator role
-							!member.getRoles().contains(guild.getRoleById("794945930809966642")) && // MC Staff role
-							!member.getRoles().contains(guild.getRoleById("319560778267230209")) // Team role
-			)
-				guild.addRoleToMember(member, DefaultRoles.fresh).complete();
+//			if(!member.getRoles().contains(DefaultRoles.supporterDivider))
+//				guild.addRoleToMember(member, DefaultRoles.supporterDivider).complete();
+//			if(!member.getRoles().contains(DefaultRoles.gameDivider))
+//				guild.addRoleToMember(member, DefaultRoles.gameDivider).complete();
+//			if(!member.getRoles().contains(DefaultRoles.otherDivider))
+//				guild.addRoleToMember(member, DefaultRoles.otherDivider).complete();
+//			if(!member.getRoles().contains(DefaultRoles.tierDivider))
+//				guild.addRoleToMember(member, DefaultRoles.tierDivider).complete();
+//
+//			if(
+//					!member.getRoles().contains(DefaultRoles.fresh) &&
+//							!member.getRoles().contains(guild.getRoleById("124204787628507136")) && // Admin role
+//							!member.getRoles().contains(guild.getRoleById("280730890945036288")) && // PGDA Boys role
+//							!member.getRoles().contains(guild.getRoleById("124204592941629442")) && // Twitch Moderator role
+//							!member.getRoles().contains(guild.getRoleById("794945930809966642")) && // MC Staff role
+//							!member.getRoles().contains(guild.getRoleById("319560778267230209")) // Team role
+//			)
+//				guild.addRoleToMember(member, DefaultRoles.fresh).complete();
 		});
 
 		System.out.println("Loop finished! All setup");
