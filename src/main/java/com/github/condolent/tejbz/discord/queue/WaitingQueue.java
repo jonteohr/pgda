@@ -48,7 +48,7 @@ public class WaitingQueue {
 		for(int i = 0; i < priorityQueue.size(); i++) {
 			prio.append(
 				(i + 1) + ". " + guild.getMemberById(priorityQueue.get(i)).getAsMention() +
-				(priorityExpires.containsKey(priorityQueue.get(i)) ? " (Expires in < 2 minutes)" : "") +
+				(priorityExpires.containsKey(priorityQueue.get(i)) ? " (Expires in < " + priorityExpires.get(priorityQueue.get(i)) + " minutes)" : "") +
 				"\n"
 			);
 		}
@@ -61,7 +61,7 @@ public class WaitingQueue {
 		for(int i = 0; i < queue.size(); i++) {
 			regular.append(
 				(i + 1 + priorityQueue.size()) + ". " + guild.getMemberById(queue.get(i)).getAsMention() +
-				(expires.containsKey(queue.get(i)) ? " (Expires in < 2 minutes)" : "") +
+				(expires.containsKey(queue.get(i)) ? " (Expires in < " + expires.get(queue.get(i)) + " minutes)" : "") +
 				"\n"
 			);
 		}
