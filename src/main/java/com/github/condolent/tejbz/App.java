@@ -5,7 +5,6 @@
 package com.github.condolent.tejbz;
 
 import com.github.condolent.tejbz.credentials.Credentials;
-import com.github.condolent.tejbz.discord.listener.commands.Server;
 import com.github.condolent.tejbz.discord.listener.VideoAnnouncer;
 import com.github.condolent.tejbz.discord.listener.commands.*;
 import com.github.condolent.tejbz.discord.listener.commands.admin.*;
@@ -13,8 +12,7 @@ import com.github.condolent.tejbz.discord.listener.guild.GuildReady;
 import com.github.condolent.tejbz.discord.listener.guild.NewMember;
 import com.github.condolent.tejbz.discord.listener.guild.RoleRequest;
 import com.github.condolent.tejbz.discord.listener.roles.SupporterRole;
-import com.github.condolent.tejbz.discord.queue.QueueJoin;
-import com.github.condolent.tejbz.discord.queue.QueueLeave;
+import com.github.condolent.tejbz.discord.queue.ChannelEvent;
 import com.github.condolent.tejbz.web.DashboardSocket;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
@@ -56,8 +54,7 @@ public class App {
 		jda.addEventListener(new NewMember());
 		jda.addEventListener(new RoleRequest());
 		jda.addEventListener(new SupporterRole());
-		jda.addEventListener(new QueueJoin());
-		jda.addEventListener(new QueueLeave());
+		jda.addEventListener(new ChannelEvent());
 		
 		// Commands
 		jda.addEventListener(new Social());
