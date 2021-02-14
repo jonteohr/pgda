@@ -82,8 +82,6 @@ public class WaitingQueue {
 		timer.scheduleAtFixedRate(new TimerTask() {
 			@Override
 			public void run() {
-				System.out.println("Prio expires: " + priorityExpires);
-				System.out.println("Regular expires: " + expires);
 				if(priorityQueue.size() < 1 && queue.size() < 1)
 					return;
 
