@@ -6,6 +6,7 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
 public class NewMember extends ListenerAdapter {
 	public void onGuildMemberJoin(GuildMemberJoinEvent e) {
-		DefaultRoles.grantDefaultRoles(e.getMember(), e.getGuild());
+		if(!e.getMember().getUser().isBot())
+			DefaultRoles.grantDefaultRoles(e.getMember(), e.getGuild());
 	}
 }
