@@ -27,7 +27,7 @@ public class WaitingQueue {
 		eb.setTitle("__How do I join the community games?__");
 		eb.setDescription("**Joining the queue**\n" +
 				"Join the [⏰ Waiting Room](https://discord.gg/npjV9zEdS3) if you are a viewer.\n" +
-				"Join the [⚡ Supporter Waiting Room](https://discord.gg/Zegejjf7Ce/) if you are a supporter/subscriber.\n\n" +
+				"Join the [⚡ Supporter Waiting Room](https://discord.gg/Zegejjf7Ce) if you are a supporter/subscriber.\n\n" +
 				"**Getting in the voice call**\n" +
 				"__After__ you've joined the queue, you will be given a queue number below. Supporters are given priority access.\n" +
 				"Once a spot opens up, a " + infoChannel.getGuild().getRoleById("809110470602260555").getAsMention() + " will move the first person in queue to the voice call.");
