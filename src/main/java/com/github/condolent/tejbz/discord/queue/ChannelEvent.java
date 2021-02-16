@@ -9,6 +9,9 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 public class ChannelEvent extends ListenerAdapter {
 
 	public void onGuildVoiceJoin(GuildVoiceJoinEvent e) {
+		if(e.getMember().getUser().isBot())
+			return;
+
 		// Supporter
 		if(e.getChannelJoined().getId().equalsIgnoreCase("808995441428660254"))
 			joinQueue(e.getGuild(), e.getMember().getId(), true);
@@ -19,6 +22,9 @@ public class ChannelEvent extends ListenerAdapter {
 	}
 
 	public void onGuildVoiceLeave(GuildVoiceLeaveEvent e) {
+		if(e.getMember().getUser().isBot())
+			return;
+
 		// Supporter
 		if(e.getChannelLeft().getId().equalsIgnoreCase("808995441428660254"))
 			leaveQueue(e.getGuild(), e.getMember().getId(), true);
@@ -29,6 +35,9 @@ public class ChannelEvent extends ListenerAdapter {
 	}
 
 	public void onGuildVoiceMove(GuildVoiceMoveEvent e) {
+		if(e.getMember().getUser().isBot())
+			return;
+
 		String userId = e.getMember().getId();
 
 		if(e.getChannelJoined().getId().equalsIgnoreCase("808995441428660254"))
