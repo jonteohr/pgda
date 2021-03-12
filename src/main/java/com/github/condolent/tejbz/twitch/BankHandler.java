@@ -31,7 +31,8 @@ public class BankHandler {
 		&& !args[0].equalsIgnoreCase("!collect")
 		&& !args[0].equalsIgnoreCase("!roll")
 		&& !args[0].equalsIgnoreCase("!givecoins")
-		&& !args[0].equalsIgnoreCase("!transfer"))
+		&& !args[0].equalsIgnoreCase("!transfer")
+		&& !args[0].equalsIgnoreCase("!dropcoins"))
 			return;
 
 		BankSQL bankSQL = new BankSQL();
@@ -100,7 +101,7 @@ public class BankHandler {
 						bankSQL.incrementCoins(chatter, finalCoins);
 				});
 
-				Twitch.chatMe(user + " Just awarded all viewers with " + coins + " PGDA Coins!");
+				Twitch.chatMe("tejbzBeer " + user + " Just awarded all viewers with " + coins + " PGDA Coins! tejbzPog");
 				return;
 			}
 		}
