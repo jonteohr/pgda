@@ -8,6 +8,7 @@ import com.github.twitch4j.helix.domain.User;
 import com.github.twitch4j.pubsub.events.RewardRedeemedEvent;
 
 import java.util.Calendar;
+import java.util.List;
 import java.util.Random;
 
 public class BankHandler {
@@ -35,9 +36,6 @@ public class BankHandler {
 
 		BankSQL bankSQL = new BankSQL();
 
-		if(!Twitch.isSubscribed(user))
-			return;
-
 		if(args[0].equalsIgnoreCase("!bank")) {
 			int coins = bankSQL.getCoins(user);
 			String fCoins = String.format("%,d", coins);
@@ -50,31 +48,59 @@ public class BankHandler {
 			MODERATOR
 			COMMANDS
 		 */
-		if(args[0].equalsIgnoreCase("!givecoins") && Twitch.isModerator(e.getTags())) {
-			if(args.length < 3) {
-				Twitch.sendPm(user, "Correct usage: !givecoins [user] [amount]");
-				return;
+		if(Twitch.isModerator(e.getTags())) {
+			if(args[0].equalsIgnoreCase("!givecoins")) {
+				if(args.length < 3) {
+					Twitch.sendPm(user, "Correct usage: !givecoins [user] [amount]");
+					return;
+				}
+
+				User target = Twitch.getUser(args[1]);
+				if(target == null) {
+					Twitch.sendPm(user, "Couldn't find user " + args[1]);
+					return;
+				}
+
+				if(!bankSQL.isUserInDatabase(target.getDisplayName())) {
+					Twitch.sendPm(user, target.getDisplayName() + " has never collected any coins. They must have done this at least once!");
+					return;
+				}
+
+				try {
+					int amount = Integer.parseInt(args[2]);
+					bankSQL.incrementCoins(target.getDisplayName(), amount);
+					Twitch.sendPm(user, "You've awarded " + target.getDisplayName() + " " + amount + " PGDA Coins.");
+					Twitch.sendPm(target.getDisplayName(), user + " has awarded you " + amount + " PGDA Coins.");
+					return;
+				} catch(NumberFormatException ex) {
+					Twitch.sendPm(user, args[2] + " is not a valid number.");
+					return;
+				}
 			}
 
-			User target = Twitch.getUser(args[1]);
-			if(target == null) {
-				Twitch.sendPm(user, "Couldn't find user " + args[1]);
-				return;
-			}
+			if(args[0].equalsIgnoreCase("!dropcoins") && (user.equalsIgnoreCase("tejbz") || user.equalsIgnoreCase("rlhypr"))) {
+				int coins;
 
-			if(!bankSQL.isUserInDatabase(target.getDisplayName())) {
-				Twitch.sendPm(user, target.getDisplayName() + " has never collected any coins. They must have done this at least once!");
-				return;
-			}
+				if(args.length < 2) {
+					coins = 100;
+				} else {
+					try {
+						coins = Integer.parseInt(args[1]);
+					} catch (NumberFormatException ex) {
+						ex.printStackTrace();
+						Twitch.chat(user + " " + args[1] + " is not a valid number.");
+						return;
+					}
+				}
 
-			try {
-				int amount = Integer.parseInt(args[2]);
-				bankSQL.incrementCoins(target.getDisplayName(), amount);
-				Twitch.sendPm(user, "You've awarded " + target.getDisplayName() + " " + amount + " PGDA Coins.");
-				Twitch.sendPm(target.getDisplayName(), user + " has awarded you " + amount + " PGDA Coins.");
-				return;
-			} catch(NumberFormatException ex) {
-				Twitch.sendPm(user, args[2] + " is not a valid number.");
+				List<String> chatters = Twitch.twitchClient.getMessagingInterface().getChatters("tejbz").execute().getAllViewers();
+				int finalCoins = coins;
+				chatters.forEach(chatter -> {
+					if(bankSQL.isUserInDatabase(chatter))
+						bankSQL.incrementCoins(chatter, finalCoins);
+				});
+
+				Twitch.chatMe(user + " Just awarded all viewers with " + coins + " PGDA Coins!");
 				return;
 			}
 		}
@@ -83,11 +109,6 @@ public class BankHandler {
 			REGULAR
 			COMMANDS
 		 */
-
-//		if(!Twitch.isStreamLive) { // Stream must be live
-//			Twitch.sendPm(e.getTags().get("display-name"),"Tejbz must be live to manage your PGDA coins, and he is currently offline.");
-//			return;
-//		}
 
 		if(args[0].equalsIgnoreCase("!collect")) {
 			Random random = new Random();
