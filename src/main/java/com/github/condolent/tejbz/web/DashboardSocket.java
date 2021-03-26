@@ -77,7 +77,7 @@ public class DashboardSocket {
 				return;
 
 			Twitch.chatMe("THE WINNER OF THE GIVEAWAY IS @" + args[1] + "! Congratulations!");
-			Giveaway.resetList();
+//			Giveaway.resetList();
 			return;
 		}
 	}
