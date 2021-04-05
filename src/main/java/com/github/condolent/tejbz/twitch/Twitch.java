@@ -26,11 +26,13 @@ import com.netflix.hystrix.exception.HystrixRuntimeException;
 
 public class Twitch {
 	public static TwitchClient twitchClient;
+	public static TwitchClient hyprTwitchClient;
 
 	public static boolean isStreamLive = false;
 
 	private static OAuth2Credential OAuth2;
 	public static OAuth2Credential chatBot = new OAuth2Credential("twitch", Credentials.BOTOAUTH.getValue());
+	public static OAuth2Credential hyprOauth = new OAuth2Credential("twitch", Credentials.HYPROAUTH.getValue());
 	
 	public static Map<String, String> commands = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
 	public static Map<String, String> specCommands = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
@@ -57,6 +59,14 @@ public class Twitch {
 				.withEventManager(eventManager)
 				.withDefaultAuthToken(chatBot)
 				.withChatAccount(chatBot)
+				.build();
+
+		// Build hypr twitch instance
+		hyprTwitchClient = TwitchClientBuilder.builder()
+				.withChatAccount(hyprOauth)
+				.withEnableChat(true)
+				.withEnableKraken(false)
+				.withEnableHelix(false)
 				.build();
 		
 		Timer timer = new Timer();
@@ -285,6 +295,14 @@ public class Twitch {
 	 */
 	public static void chatMe(String msg) {
 		Twitch.twitchClient.getChat().sendMessage("tejbz", "/me " + msg);
+	}
+
+	/**
+	 * Sends a colored message from rlHypr
+	 * @param msg
+	 */
+	public static void chatHyprMe(String msg) {
+		Twitch.hyprTwitchClient.getChat().sendMessage("tejbz", "/me " + msg);
 	}
 
 	/**
