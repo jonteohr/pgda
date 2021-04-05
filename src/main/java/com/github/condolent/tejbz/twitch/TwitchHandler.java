@@ -449,10 +449,10 @@ public class TwitchHandler {
 		 */
 		if(Twitch.twitchClient.getChat().isChannelJoined("tejbz"))
 			if(months <= 1) {
-				Twitch.chatMe("tejbzWave Welcome to the squad, @" + user + " tejbzLove");
+				Twitch.chatHyprMe("tejbzWave Welcome to the squad, @" + user + " tejbzLove");
 				BankHandler.onFirstSub(user);
 			} else {
-				Twitch.chatMe("pepeD Welcome back @" + user + " pepeD");
+				Twitch.chatHyprMe("pepeD Welcome back @" + user + " pepeD");
 				BankHandler.onResub(user);
 			}
 		
@@ -477,7 +477,7 @@ public class TwitchHandler {
 		
 		// Twitch Chat
 		if(Twitch.twitchClient.getChat().isChannelJoined("tejbz"))
-			Twitch.chatMe("tejbzPog Thanks for the gifted, @" + user + " tejbzLove");
+			Twitch.chatHyprMe("tejbzPog Thanks for the gifted, @" + user + " tejbzLove");
 		
 		TextChannel channel = App.twitchLog;
 		
