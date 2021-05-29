@@ -11,6 +11,8 @@ import com.github.condolent.tejbz.discord.listener.commands.*;
 import com.github.condolent.tejbz.discord.listener.commands.admin.*;
 import com.github.condolent.tejbz.discord.listener.guild.GuildReady;
 import com.github.condolent.tejbz.web.DashboardSocket;
+import jcurses.system.InputChar;
+import jcurses.system.Toolkit;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Guild;
@@ -23,6 +25,7 @@ import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Scanner;
 
 public class App {
 	public static JDA jda;
@@ -78,6 +81,9 @@ public class App {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+
+		InputChar ch = Toolkit.readCharacter();
+		System.out.println(ch.getCode());
 	}
 
 	public static void onDisable() {
