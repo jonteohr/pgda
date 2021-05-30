@@ -28,6 +28,7 @@ import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Scanner;
 
 public class App {
 	public static JDA jda;
@@ -47,6 +48,11 @@ public class App {
 	public static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	
 	public static void main(String[] args) throws LoginException {
+
+		// Read console input
+		InputReader thread = new InputReader();
+		thread.start();
+
 		Collection<GatewayIntent> intents = new ArrayList<>(GatewayIntent.getIntents(GatewayIntent.ALL_INTENTS));
 		
 		jda = JDABuilder.create(Credentials.TOKEN.getValue(), intents)
@@ -89,6 +95,16 @@ public class App {
 			e.printStackTrace();
 		}
 	}
+
+	public static void onDisable() {
+		System.out.println("Saving data...");
+		/*
+			TODO Fill with saves and such.
+		 */
+
+		System.out.println("Stopping the bot...");
+		System.exit(1);
+	}
 	
 	public static String formatDuration(Duration duration) {
 	    long seconds = duration.getSeconds();
@@ -101,4 +117,19 @@ public class App {
 	    return seconds < 0 ? "-" + positive : positive;
 	}
 
+}
+
+class InputReader extends Thread {
+
+	@Override
+	public void run() {
+		Scanner in = new Scanner(System.in);
+
+		while(in.hasNext()) {
+			String s = in.nextLine();
+
+			if(s.equalsIgnoreCase("stop"))
+				App.onDisable();
+		}
+	}
 }
