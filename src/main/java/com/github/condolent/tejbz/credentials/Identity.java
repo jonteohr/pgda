@@ -9,9 +9,9 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 
 public class Identity {
-	private static final TwitchIdentityProvider identityProvider = new TwitchIdentityProvider("client_id", "client_secret", "redirect_uri");
+	private static final TwitchIdentityProvider identityProvider = new TwitchIdentityProvider("client_id", "client_secret", "redirect_url");
 	
-	public OAuth2Credential refreshToken(OAuth2Credential credential) {
+	public static OAuth2Credential refreshToken(OAuth2Credential credential) {
 		OAuth2Credential newOauth = identityProvider.refreshCredential(getCredential(credential)).get();
 		
 		PropertyHandler props = new PropertyHandler();
@@ -26,7 +26,7 @@ public class Identity {
 		return newOauth;
 	}
 	
-	public OAuth2Credential getCredential(OAuth2Credential credential) {
+	public static OAuth2Credential getCredential(OAuth2Credential credential) {
 		return identityProvider.getAdditionalCredentialInformation(credential).get();
 	}
 	
@@ -37,7 +37,7 @@ public class Identity {
 		return oauth.getAccessToken();
 	}
 
-	private boolean saveOAuth(String access, String refresh) {
+	private static boolean saveOAuth(String access, String refresh) {
 		try {
 			Class.forName("com.mysql.cj.jdbc.Driver");
 			Connection con = DriverManager.getConnection("jdbc:mysql://" + Credentials.DB_HOST.getValue() + ":3306/" + Credentials.DB_NAME.getValue() + "?serverTimezone=UTC",
