@@ -11,8 +11,6 @@ import com.github.condolent.tejbz.discord.listener.commands.*;
 import com.github.condolent.tejbz.discord.listener.commands.admin.*;
 import com.github.condolent.tejbz.discord.listener.guild.GuildReady;
 import com.github.condolent.tejbz.web.DashboardSocket;
-import jcurses.system.InputChar;
-import jcurses.system.Toolkit;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Guild;
@@ -45,6 +43,11 @@ public class App {
 	public static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	
 	public static void main(String[] args) throws LoginException {
+
+		// Read console input
+		InputReader thread = new InputReader();
+		thread.start();
+
 		Collection<GatewayIntent> intents = new ArrayList<>(GatewayIntent.getIntents(GatewayIntent.ALL_INTENTS));
 		
 		jda = JDABuilder.create(Credentials.TOKEN.getValue(), intents)
@@ -81,9 +84,6 @@ public class App {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-
-		InputChar ch = Toolkit.readCharacter();
-		System.out.println(ch.getCode());
 	}
 
 	public static void onDisable() {
@@ -93,7 +93,7 @@ public class App {
 		 */
 
 		System.out.println("Stopping the bot...");
-//		System.exit(1);
+		System.exit(1);
 	}
 	
 	public static String formatDuration(Duration duration) {
@@ -107,4 +107,19 @@ public class App {
 	    return seconds < 0 ? "-" + positive : positive;
 	}
 
+}
+
+class InputReader extends Thread {
+
+	@Override
+	public void run() {
+		Scanner in = new Scanner(System.in);
+
+		while(in.hasNext()) {
+			String s = in.nextLine();
+
+			if(s.equalsIgnoreCase("stop"))
+				App.onDisable();
+		}
+	}
 }
