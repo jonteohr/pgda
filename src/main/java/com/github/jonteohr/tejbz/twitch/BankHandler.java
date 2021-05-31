@@ -275,14 +275,14 @@ public class BankHandler {
 		if(result) {
 			if(bankSQL.incrementCoins(user, returned)) {
 				CoinsTimer.activateCooldown(user);
-				Twitch.chatMe(user + " Rolled and won " + (returned + bet) + " PGDA Coins, with a profit of " + returned + ".");
+				Twitch.chatMe(user + " Rolled and won " + (returned + bet) + " PGDA Coins, with a profit of " + returned + ". New total: " + bankSQL.getCoins(user) + " PGDA Coins.");
 			} else
 				Twitch.chat("@" + user + " Error while rolling. Please try again!");
 
 		} else {
 			if(bankSQL.decrementCoins(user, bet)) {
 				CoinsTimer.activateCooldown(user);
-				Twitch.chat("@" + user + " You lost " + bet + " PGDA Coins.");
+				Twitch.chat("@" + user + " You lost " + bet + " PGDA Coins. New total: " + bankSQL.getCoins(user) + " PGDA Coins.");
 			} else
 				Twitch.chat("@" + user + " Error while rolling. Please try again!");
 
