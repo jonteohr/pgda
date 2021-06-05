@@ -101,10 +101,8 @@ public class App {
 	public static void onDisable() {
 		System.out.println("***** SAVING DATA *****");
 
-		System.out.println("Refreshing credentials..");
-		OAuth2Credential oauth = Identity.refreshToken(Twitch.getOAuth2());
-		System.out.println("Saving new credentials..");
-		Identity.saveOAuth(oauth.getAccessToken(), oauth.getRefreshToken());
+		System.out.println("Refreshing and saving credentials..");
+		Identity.refreshToken(Twitch.getOAuth2());
 
 		System.out.println("***** STOPPING BOT *****");
 		System.exit(1);
