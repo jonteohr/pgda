@@ -5,6 +5,7 @@
 package com.github.jonteohr.tejbz;
 
 import com.github.jonteohr.tejbz.credentials.Credentials;
+import com.github.jonteohr.tejbz.credentials.Identity;
 import com.github.jonteohr.tejbz.discord.listener.BotMessage;
 import com.github.jonteohr.tejbz.discord.listener.commands.*;
 import com.github.jonteohr.tejbz.discord.listener.VideoAnnouncer;
@@ -14,7 +15,9 @@ import com.github.jonteohr.tejbz.discord.listener.guild.NewMember;
 import com.github.jonteohr.tejbz.discord.listener.guild.RoleRequest;
 import com.github.jonteohr.tejbz.discord.listener.roles.SupporterRole;
 import com.github.jonteohr.tejbz.discord.queue.ChannelEvent;
+import com.github.jonteohr.tejbz.twitch.Twitch;
 import com.github.jonteohr.tejbz.web.DashboardSocket;
+import com.github.philippheuer.credentialmanager.domain.OAuth2Credential;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Guild;
@@ -96,12 +99,14 @@ public class App {
 	}
 
 	public static void onDisable() {
-		System.out.println("Saving data...");
-		/*
-			TODO Fill with saves and such.
-		 */
+		System.out.println("***** SAVING DATA *****");
 
-		System.out.println("Stopping the bot...");
+		System.out.println("Refreshing credentials..");
+		OAuth2Credential oauth = Identity.refreshToken(Twitch.getOAuth2());
+		System.out.println("Saving new credentials..");
+		Identity.saveOAuth(oauth.getAccessToken(), oauth.getRefreshToken());
+
+		System.out.println("***** STOPPING BOT *****");
 		System.exit(1);
 	}
 	
