@@ -37,11 +37,22 @@ public class DefaultRoles {
 		System.out.println("Starting too loop and giving roles");
 		System.out.println("Going through " + guild.getMembers().size() + " members.");
 		guild.getMembers().forEach(member -> {
+			if(member.getUser().isBot()) // Skip bots
+				return;
+
 			System.out.println("Checking " + member.getUser().getAsTag());
 			if(!member.getRoles().contains(guild.getRoleById("808968542007197707"))) {
 				guild.removeRoleFromMember(member, supporterDivider).complete();
 				guild.removeRoleFromMember(member, tierDivider).complete();
 			}
+
+			// Check supporter roles
+			if(member.getRoles().contains(guild.getRoleById("278439657358753792")) || member.getRoles().contains(guild.getRoleById("640863929039323146"))) {
+				guild.addRoleToMember(member, supporterDivider).complete();
+				guild.addRoleToMember(member, tierDivider).complete();
+				guild.addRoleToMember(member, guild.getRoleById("808968542007197707")).complete();
+			}
+
 			// Dividers
 //			if(!member.getRoles().contains(supporterDivider))
 //				guild.addRoleToMember(member, supporterDivider).complete();

@@ -66,6 +66,8 @@ public class GuildReady extends ListenerAdapter {
 		AutomaticRoles.eighteenMonths = e.getGuild().getRoleById("809148919786242058");
 		AutomaticRoles.twentyfourMonths = e.getGuild().getRoleById("809148966780403793");
 		AutomaticRoles.checkMemberStatus();
+
+//		DefaultRoles.loopAllMembers(e.getGuild());
 	}
 
 	/**
