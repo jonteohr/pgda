@@ -277,6 +277,7 @@ public class Twitch {
 		
 		settings.put("preventLinks", (sql.getSettingValue("preventLinks") == 1));
 		settings.put("allowMe", (sql.getSettingValue("allowMe") == 1));
+		settings.put("allowCaps", (sql.getSettingValue("allowCaps") == 1));
 		settings.put("excemptSubs", (sql.getSettingValue("excemptSubs") == 1));
 		BlackList.blockedPhrases = bList.getBlacklist();
 	}

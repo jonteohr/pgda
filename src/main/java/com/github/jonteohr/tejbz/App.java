@@ -119,6 +119,16 @@ public class App {
 	    return seconds < 0 ? "-" + positive : positive;
 	}
 
+	public static boolean isStringUppercase(String string) {
+		char[] charArray = string.toCharArray();
+
+		for(int i = 0; i < charArray.length; i++)
+			if(!Character.isUpperCase(charArray[i]))
+				return false;
+
+		return true;
+	}
+
 }
 
 class InputReader extends Thread {

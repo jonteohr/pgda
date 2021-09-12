@@ -57,6 +57,7 @@ public class DashboardSocket {
 			Twitch.settings.put("preventLinks", (settingsSql.getSettingValue("preventLinks") == 1));
 			Twitch.settings.put("allowMe", (settingsSql.getSettingValue("allowMe") == 1));
 			Twitch.settings.put("excemptSubs", (settingsSql.getSettingValue("excemptSubs") == 1));
+			Twitch.settings.put("allowCaps", (settingsSql.getSettingValue("allowCaps") == 1));
 			BlackList.blockedPhrases = bList.getBlacklist();
 			
 			System.out.println("Updated local settings");
