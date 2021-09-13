@@ -120,7 +120,16 @@ public class App {
 	}
 
 	public static boolean isStringUppercase(String string) {
-		char[] charArray = string.toCharArray();
+		StringBuffer stringBuffer = new StringBuffer();
+		for(int k = 0; k < string.length(); k++) {
+			if(Character.isSpaceChar(string.charAt(k)))
+				stringBuffer.append(" ");
+			else
+				if(Character.isLetter(string.charAt(k)))
+					stringBuffer.append(string.charAt(k));
+		}
+
+		char[] charArray = stringBuffer.toString().toCharArray();
 
 		for(int i = 0; i < charArray.length; i++)
 			if(!Character.isUpperCase(charArray[i]))
