@@ -119,7 +119,7 @@ public class App {
 	    return seconds < 0 ? "-" + positive : positive;
 	}
 
-	public static boolean isStringUppercase(String string) {
+	public static boolean isStringUppercase(String string, int minLength) {
 		StringBuffer stringBuffer = new StringBuffer();
 		for(int k = 0; k < string.length(); k++) {
 			if(Character.isSpaceChar(string.charAt(k)))
@@ -130,6 +130,9 @@ public class App {
 		}
 
 		char[] charArray = stringBuffer.toString().toCharArray();
+
+		if(charArray.length < minLength)
+			return false;
 
 		for(int i = 0; i < charArray.length; i++)
 			if(!Character.isUpperCase(charArray[i]))

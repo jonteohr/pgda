@@ -66,7 +66,7 @@ public class TwitchHandler {
 
 			// Check if message is all caps
 			if((!Twitch.settings.get("allowCaps")) && !Twitch.isModerator(e.getTags())) {
-				if(App.isStringUppercase(e.getMessage().get())) {
+				if(App.isStringUppercase(e.getMessage().get(), 4)) {
 					Twitch.chat("/timeout " + user + " 3 Wrote in all caps.");
 					Twitch.chat(user + " Feeling a little hectic, are we? Don't use all uppercase...");
 
