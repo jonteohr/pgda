@@ -17,7 +17,6 @@ import com.github.jonteohr.tejbz.discord.listener.roles.SupporterRole;
 import com.github.jonteohr.tejbz.discord.queue.ChannelEvent;
 import com.github.jonteohr.tejbz.twitch.Twitch;
 import com.github.jonteohr.tejbz.web.DashboardSocket;
-import com.github.philippheuer.credentialmanager.domain.OAuth2Credential;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Guild;
@@ -41,6 +40,7 @@ public class App {
 	
 	public static Guild guild;
 	public static TextChannel general;
+	public static TextChannel liveChannel;
 	public static TextChannel twitchLog;
 	public static String logChannelId = "732559129268322375";
 	
@@ -134,8 +134,8 @@ public class App {
 		if(charArray.length < minLength)
 			return false;
 
-		for(int i = 0; i < charArray.length; i++)
-			if(!Character.isUpperCase(charArray[i]))
+		for (char c : charArray)
+			if (!Character.isUpperCase(c))
 				return false;
 
 		return true;

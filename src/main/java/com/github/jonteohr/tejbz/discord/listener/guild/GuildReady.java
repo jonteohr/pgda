@@ -20,6 +20,7 @@ public class GuildReady extends ListenerAdapter {
 
 		App.guild = e.getGuild();
 		App.general = e.getGuild().getTextChannelById("124204242683559938");
+		App.liveChannel = e.getGuild().getTextChannelById("928958141633282088");
 		App.twitchLog = e.getGuild().getTextChannelById("735122823017791578");
 		Join.lobby = App.guild.getVoiceChannelById("124204246815080449");
 		Join.queue = App.guild.getVoiceChannelById("732569438326489139");

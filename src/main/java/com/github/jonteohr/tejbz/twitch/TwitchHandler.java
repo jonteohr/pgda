@@ -66,7 +66,7 @@ public class TwitchHandler {
 
 			// Check if message is all caps
 			if((!Twitch.settings.get("allowCaps")) && !Twitch.isModerator(e.getTags())) {
-				if(App.isStringUppercase(e.getMessage().get(), 4)) {
+				if(App.isStringUppercase(e.getMessage().get(), 10)) {
 					Twitch.chat("/timeout " + user + " 3 Wrote in all caps.");
 					Twitch.chat(user + " Feeling a little hectic, are we? Don't use all uppercase...");
 
@@ -432,8 +432,8 @@ public class TwitchHandler {
 		msg.addField("Title", e.getStream().getTitle(), false);
 		msg.addField("Playing", Twitch.getGameById(e.getStream().getGameId()), false);
 		
-		App.general.sendMessage(App.guild.getPublicRole().getAsMention() + " Tejbz just went live!").queue();
-		App.general.sendMessage(msg.build()).queue();
+		App.liveChannel.sendMessage(App.guild.getPublicRole().getAsMention() + " Tejbz just went live!").queue();
+		App.liveChannel.sendMessage(msg.build()).queue();
 
 		Twitch.chatMe("Tejbz Just went live! You can now collect your daily PGDA Coins with !collect");
 	}
@@ -504,13 +504,15 @@ public class TwitchHandler {
 		String rewardId = e.getRedemption().getReward().getId();
 		String user = e.getRedemption().getUser().getDisplayName();
 
+//		System.out.println(user + " bought reward ID: " + rewardId);
+
 		if(rewardId.equalsIgnoreCase("6b82416f-1197-4e92-b787-486967de076a")) {
 			Twitch.chatMe(user + " WENT ZOOM ZOOM ZOOM");
 			return;
 		}
 
 		// Giveaway Reward
-		if(rewardId.equalsIgnoreCase("2018bc02-7604-44a8-a9ad-4b578bfdbe3c")) {
+		if(rewardId.equalsIgnoreCase("eb4d3dc7-9d54-4ab4-866c-8b2604f472ae")) {
 			Giveaway giveaway = new Giveaway();
 
 			if(giveaway.addToGiveawayList(e.getRedemption().getUser().getDisplayName(), Twitch.isSubscribed(e.getRedemption().getUser().getDisplayName())))
