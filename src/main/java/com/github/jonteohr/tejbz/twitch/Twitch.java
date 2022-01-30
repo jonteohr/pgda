@@ -14,7 +14,6 @@ import com.github.jonteohr.tejbz.twitch.giveaway.GiveawayCommand;
 import com.github.jonteohr.tejbz.twitch.sql.*;
 import com.github.jonteohr.tejbz.twitch.threads.CoinsTimer;
 import com.github.jonteohr.tejbz.twitch.threads.CommandTimer;
-import com.github.jonteohr.tejbz.PropertyHandler;
 import com.github.philippheuer.credentialmanager.domain.OAuth2Credential;
 import com.github.philippheuer.events4j.core.EventManager;
 import com.github.philippheuer.events4j.simple.SimpleEventHandler;
@@ -43,10 +42,7 @@ public class Twitch {
 		eventManager.autoDiscovery();
 		eventManager.setDefaultEventHandler(SimpleEventHandler.class);
 
-		// Refresh the OAuth2 token!
-		PropertyHandler props = new PropertyHandler();
-
-		OAuth2 = new OAuth2Credential("twitch", props.getPropertyValue("access_token"), props.getPropertyValue("refresh_token"), null, null, null, null);
+		OAuth2 = Identity.getLatestCredential();
 		OAuth2 = Identity.refreshToken(OAuth2);
 
 		// Build the twitch instance
@@ -250,9 +246,7 @@ public class Twitch {
 		FollowList reslist = Twitch.twitchClient.getHelix().getFollowers(Identity.getAccessToken(OAuth2), Twitch.getUser(user).getId(), Twitch.getUser("tejbz").getId(), null, 1).execute();
 		
 		Instant followDate = reslist.getFollows().get(0).getFollowedAtInstant();
-//		LocalDateTime followDate = reslist.getFollows().get(0).getFollowedAt();
 		LocalDateTime currentDate = LocalDateTime.now();
-//		LocalDateTime tempDate = LocalDateTime.from(followDate);
 		LocalDateTime tempDate = LocalDateTime.ofInstant(followDate, ZoneOffset.UTC);
 		
 		long years = tempDate.until(currentDate, ChronoUnit.YEARS);

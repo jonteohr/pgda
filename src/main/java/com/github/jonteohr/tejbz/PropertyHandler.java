@@ -17,16 +17,16 @@ public class PropertyHandler {
 	public String getPropertyValue(String key) {
 		try(InputStream inputStream = new FileInputStream("bot.properties")) {
 			Properties prop = new Properties();
-			
+
 			prop.load(inputStream);
-			
+
 			return prop.getProperty(key);
 		} catch(IOException e) {
 			System.out.println(e);
 			return null;
 		}
 	}
-	
+
 	/**
 	 * Sets the value of a key, or creates one.
 	 * @param key a {@link java.lang.String String} key
@@ -36,22 +36,22 @@ public class PropertyHandler {
 	 */
 	public boolean setProperty(String key, String value) {
 		try(InputStream inputStream = new FileInputStream("bot.properties")) {
-			
+
 			Properties prop = new Properties();
-			
+
 			prop.load(inputStream);
-			
+
 			try(OutputStream outputStream = new FileOutputStream("bot.properties")) {
 				prop.setProperty(key, value);
 				prop.store(outputStream, null);
-				
+
 				return true;
 			} catch (IOException e) {
 				System.out.println(e);
 			}
-			
+
 			return true;
-			
+
 		} catch(IOException e) {
 			System.out.println(e);
 			return false;
