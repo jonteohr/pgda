@@ -48,7 +48,7 @@ public class Twitch {
 		// Build the twitch instance
 		twitchClient = TwitchClientBuilder.builder()
 				.withEnableHelix(true)
-				.withEnableKraken(true)
+				.withEnableKraken(false)
 				.withEnableChat(true)
 				.withEnablePubSub(true)
 				.withEnableTMI(true)
@@ -159,10 +159,10 @@ public class Twitch {
 		SubscriptionList subList  = twitchClient.getHelix().getSubscriptionsByUser(Identity.getAccessToken(OAuth2), getUser("tejbz").getId(), Arrays.asList(getUser(user).getId())).execute();
 		return subList.getSubscriptions().size() > 0;
 	}
-	
-	@SuppressWarnings("deprecation")
+
 	public static void setTitle(String title) {
-		twitchClient.getKraken().updateTitle(Identity.getAccessToken(OAuth2), getUser("tejbz").getId(), title).execute();
+		ChannelInformation channelInfo = new ChannelInformation().withTitle(title);
+		twitchClient.getHelix().updateChannelInformation(Identity.getAccessToken(OAuth2), getUser("tejbz").getId(), channelInfo).execute();
 	}
 	
 	public static void setGame(String game) {
