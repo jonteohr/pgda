@@ -1,6 +1,7 @@
 package com.github.jonteohr.tejbz.discord.listener.guild;
 
 import com.github.jonteohr.tejbz.App;
+import com.github.jonteohr.tejbz.discord.ServerStats;
 import com.github.jonteohr.tejbz.discord.listener.commands.Join;
 import com.github.jonteohr.tejbz.discord.listener.roles.AutomaticRoles;
 import com.github.jonteohr.tejbz.discord.listener.roles.DefaultRoles;
@@ -25,6 +26,7 @@ public class GuildReady extends ListenerAdapter {
 		Join.lobby = App.guild.getVoiceChannelById("124204246815080449");
 		Join.queue = App.guild.getVoiceChannelById("732569438326489139");
 		Join.live = App.guild.getVoiceChannelById("280730003484835860");
+		ServerStats.statChannel = App.guild.getVoiceChannelById("941272914886529094");
 
 		setPresence(Twitch.getSubscribers("tejbz"));
 
@@ -69,6 +71,8 @@ public class GuildReady extends ListenerAdapter {
 		AutomaticRoles.checkMemberStatus();
 
 //		DefaultRoles.loopAllMembers(e.getGuild());
+
+		ServerStats.updateMemberCount();
 	}
 
 	/**

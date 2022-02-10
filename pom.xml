@@ -41,12 +41,6 @@
 	    <artifactId>twitch4j</artifactId>
 	    <version>1.8.0</version>
 	</dependency> <!-- ./Twitch4J -->
-	<!-- https://mvnrepository.com/artifact/com.github.philippheuer.events4j/events4j-handler-reactor -->
-<dependency>
-    <groupId>com.github.philippheuer.events4j</groupId>
-    <artifactId>events4j-handler-reactor</artifactId>
-    <version>0.9.9</version>
-</dependency>
 	
 	<dependency>
 	    <groupId>com.squareup.okhttp3</groupId>
