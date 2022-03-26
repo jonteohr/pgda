@@ -4,7 +4,7 @@ import com.github.jonteohr.tejbz.App;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.TextChannel;
-import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
@@ -12,7 +12,7 @@ public class BotMessage extends ListenerAdapter {
 
 	private TextChannel publishChannel;
 
-	public void onGuildMessageReceived(GuildMessageReceivedEvent e) {
+	public void onMessageReceived(MessageReceivedEvent e) {
 		if(!e.getChannel().getId().equalsIgnoreCase("809704199142375474"))
 			return;
 
@@ -34,7 +34,7 @@ public class BotMessage extends ListenerAdapter {
 		eb.setAuthor(e.getAuthor().getName(), null, e.getAuthor().getAvatarUrl());
 		eb.setDescription(message[1]);
 
-		e.getChannel().sendMessage(eb.build()).queue(success -> {
+		e.getChannel().sendMessageEmbeds(eb.build()).queue(success -> {
 			success.addReaction("✅").queue();
 		});
 	}
@@ -51,7 +51,7 @@ public class BotMessage extends ListenerAdapter {
 			return;
 
 		if(e.getReactionEmote().getAsReactionCode().equalsIgnoreCase("✅")) {
-			publishChannel.sendMessage(originalMessage.getEmbeds().get(0)).queue();
+			publishChannel.sendMessageEmbeds(originalMessage.getEmbeds().get(0)).queue();
 			originalMessage.delete().complete();
 		}
 	}

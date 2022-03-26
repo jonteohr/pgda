@@ -3,11 +3,11 @@ package com.github.jonteohr.tejbz.discord.listener.commands;
 import com.github.jonteohr.tejbz.App;
 import com.github.jonteohr.tejbz.twitch.Twitch;
 
-import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
 public class Follow extends ListenerAdapter {
-	public void onGuildMessageReceived(GuildMessageReceivedEvent e) {
+	public void onMessageReceived(MessageReceivedEvent e) {
 		String[] args = e.getMessage().getContentRaw().split("\\s+");
 		
 		if(!args[0].equalsIgnoreCase(App.prefix + "follow"))

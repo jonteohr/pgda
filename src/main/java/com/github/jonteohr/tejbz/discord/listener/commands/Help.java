@@ -5,11 +5,11 @@ import java.util.Random;
 import com.github.jonteohr.tejbz.App;
 
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
 public class Help extends ListenerAdapter {
-	public void onGuildMessageReceived(GuildMessageReceivedEvent e) {
+	public void onMessageReceived(MessageReceivedEvent e) {
 		String[] args = e.getMessage().getContentRaw().split("\\s+");
 		
 		if(!args[0].equalsIgnoreCase(App.prefix + "help"))
@@ -41,6 +41,6 @@ public class Help extends ListenerAdapter {
 				+ "Join the queue for gaming with Tejbz.", true);
 		msg.setFooter("" + motd[rand.nextInt(motd.length)]);
 		
-		e.getChannel().sendMessage(msg.build()).queue();
+		e.getChannel().sendMessageEmbeds(msg.build()).queue();
 	}
 }

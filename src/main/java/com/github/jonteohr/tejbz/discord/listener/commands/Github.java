@@ -3,11 +3,11 @@ package com.github.jonteohr.tejbz.discord.listener.commands;
 import com.github.jonteohr.tejbz.App;
 
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
 public class Github extends ListenerAdapter {
-	public void onGuildMessageReceived(GuildMessageReceivedEvent e) {
+	public void onMessageReceived(MessageReceivedEvent e) {
 		String[] args = e.getMessage().getContentRaw().split("\\s+");
 		
 		if(!args[0].equalsIgnoreCase(App.prefix + "github"))
@@ -19,7 +19,7 @@ public class Github extends ListenerAdapter {
 		msg.setColor(App.color);
 		msg.setDescription("PGDABot is an open sourced Java development project. We're open to contributions from the community!");
 		
-		e.getChannel().sendMessage(msg.build()).queue();
+		e.getChannel().sendMessageEmbeds(msg.build()).queue();
 		return;
 	}
 }

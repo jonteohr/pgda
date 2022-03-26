@@ -5,11 +5,11 @@ import com.github.jonteohr.tejbz.PermissionHandler;
 import com.github.jonteohr.tejbz.PropertyHandler;
 import com.github.jonteohr.tejbz.web.WebLog;
 
-import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
 public class SetVideo extends ListenerAdapter {
-	public void onGuildMessageReceived(GuildMessageReceivedEvent e) {
+	public void onMessageReceived(MessageReceivedEvent e) {
 		PropertyHandler prop = new PropertyHandler();
 		PermissionHandler perm = new PermissionHandler();
 		

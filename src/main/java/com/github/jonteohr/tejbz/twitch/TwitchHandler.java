@@ -119,7 +119,7 @@ public class TwitchHandler {
 			msg.setAuthor(user, "https://twitch.tv/" + user, Twitch.getUser(user).getProfileImageUrl());
 			msg.setDescription("Just clipped Tejbz stream. Check it out!\n" + clipLink);
 			
-			App.twitchLog.sendMessage(msg.build()).queue();
+			App.twitchLog.sendMessageEmbeds(msg.build()).queue();
 			
 			clipTimer();
 			return;
@@ -433,7 +433,7 @@ public class TwitchHandler {
 		msg.addField("Playing", Twitch.getGameById(e.getStream().getGameId()), false);
 		
 		App.liveChannel.sendMessage(App.guild.getPublicRole().getAsMention() + " Tejbz just went live!").queue();
-		App.liveChannel.sendMessage(msg.build()).queue();
+		App.liveChannel.sendMessageEmbeds(msg.build()).queue();
 
 		Twitch.chatMe("Tejbz Just went live! You can now collect your daily PGDA Coins with !collect");
 	}
@@ -476,7 +476,7 @@ public class TwitchHandler {
 		if(streak > 0)
 			msg.addField("Streak", streak + " months", true);
 		
-		App.twitchLog.sendMessage(msg.build()).queue();
+		App.twitchLog.sendMessageEmbeds(msg.build()).queue();
 	}
 	
 	@EventSubscriber
@@ -496,7 +496,7 @@ public class TwitchHandler {
 		msg.setAuthor(user, "https://twitch.tv/" + user, Twitch.getUser(user).getProfileImageUrl());
 		msg.setDescription("Just gifted " + count + " subs to the community! They've gifted a total of " + totalGifted + " subs.");
 		
-		channel.sendMessage(msg.build()).queue();
+		channel.sendMessageEmbeds(msg.build()).queue();
 	}
 
 	@EventSubscriber

@@ -10,14 +10,14 @@ import com.github.jonteohr.tejbz.discord.listener.commands.Video;
 
 import com.github.jonteohr.tejbz.mcping.MinecraftStats;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
 public class VideoAnnouncer extends ListenerAdapter {
 	private static int count = 0;
 	private static final int fire = 30;
 	
-	public void onGuildMessageReceived(GuildMessageReceivedEvent e) {
+	public void onMessageReceived(MessageReceivedEvent e) {
 		if(!e.getGuild().equals(App.guild))
 			return;
 		
@@ -60,7 +60,7 @@ public class VideoAnnouncer extends ListenerAdapter {
 							embedBuilder.setDescription("Server is currently offline.");
 						}
 
-						App.general.sendMessage(embedBuilder.build()).queue();
+						App.general.sendMessageEmbeds(embedBuilder.build()).queue();
 					}
 
 					count = 0;

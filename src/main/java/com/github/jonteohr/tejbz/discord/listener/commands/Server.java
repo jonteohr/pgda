@@ -3,13 +3,13 @@ package com.github.jonteohr.tejbz.discord.listener.commands;
 import com.github.jonteohr.tejbz.App;
 import com.github.jonteohr.tejbz.mcping.MinecraftStats;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
 import java.io.IOException;
 
 public class Server extends ListenerAdapter {
-	public void onGuildMessageReceived(GuildMessageReceivedEvent e) {
+	public void onMessageReceived(MessageReceivedEvent e) {
 		String[] args = e.getMessage().getContentRaw().split("\\s+");
 
 		if(!args[0].equalsIgnoreCase(App.prefix + "server"))
@@ -31,6 +31,6 @@ public class Server extends ListenerAdapter {
 			embedBuilder.setDescription("Server is currently offline.");
 		}
 
-		e.getChannel().sendMessage(embedBuilder.build()).queue();
+		e.getChannel().sendMessageEmbeds(embedBuilder.build()).queue();
 	}
 }

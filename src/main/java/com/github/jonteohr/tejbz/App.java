@@ -4,6 +4,7 @@
 
 package com.github.jonteohr.tejbz;
 
+import com.github.jonteohr.tejbz.discord.listener.SlashCommandListener;
 import com.github.jonteohr.tejbz.credentials.Credentials;
 import com.github.jonteohr.tejbz.credentials.Identity;
 import com.github.jonteohr.tejbz.discord.listener.BotMessage;
@@ -21,7 +22,9 @@ import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.requests.GatewayIntent;
+import net.dv8tion.jda.api.requests.restaction.CommandListUpdateAction;
 
 import javax.security.auth.login.LoginException;
 import java.io.IOException;
@@ -37,6 +40,7 @@ public class App {
 	public static String prefix = "!";
 	public static int color = 0x39A0FE;
 	public static String authorImage = "https://static-cdn.jtvnw.net/jtv_user_pictures/7f35ded7-e1d7-4cb3-9a46-a47e8ff56e3a-profile_image-300x300.png";
+	public static boolean DEV_MODE = false;
 	
 	public static Guild guild;
 	public static TextChannel general;
@@ -56,6 +60,8 @@ public class App {
 		thread.start();
 
 		Collection<GatewayIntent> intents = new ArrayList<>(GatewayIntent.getIntents(GatewayIntent.ALL_INTENTS));
+
+		intents.add(GatewayIntent.GUILD_MESSAGES);
 		
 		jda = JDABuilder.create(Credentials.TOKEN.getValue(), intents)
 				.build();
@@ -66,6 +72,7 @@ public class App {
 		jda.addEventListener(new SupporterRole());
 		jda.addEventListener(new ChannelEvent());
 		jda.addEventListener(new BotMessage());
+		jda.addEventListener(new SlashCommandListener());
 		
 		// Commands
 		jda.addEventListener(new Social());
@@ -87,6 +94,16 @@ public class App {
 		
 		// Misc
 		jda.addEventListener(new VideoAnnouncer());
+
+		if(!DEV_MODE) {
+			CommandListUpdateAction commandListUpdateAction = jda.updateCommands();
+
+			commandListUpdateAction.addCommands(
+					Commands.slash("test", "A test command for admins.")
+			);
+
+			commandListUpdateAction.queue();
+		}
 		
 		VideoAnnouncer.videoTimer();
 		

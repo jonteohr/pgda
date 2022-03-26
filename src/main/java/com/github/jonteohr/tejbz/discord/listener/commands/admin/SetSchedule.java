@@ -8,11 +8,11 @@ import com.github.jonteohr.tejbz.PermissionHandler;
 import com.github.jonteohr.tejbz.PropertyHandler;
 import com.github.jonteohr.tejbz.web.WebLog;
 
-import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
 public class SetSchedule extends ListenerAdapter {
-	public void onGuildMessageReceived(GuildMessageReceivedEvent e) {
+	public void onMessageReceived(MessageReceivedEvent e) {
 		String[] args = e.getMessage().getContentRaw().split("\\s+");
 		
 		if(!args[0].equalsIgnoreCase(App.prefix + "setschedule"))

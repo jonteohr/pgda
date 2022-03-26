@@ -3,11 +3,11 @@ package com.github.jonteohr.tejbz.discord.listener.commands;
 import com.github.jonteohr.tejbz.App;
 
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
 public class Social extends ListenerAdapter {
-	public void onGuildMessageReceived(GuildMessageReceivedEvent e) {
+	public void onMessageReceived(MessageReceivedEvent e) {
 		String[] args = e.getMessage().getContentRaw().split("\\s+");
 		
 		if(!args[0].equalsIgnoreCase(App.prefix + "social"))
@@ -24,6 +24,6 @@ public class Social extends ListenerAdapter {
 		msg.addField("YouTube", "[/tejbztejbz](https://www.youtube.com/c/tejbztejbz)", true);
 		
 		e.getChannel().sendMessage(e.getAuthor().getAsMention()).queue();
-		e.getChannel().sendMessage(msg.build()).queue();
+		e.getChannel().sendMessageEmbeds(msg.build()).queue();
 	}
 }

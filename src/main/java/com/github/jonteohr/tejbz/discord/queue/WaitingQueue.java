@@ -32,7 +32,7 @@ public class WaitingQueue {
 				"__After__ you've joined the queue, you will be given a queue number below. Supporters are given priority access.\n" +
 				"Once a spot opens up, a " + infoChannel.getGuild().getRoleById("809110470602260555").getAsMention() + " will move the first person in queue to the voice call.");
 
-		infoChannel.retrieveMessageById("809002784552779796").complete().editMessage(eb.build()).queue();
+		infoChannel.retrieveMessageById("809002784552779796").complete().editMessageEmbeds(eb.build()).queue();
 	}
 
 	public static void updateQueue(Guild guild) {
@@ -73,7 +73,7 @@ public class WaitingQueue {
 				regular +
 				"");
 
-		queueMessage.editMessage(eb.build()).queue();
+		queueMessage.editMessageEmbeds(eb.build()).queue();
 	}
 
 	public static void expirationTimer() {

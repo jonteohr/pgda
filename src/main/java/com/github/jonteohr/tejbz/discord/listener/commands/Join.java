@@ -10,7 +10,7 @@ import com.github.jonteohr.tejbz.PermissionHandler;
 
 import net.dv8tion.jda.api.entities.VoiceChannel;
 import net.dv8tion.jda.api.events.guild.GuildReadyEvent;
-import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
 public class Join extends ListenerAdapter {
@@ -25,7 +25,7 @@ public class Join extends ListenerAdapter {
 		ticketTimer();
 	}
 	
-	public void onGuildMessageReceived(GuildMessageReceivedEvent e) {
+	public void onMessageReceived(MessageReceivedEvent e) {
 		String[] args = e.getMessage().getContentRaw().split("\\s+");
 		
 		if(!args[0].equalsIgnoreCase(App.prefix + "join"))
@@ -43,7 +43,7 @@ public class Join extends ListenerAdapter {
 			return;
 		}
 		
-		if(!e.getMember().getVoiceState().inVoiceChannel() || !e.getMember().getVoiceState().getChannel().equals(lobby)) {
+		if(!e.getMember().getVoiceState().inAudioChannel() || !e.getMember().getVoiceState().getChannel().equals(lobby)) {
 			e.getChannel().sendMessage(e.getAuthor().getAsMention() + " You must be connected to the Lobby channel while performing this command.").queue();
 			return;
 		}

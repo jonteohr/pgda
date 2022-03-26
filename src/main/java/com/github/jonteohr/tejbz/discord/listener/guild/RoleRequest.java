@@ -31,7 +31,7 @@ public class RoleRequest extends ListenerAdapter {
 		eb.setTitle("__Role Menu: Game Roles__");
 		eb.setDescription("React to one of the emotes below to get the specified role.");
 
-		roleRequest.sendMessage(eb.build()).queue();
+		roleRequest.sendMessageEmbeds(eb.build()).queue();
 	}
 
 	public static void editmsg() {
@@ -46,7 +46,7 @@ public class RoleRequest extends ListenerAdapter {
 		eb.setColor(App.color);
 		eb.setAuthor(null);
 
-		gameRequestMessage.editMessage(eb.build()).queue();
+		gameRequestMessage.editMessageEmbeds(eb.build()).queue();
 
 		react();
 	}

@@ -20,7 +20,7 @@ public class Logging {
 		Date date = new Date();
 		embed.setColor(LogType.getColorFromType(logType));
 		embed.setFooter(App.sdf.format(date));
-		channel.sendMessage(embed.build()).queue();
+		channel.sendMessageEmbeds(embed.build()).queue();
 	}
 	
 	/**
@@ -37,7 +37,7 @@ public class Logging {
 		eb.setDescription(msg);
 		eb.setFooter(App.sdf.format(date));
 		
-		channel.sendMessage(eb.build()).queue();
+		channel.sendMessageEmbeds(eb.build()).queue();
 	}
 	
 	/**
@@ -59,7 +59,7 @@ public class Logging {
 		eb.addField("Reason", reason, false);
 		eb.setFooter(App.sdf.format(date));
 		
-		channel.sendMessage(eb.build()).queue();
+		channel.sendMessageEmbeds(eb.build()).queue();
 	}
 	
 	/**
@@ -79,6 +79,6 @@ public class Logging {
 		eb.addField("Moderator", mod, true);
 		eb.setFooter(App.sdf.format(date));
 		
-		channel.sendMessage(eb.build()).queue();
+		channel.sendMessageEmbeds(eb.build()).queue();
 	}
 }

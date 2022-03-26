@@ -4,11 +4,11 @@ import com.github.jonteohr.tejbz.App;
 import com.github.jonteohr.tejbz.PermissionHandler;
 
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
 public class ModHelp extends ListenerAdapter {
-	public void onGuildMessageReceived(GuildMessageReceivedEvent e) {
+	public void onMessageReceived(MessageReceivedEvent e) {
 		String[] args = e.getMessage().getContentRaw().split("\\s+");
 		
 		if(!args[0].equalsIgnoreCase(App.prefix + "modhelp"))
@@ -39,6 +39,6 @@ public class ModHelp extends ListenerAdapter {
 				+ "Toggles the queue system.\n"
 				+ "Sets the max limit of users in the Live lobby. If there's less people in channel than set amount and joining is enabled then the next person in queue will join.", true);
 		
-		e.getChannel().sendMessage(msg.build()).queue();
+		e.getChannel().sendMessageEmbeds(msg.build()).queue();
 	}
 }

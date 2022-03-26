@@ -3,11 +3,11 @@ package com.github.jonteohr.tejbz.discord.listener.commands.admin;
 import com.github.jonteohr.tejbz.App;
 import com.github.jonteohr.tejbz.PermissionHandler;
 
-import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
 public class StartJoin extends ListenerAdapter {
-	public void onGuildMessageReceived(GuildMessageReceivedEvent e) {
+	public void onMessageReceived(MessageReceivedEvent e) {
 		String[] args = e.getMessage().getContentRaw().split("\\s+");
 		PermissionHandler perms = new PermissionHandler();
 		
