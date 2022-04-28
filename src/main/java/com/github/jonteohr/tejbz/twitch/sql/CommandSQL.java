@@ -24,7 +24,7 @@ public class CommandSQL {
 						Credentials.DB_USER.getValue(),
 						Credentials.DB_PASS.getValue());
 
-			reply = reply.replace("'", "\'");
+			reply = reply.replace("'", "'");
 
 			PreparedStatement pstmt = con.prepareStatement("INSERT INTO commands(cmd,reply) VALUES(?,?);");
 			pstmt.setString(1, cmdName);

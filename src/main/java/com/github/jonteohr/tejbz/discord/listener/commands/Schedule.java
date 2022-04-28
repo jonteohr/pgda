@@ -4,24 +4,19 @@ import com.github.jonteohr.tejbz.App;
 import com.github.jonteohr.tejbz.PropertyHandler;
 
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
-import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.interactions.InteractionHook;
 
-public class Schedule extends ListenerAdapter {
-	public void onMessageReceived(MessageReceivedEvent e) {
-		String[] args = e.getMessage().getContentRaw().split("\\s+");
-		
-		if(!args[0].equalsIgnoreCase(App.prefix + "schedule"))
-			return;
-		
+public class Schedule {
+	public static void sendSchedule(SlashCommandInteractionEvent e, InteractionHook hook) {
 		PropertyHandler prop = new PropertyHandler();
-		
+
 		EmbedBuilder msg = new EmbedBuilder();
 		msg.setAuthor("PGDA", null, App.authorImage);
 		msg.setColor(App.color);
 		msg.setTitle("This weeks schedule");
 		msg.setImage(prop.getPropertyValue("schedule_url"));
-		
-		e.getChannel().sendMessageEmbeds(msg.build()).queue();
+
+		hook.sendMessageEmbeds(msg.build()).queue();
 	}
 }

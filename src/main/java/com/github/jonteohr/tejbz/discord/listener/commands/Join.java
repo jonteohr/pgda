@@ -15,7 +15,7 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
 public class Join extends ListenerAdapter {
 	
-	private static List<String> placement = new ArrayList<String>();
+	private static List<String> placement = new ArrayList<>();
 	
 	public static VoiceChannel lobby;
 	public static VoiceChannel queue; 

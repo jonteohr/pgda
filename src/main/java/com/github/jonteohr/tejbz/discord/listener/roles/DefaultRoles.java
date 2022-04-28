@@ -26,8 +26,6 @@ public class DefaultRoles {
 
 	public static void grantDefaultRoles(Member member, Guild guild) {
 		guild.addRoleToMember(member, fresh).complete();
-//		guild.addRoleToMember(member, supporterDivider).complete();
-//		guild.addRoleToMember(member, tierDivider).complete();
 		guild.addRoleToMember(member, titleDivider).complete();
 		guild.addRoleToMember(member, gameDivider).complete();
 		guild.addRoleToMember(member, otherDivider).complete();
@@ -54,26 +52,12 @@ public class DefaultRoles {
 			}
 
 			// Dividers
-//			if(!member.getRoles().contains(supporterDivider))
-//				guild.addRoleToMember(member, supporterDivider).complete();
 			if(!member.getRoles().contains(gameDivider))
 				guild.addRoleToMember(member, gameDivider).complete();
 			if(!member.getRoles().contains(otherDivider))
 				guild.addRoleToMember(member, otherDivider).complete();
 			if(!member.getRoles().contains(titleDivider))
 				guild.addRoleToMember(member, titleDivider).complete();
-//			if(!member.getRoles().contains(tierDivider))
-//				guild.addRoleToMember(member, tierDivider).complete();
-//
-//			if(
-//					!member.getRoles().contains(fresh) &&
-//							!member.getRoles().contains(guild.getRoleById("124204787628507136")) && // Admin role
-//							!member.getRoles().contains(guild.getRoleById("280730890945036288")) && // PGDA Boys role
-//							!member.getRoles().contains(guild.getRoleById("124204592941629442")) && // Twitch Moderator role
-//							!member.getRoles().contains(guild.getRoleById("794945930809966642")) && // MC Staff role
-//							!member.getRoles().contains(guild.getRoleById("319560778267230209")) // Team role
-//			)
-//				guild.addRoleToMember(member, fresh).complete();
 		});
 
 		System.out.println("Loop finished! All setup");

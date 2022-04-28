@@ -34,9 +34,7 @@ public class BotMessage extends ListenerAdapter {
 		eb.setAuthor(e.getAuthor().getName(), null, e.getAuthor().getAvatarUrl());
 		eb.setDescription(message[1]);
 
-		e.getChannel().sendMessageEmbeds(eb.build()).queue(success -> {
-			success.addReaction("✅").queue();
-		});
+		e.getChannel().sendMessageEmbeds(eb.build()).queue(success -> success.addReaction("✅").queue());
 	}
 
 	public void onMessageReactionAdd(MessageReactionAddEvent e) {

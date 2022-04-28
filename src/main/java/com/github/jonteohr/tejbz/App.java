@@ -15,13 +15,13 @@ import com.github.jonteohr.tejbz.discord.listener.guild.GuildReady;
 import com.github.jonteohr.tejbz.discord.listener.guild.NewMember;
 import com.github.jonteohr.tejbz.discord.listener.guild.RoleRequest;
 import com.github.jonteohr.tejbz.discord.listener.roles.SupporterRole;
-import com.github.jonteohr.tejbz.discord.queue.ChannelEvent;
 import com.github.jonteohr.tejbz.twitch.Twitch;
 import com.github.jonteohr.tejbz.web.DashboardSocket;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.requests.restaction.CommandListUpdateAction;
@@ -37,21 +37,21 @@ import java.util.Scanner;
 public class App {
 	public static JDA jda;
 	
-	public static String prefix = "!";
-	public static int color = 0x39A0FE;
-	public static String authorImage = "https://static-cdn.jtvnw.net/jtv_user_pictures/7f35ded7-e1d7-4cb3-9a46-a47e8ff56e3a-profile_image-300x300.png";
-	public static boolean DEV_MODE = false;
+	public static final String prefix = "!";
+	public static final int color = 0x39A0FE;
+	public static final String authorImage = "https://static-cdn.jtvnw.net/jtv_user_pictures/7f35ded7-e1d7-4cb3-9a46-a47e8ff56e3a-profile_image-300x300.png";
+	public static final boolean DEV_MODE = false;
 	
 	public static Guild guild;
 	public static TextChannel general;
 	public static TextChannel liveChannel;
 	public static TextChannel twitchLog;
-	public static String logChannelId = "732559129268322375";
+	public static final String logChannelId = "732559129268322375";
 	
 	public static boolean enableJoin = false;
 	public static int joinLimit = 4;
 	
-	public static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+	public static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	
 	public static void main(String[] args) throws LoginException {
 
@@ -70,20 +70,12 @@ public class App {
 		jda.addEventListener(new NewMember());
 		jda.addEventListener(new RoleRequest());
 		jda.addEventListener(new SupporterRole());
-		jda.addEventListener(new ChannelEvent());
 		jda.addEventListener(new BotMessage());
 		jda.addEventListener(new SlashCommandListener());
 		
 		// Commands
-		jda.addEventListener(new Social());
-		jda.addEventListener(new Follow());
-		jda.addEventListener(new Stream());
-		jda.addEventListener(new Video());
-		jda.addEventListener(new Schedule());
 		jda.addEventListener(new Help());
 		jda.addEventListener(new Join());
-		jda.addEventListener(new Github());
-		jda.addEventListener(new Server());
 		
 		// Admin commands
 		jda.addEventListener(new SetVideo());
@@ -99,7 +91,20 @@ public class App {
 			CommandListUpdateAction commandListUpdateAction = jda.updateCommands();
 
 			commandListUpdateAction.addCommands(
-					Commands.slash("test", "A test command for admins.")
+					Commands.slash("social", "The links to Tejbz social channels."),
+					Commands.slash("stream", "Current stream information."),
+					Commands.slash("schedule", "This weeks streaming schedule."),
+					Commands.slash("youtube", "The latest youtube video from Tejbz."),
+
+					// Admin
+					Commands.slash("modhelp", "A quick overview of the commands moderators can use."),
+					Commands.slash("mute", "Mute a member from talking and chatting.")
+							.addOption(OptionType.USER, "target", "The member you want to mute.", true),
+					Commands.slash("setschedule", "Sets this weeks schedule image.")
+							.addOption(OptionType.STRING, "image_url", "A url to the schedule image.", true),
+					Commands.slash("setvideo", "Sets the recent video to be promoted by the bot.")
+							.addOption(OptionType.STRING, "video_url", "The URL to the latest video", true)
+
 			);
 
 			commandListUpdateAction.queue();
@@ -137,16 +142,16 @@ public class App {
 	}
 
 	public static boolean isStringUppercase(String string, int minLength) {
-		StringBuffer stringBuffer = new StringBuffer();
+		StringBuilder stringBuilder = new StringBuilder();
 		for(int k = 0; k < string.length(); k++) {
 			if(Character.isSpaceChar(string.charAt(k)))
-				stringBuffer.append(" ");
+				stringBuilder.append(" ");
 			else
 				if(Character.isLetter(string.charAt(k)))
-					stringBuffer.append(string.charAt(k));
+					stringBuilder.append(string.charAt(k));
 		}
 
-		char[] charArray = stringBuffer.toString().toCharArray();
+		char[] charArray = stringBuilder.toString().toCharArray();
 
 		if(charArray.length < minLength)
 			return false;

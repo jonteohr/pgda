@@ -28,7 +28,7 @@ public class TwitchHandler {
 	
 	private int clipTime = 0;
 	private final String URL_REGEX = "^((https?|ftp)://|(www|ftp)\\.)?[a-z0-9-]+(\\.[a-z0-9-]+)+([/?].*)?$";
-	Pattern pattern = Pattern.compile(URL_REGEX);
+	final Pattern pattern = Pattern.compile(URL_REGEX);
 
 	@EventSubscriber
 	public void onTwitchChat(IRCMessageEvent e) {

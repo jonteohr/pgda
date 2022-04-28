@@ -1,24 +1,19 @@
 package com.github.jonteohr.tejbz.discord.listener.commands;
 
-import com.github.jonteohr.tejbz.App;
 import com.github.jonteohr.tejbz.PropertyHandler;
 
 import net.dv8tion.jda.api.entities.TextChannel;
-import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
-import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.interactions.InteractionHook;
 
-public class Video extends ListenerAdapter {
-	public void onMessageReceived(MessageReceivedEvent e) {
-		String[] args = e.getMessage().getContentRaw().split("\\s+");
-		
-		if(!args[0].equalsIgnoreCase(App.prefix + "video"))
-			return;
-		
+public class Video {
+
+	public static void sendVideo(SlashCommandInteractionEvent e, InteractionHook hook) {
 		PropertyHandler prop = new PropertyHandler();
-		
+
 		String url = prop.getPropertyValue("recent_video");
-		
-		e.getChannel().sendMessage(e.getAuthor().getAsMention() + " Check out the latest video on the YouTube channel!\n" + url).queue();
+
+		hook.sendMessage(e.getMember().getAsMention() + " Check out the latest video on the YouTube channel!\n" + url).queue();
 	}
 	
 	public static void sendAd(TextChannel channel) {

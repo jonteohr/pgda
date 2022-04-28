@@ -9,54 +9,49 @@ import com.github.jonteohr.tejbz.App;
 import com.github.jonteohr.tejbz.twitch.Twitch;
 
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
-import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.interactions.InteractionHook;
 
-public class Stream extends ListenerAdapter {
+public class Stream {
 	
-	private int cooldown = 0;
-	
-	public void onMessageReceived(MessageReceivedEvent e) {
-		String[] args = e.getMessage().getContentRaw().split("\\s+");
-		
-		if(!args[0].equalsIgnoreCase(App.prefix + "stream"))
-			return;
-		
+	private static int cooldown = 0;
+
+	public static void sendStream(SlashCommandInteractionEvent e, InteractionHook hook) {
 		if(cooldown > 0) {
-			e.getChannel().sendMessage("Timer: " + cooldown).queue();
+			hook.sendMessage("Timer: " + cooldown).queue();
 			return;
 		}
-		
+
 		EmbedBuilder msg = new EmbedBuilder();
 		msg.setAuthor("Tejbz", null, Twitch.getUser("tejbz").getProfileImageUrl());
 		msg.setColor(App.color);
-		
+
 		if(Twitch.getStream("tejbz") != null) {
 			msg.setTitle(Twitch.getStream("tejbz").getTitle(), "https://twitch.tv/tejbz");
-			
+
 			msg.addField("Viewers", NumberFormat.getNumberInstance(Locale.US).format(Twitch.getStream("tejbz").getViewerCount()), true);
 			msg.addField("Playing", Twitch.getGameById(Twitch.getStream("tejbz").getGameId()), true);
 			msg.addField("Uptime", App.formatDuration(Twitch.getStream("tejbz").getUptime()), true);
-			
+
 			msg.setImage(Twitch.getStream("tejbz").getThumbnailUrl(1280,720));
-			
+
 			e.getChannel().sendMessageEmbeds(msg.build()).queue();
-			
+
 			cooldown = 30;
 			cooldown();
-			
+
 			return;
 		}
-		
+
 		msg.setDescription("Stream is offline.");
-		
-		e.getChannel().sendMessageEmbeds(msg.build()).queue();
-		
+
+		hook.sendMessageEmbeds(msg.build()).queue();
+
 		cooldown = 30;
 		cooldown();
 	}
 	
-	private void cooldown() {
+	private static void cooldown() {
 		Timer timer = new Timer();
 		
 		timer.scheduleAtFixedRate(new TimerTask() {
