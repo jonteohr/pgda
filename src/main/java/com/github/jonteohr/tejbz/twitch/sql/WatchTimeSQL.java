@@ -70,41 +70,6 @@ public class WatchTimeSQL {
 	}
 	
 	/**
-	 * Retrieves the total watchtime of a viewer in minutes.
-	 * @param viewer
-	 * @return minutes in an {@link java.lang.Integer Integer}
-	 */
-	public int getWatchTime(String viewer) {
-		ResultSet result;
-		try {
-			Class.forName("com.mysql.cj.jdbc.Driver");
-			Connection con = DriverManager.getConnection("jdbc:mysql://" + Credentials.DB_HOST.getValue() + ":3306/" + Credentials.DB_NAME.getValue() + "?serverTimezone=UTC",
-					Credentials.DB_USER.getValue(),
-					Credentials.DB_PASS.getValue());
-			
-			PreparedStatement pstmt = con.prepareStatement("SELECT time FROM watchtime WHERE viewer=?;");
-			pstmt.setString(1, viewer);
-			
-			result = pstmt.executeQuery();
-
-			int res = 0;
-
-			while(result.next()) {
-				res = result.getInt(1);
-			}
-			
-			result.close();
-			con.close();
-
-			return res;
-
-		} catch (Exception e) {
-			System.out.println(e);
-			return -1;
-		}
-	}
-	
-	/**
 	 * Gets all saved watchtimes as a map.
 	 * @return a {@link java.util.Map Map} with every viewer and their watchtime.
 	 */

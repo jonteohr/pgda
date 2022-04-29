@@ -13,9 +13,6 @@ import java.util.Random;
 
 public class BankHandler {
 
-	private final int minDaily = 500;
-	private final int maxDaily = 1000;
-
 	@EventSubscriber
 	public void onDaily(IRCMessageEvent e) {
 		if(!e.getChannel().getName().equalsIgnoreCase("tejbz"))
@@ -113,6 +110,8 @@ public class BankHandler {
 
 		if(args[0].equalsIgnoreCase("!collect")) {
 			Random random = new Random();
+			int maxDaily = 1000;
+			int minDaily = 500;
 			int coins = random.nextInt(maxDaily - minDaily) + minDaily;
 
 			String fCoins = String.format("%,d", coins);

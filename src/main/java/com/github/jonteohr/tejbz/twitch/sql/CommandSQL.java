@@ -185,40 +185,6 @@ public class CommandSQL {
 			return null;
 		}
 	}
-
-	/**
-	 * 
-	 * @param cmdName
-	 * @return
-	 */
-	public String getCommandReply(String cmdName) {
-		ResultSet result;
-		try {
-			Class.forName("com.mysql.cj.jdbc.Driver");
-			Connection con = DriverManager.getConnection("jdbc:mysql://" + Credentials.DB_HOST.getValue() + ":3306/" + Credentials.DB_NAME.getValue() + "?serverTimezone=UTC",
-					Credentials.DB_USER.getValue(),
-					Credentials.DB_PASS.getValue());
-			
-			PreparedStatement pstmt = con.prepareStatement("SELECT reply FROM commands WHERE cmd=?;");
-			pstmt.setString(1, cmdName);
-			result = pstmt.executeQuery();
-
-			String reply = null;
-
-			while(result.next()) {
-				reply = result.getString(1);
-			}
-			
-			result.close();
-			con.close();
-
-			return reply;
-
-		} catch (Exception e) {
-			System.out.println(e);
-			return null;
-		}
-	}
 	
 	public Map<String, String> getCommandsMap() {
 		ResultSet result;

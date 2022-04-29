@@ -1,7 +1,5 @@
 package com.github.jonteohr.tejbz.discord.listener.guild;
 
-import com.github.jonteohr.tejbz.App;
-import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
 import net.dv8tion.jda.api.events.message.react.MessageReactionRemoveEvent;
@@ -24,32 +22,6 @@ public class RoleRequest extends ListenerAdapter {
 	public static Role gameRl;
 	public static Role gameSot;
 	public static Role gameMisc;
-
-	public static void sendMsg() {
-		EmbedBuilder eb = new EmbedBuilder();
-		eb.setColor(App.color);
-		eb.setTitle("__Role Menu: Game Roles__");
-		eb.setDescription("React to one of the emotes below to get the specified role.");
-
-		roleRequest.sendMessageEmbeds(eb.build()).queue();
-	}
-
-	public static void editmsg() {
-		EmbedBuilder eb = new EmbedBuilder();
-		eb.setTitle("__Role Menu: Game Roles__");
-		eb.setDescription("React to one of the emotes below to get the specified role.\n\n" +
-				"<:mc:808961323299241994> : `Minecraft`\n\n" +
-				"<:warzone:808962059647582249> : `COD: Warzone`\n\n" +
-				"<:rl:808962304699531295> : `Rocket League`\n\n" +
-				"<:sot:808962592486719498> : `Sea of Thieves`\n\n" +
-				"\uD83D\uDD79 : `Other Games`");
-		eb.setColor(App.color);
-		eb.setAuthor(null);
-
-		gameRequestMessage.editMessageEmbeds(eb.build()).queue();
-
-		react();
-	}
 
 	private static void react() {
 		gameRequestMessage.addReaction("mc:808961323299241994").queue();

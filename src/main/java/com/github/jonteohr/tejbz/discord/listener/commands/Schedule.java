@@ -4,11 +4,10 @@ import com.github.jonteohr.tejbz.App;
 import com.github.jonteohr.tejbz.PropertyHandler;
 
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.InteractionHook;
 
 public class Schedule {
-	public static void sendSchedule(SlashCommandInteractionEvent e, InteractionHook hook) {
+	public static void sendSchedule(InteractionHook hook) {
 		PropertyHandler prop = new PropertyHandler();
 
 		EmbedBuilder msg = new EmbedBuilder();

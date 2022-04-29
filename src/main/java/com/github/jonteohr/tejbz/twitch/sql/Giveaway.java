@@ -35,28 +35,4 @@ public class Giveaway {
 			return false;
 		}
 	}
-
-	/**
-	 *
-	 * @return
-	 */
-	public static boolean resetList() {
-		try {
-			Class.forName("com.mysql.cj.jdbc.Driver");
-			Connection con = DriverManager.getConnection("jdbc:mysql://" + Credentials.DB_HOST.getValue() + ":3306/" + Credentials.DB_NAME.getValue() + "?serverTimezone=UTC",
-					Credentials.DB_USER.getValue(),
-					Credentials.DB_PASS.getValue());
-
-			PreparedStatement pstmt = con.prepareStatement("TRUNCATE TABLE giveaway;");
-			pstmt.executeUpdate();
-
-			con.close();
-			pstmt.close();
-
-			return true;
-		} catch (Exception e) {
-			e.printStackTrace();
-			return false;
-		}
-	}
 }

@@ -37,7 +37,7 @@ public class SlashCommandListener extends ListenerAdapter {
 		InteractionHook hook = e.getHook();
 		hook.setEphemeral(true);
 
-		Social.sendSocial(e, hook);
+		Social.sendSocial(hook);
 	}
 
 	private void doStream(SlashCommandInteractionEvent e) {
@@ -53,7 +53,7 @@ public class SlashCommandListener extends ListenerAdapter {
 		InteractionHook hook = e.getHook();
 		hook.setEphemeral(true);
 
-		Schedule.sendSchedule(e, hook);
+		Schedule.sendSchedule(hook);
 	}
 
 	private void doVideo(SlashCommandInteractionEvent e) {

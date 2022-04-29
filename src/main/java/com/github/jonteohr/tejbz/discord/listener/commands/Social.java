@@ -3,12 +3,11 @@ package com.github.jonteohr.tejbz.discord.listener.commands;
 import com.github.jonteohr.tejbz.App;
 
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.InteractionHook;
 
 public class Social {
 
-	public static void sendSocial(SlashCommandInteractionEvent e, InteractionHook hook) {
+	public static void sendSocial(InteractionHook hook) {
 		EmbedBuilder msg = new EmbedBuilder();
 		msg.setAuthor("PGDA", null, App.authorImage);
 		msg.setColor(App.color);

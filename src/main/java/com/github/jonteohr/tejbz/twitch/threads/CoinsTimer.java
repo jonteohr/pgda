@@ -23,10 +23,7 @@ public class CoinsTimer {
 	}
 
 	public static int getCooldown(String user) {
-		if(cooldownList.containsKey(user))
-			return cooldownList.get(user);
-		else
-			return -1;
+		return cooldownList.getOrDefault(user, -1);
 	}
 
 	private static void coinsTimer() {
