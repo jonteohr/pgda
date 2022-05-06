@@ -1,38 +1,33 @@
 package com.github.jonteohr.tejbz.discord.listener.commands.admin;
 
-import com.github.jonteohr.tejbz.App;
 import com.github.jonteohr.tejbz.PermissionHandler;
 import com.github.jonteohr.tejbz.PropertyHandler;
 import com.github.jonteohr.tejbz.web.WebLog;
 
-import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import net.dv8tion.jda.api.interactions.InteractionHook;
 
 public class SetVideo extends ListenerAdapter {
-	public void onMessageReceived(MessageReceivedEvent e) {
+	public static void setVideo(SlashCommandInteractionEvent e, InteractionHook hook) {
 		PropertyHandler prop = new PropertyHandler();
 		PermissionHandler perm = new PermissionHandler();
-		
-		String[] args = e.getMessage().getContentRaw().split("\\s+");
-		
-		if(!args[0].equalsIgnoreCase(App.prefix + "setvideo"))
-			return;
 		
 		if(!perm.isMod(e.getMember()))
 			return;
 		
-		if(args.length < 2) {
-			e.getAuthor().openPrivateChannel().complete().sendMessage("Invalid usage.\nCorrect usage: `!setvid <youtubeURL>`").queue();
+		if(e.getOptions().size() < 1) {
+			hook.sendMessage("Invalid usage.\nCorrect usage: `!setvid <youtubeURL>`").queue();
 			return;
 		}
 		
-		String url = args[1];
+		String url = e.getOption("video_url").getAsString();
 		
 		if(prop.setProperty("recent_video", url)) {
-			e.getAuthor().openPrivateChannel().complete().sendMessage("Successfully saved!").queue();
-			WebLog.addToWeblog("DISCORD", e.getAuthor().getAsTag(), "Updated the latest video: <a href='" + url + "'>New Video</a>");
+			hook.sendMessage("Successfully saved!").queue();
+			WebLog.addToWeblog("DISCORD", e.getUser().getAsTag(), "Updated the latest video: <a href='" + url + "'>New Video</a>");
 		} else {
-			e.getAuthor().openPrivateChannel().complete().sendMessage("Failed to save...").queue();
+			hook.sendMessage("Failed to save...").queue();
 		}
 	}
 }

@@ -39,7 +39,7 @@
 	<dependency> <!-- .Twitch4J -->
 	    <groupId>com.github.twitch4j</groupId>
 	    <artifactId>twitch4j</artifactId>
-	    <version>1.8.0</version>
+	    <version>1.9.0</version>
 	</dependency> <!-- ./Twitch4J -->
 	
 	<dependency>

@@ -72,7 +72,6 @@ public class Twitch {
 		eventManager.getEventHandler(SimpleEventHandler.class).registerListener(new TwitchHandler());
 		eventManager.getEventHandler(SimpleEventHandler.class).registerListener(new GiveawayCommand());
 		eventManager.getEventHandler(SimpleEventHandler.class).registerListener(new BankHandler());
-//		eventManager.getEventHandler(SimpleEventHandler.class).registerListener(new Predictions());
 		
 		twitchClient.getClientHelper().enableStreamEventListener("tejbz");
 		twitchClient.getPubSub().listenForChannelPointsRedemptionEvents(Identity.getCredential(OAuth2), "25622462");
