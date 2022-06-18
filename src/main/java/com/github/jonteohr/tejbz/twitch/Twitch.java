@@ -48,7 +48,6 @@ public class Twitch {
 		// Build the twitch instance
 		twitchClient = TwitchClientBuilder.builder()
 				.withEnableHelix(true)
-				.withEnableKraken(false)
 				.withEnableChat(true)
 				.withEnablePubSub(true)
 				.withEnableTMI(true)
@@ -61,7 +60,6 @@ public class Twitch {
 		hyprTwitchClient = TwitchClientBuilder.builder()
 				.withChatAccount(hyprOauth)
 				.withEnableChat(true)
-				.withEnableKraken(false)
 				.withEnableHelix(false)
 				.build();
 		
