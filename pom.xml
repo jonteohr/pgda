@@ -27,7 +27,7 @@
     <dependency> <!-- .JDA -->
 		<groupId>net.dv8tion</groupId> 
 		<artifactId>JDA</artifactId>
-		<version>5.0.0-alpha.11</version>
+		<version>5.0.0-alpha.21</version>
 		<type>jar</type>
 		<scope>compile</scope>
 	</dependency> <!-- ./JDA -->
@@ -39,7 +39,7 @@
 	<dependency> <!-- .Twitch4J -->
 	    <groupId>com.github.twitch4j</groupId>
 	    <artifactId>twitch4j</artifactId>
-	    <version>1.10.0</version>
+	    <version>1.12.0</version>
 	</dependency> <!-- ./Twitch4J -->
 	
 	<dependency>
