@@ -75,7 +75,7 @@ public class AutoMessageSQL {
 					Credentials.DB_PASS.getValue());
 			
 			Statement pstmt = con.createStatement();
-			result = pstmt.executeQuery("SELECT message FROM messages;");
+			result = pstmt.executeQuery("SELECT message FROM messages ORDER BY item_order ASC;");
 
 			List<String> msgs = new ArrayList<>();
 
